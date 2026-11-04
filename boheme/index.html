@@ -198,6 +198,14 @@
   .choice label:has(input:checked){ border-color:#B8862B; } .choice input:checked + span{ color:#A8761F; }
   .rsvp input:focus,.rsvp textarea:focus{ border-color:#B8862B; }
   .rsvp input[type=text], .rsvp input[type=number], .rsvp textarea{ border-color:rgba(184,134,43,.35); }
+
+  .cd{ margin:1.2rem 0 .3rem; }
+  .cd-title{ font-family:'Cormorant Garamond',serif; font-style:italic; font-weight:600; font-size:1.2rem; color:#7A5A4A; margin-bottom:.6rem; }
+  .cd-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:.5rem; }
+  .cd-cell{ background:rgba(255,255,255,.72); border:1px solid rgba(201,146,46,.5); border-radius:16px; padding:.65rem .15rem .55rem; box-shadow:inset 0 0 0 3px rgba(255,248,232,.8), 0 4px 12px rgba(120,80,20,.10); }
+  .cd-n{ display:block; font-family:'Cormorant Garamond',serif; font-weight:700; font-size:2.1rem; line-height:1.05; font-variant-numeric:lining-nums tabular-nums; font-feature-settings:'lnum' 1;
+    background:linear-gradient(160deg,#8C5A12,#D4A13A 55%,#8C5A12); -webkit-background-clip:text; background-clip:text; color:transparent; -webkit-text-fill-color:transparent; }
+  .cd-l{ display:block; font-family:'Jost',sans-serif; font-size:.58rem; font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:#B8862B; margin-top:.2rem; }
 </style>
 </head>
 <body>
@@ -570,6 +578,32 @@
   (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(()=>{ if(_lastInv) renderCard(_lastInv); });
   let _rz; window.addEventListener('resize', ()=>{ clearTimeout(_rz); _rz = setTimeout(()=>{ if(_lastInv) renderCard(_lastInv); }, 150); });
 
+
+  // ---- Compte à rebours jusqu'à l'événement ----
+  function buildCountdown(inv){
+    if(!inv.event_date) return document.createDocumentFragment();
+    const [y,m,d] = inv.event_date.split('-').map(Number);
+    let h = 0, mi = 0; const t = String(inv.event_time||'').match(/(\d{1,2})\s*[:hH]\s*(\d{2})?/); if(t){ h = +t[1]; mi = +(t[2]||0); }
+    const target = new Date(y, m-1, d, h, mi, 0);
+    const wrap = el('div','cd'), title = el('div','cd-title'), grid = el('div','cd-grid');
+    const cells = ['jours','heures','minutes','secondes'].map(l=>{ const c = el('div','cd-cell'); const n = el('b','cd-n','00'); c.appendChild(n); c.appendChild(el('span','cd-l',l)); grid.appendChild(c); return n; });
+    wrap.appendChild(title); wrap.appendChild(grid);
+    let timer = null;
+    function tick(){
+      let s = Math.floor((target - new Date())/1000);
+      if(s <= 0){
+        const now = new Date();
+        title.textContent = (now.getFullYear()===y && now.getMonth()===m-1 && now.getDate()===d) ? "C'est aujourd'hui !" : "L'événement a eu lieu ✨";
+        grid.style.display = 'none'; if(timer) clearInterval(timer); return;
+      }
+      title.textContent = 'Rendez-vous dans'; grid.style.display = '';
+      const dd = Math.floor(s/86400); s %= 86400; const hh = Math.floor(s/3600); s %= 3600; const mm = Math.floor(s/60), ss = s % 60;
+      [dd,hh,mm,ss].forEach((v,i)=>{ cells[i].textContent = String(v).padStart(i===0 && dd>99 ? 3 : 2, '0'); });
+    }
+    timer = setInterval(tick, 1000); tick();
+    return wrap;
+  }
+
   async function loadInfos(){
     const box = document.getElementById('info-card');
     try{
@@ -586,6 +620,7 @@
 
       box.appendChild(el('h2', null, inv.title));
       if(inv.host_names) box.appendChild(el('div','host', inv.host_names));
+      box.appendChild(buildCountdown(inv));
 
       const rows = el('div','info-rows');
       if(inv.event_date){
