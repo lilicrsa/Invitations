@@ -177,7 +177,7 @@
   .info-card .host{ font-family:'Cormorant Garamond',serif; font-weight:600; font-size:1.2rem; letter-spacing:.04em; color:#7A5A4A; }
   .info-row{ background:rgba(255,255,255,.66); border:1px solid rgba(201,146,46,.28); }
   .info-row .k{ color:var(--or) !important; font-family:'Jost',sans-serif; }
-  .info-row .v{ font-family:'Cormorant Garamond',serif; font-weight:600; font-size:1.18rem; color:var(--brun); }
+  .info-row .v{ font-variant-numeric:lining-nums; font-feature-settings:'lnum' 1; font-family:'Cormorant Garamond',serif; font-weight:600; font-size:1.18rem; color:var(--brun); }
   .info-row .nav-links a{ background:linear-gradient(135deg,#D9A94A,#A8761F); font-family:'Jost',sans-serif; }
   .info-row a{ text-decoration-color:#D9A94A; }
   .info-message{ font-family:'Cormorant Garamond',serif; font-size:1.15rem; font-weight:500; }
@@ -546,7 +546,7 @@
       if(inv.event_time) rows.appendChild(row('🕒','Heure', document.createTextNode(inv.event_time)));
       if(inv.venue_name || inv.address){
         const wrap = document.createElement('span');
-        const label = [inv.venue_name, inv.address].filter(Boolean).join(' — ');
+        const vn = (inv.venue_name||'').trim(), ad = (inv.address||'').trim(); const label = (vn && ad && ad.toLowerCase().indexOf(vn.toLowerCase()) === 0) ? ad : [vn, ad].filter(Boolean).join(' — ');
         wrap.appendChild(document.createTextNode(label));
         wrap.appendChild(buildNavLinks(inv, label));
         rows.appendChild(row('📍','Lieu', wrap));

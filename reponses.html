@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Réponses des invités</title>
+<style>
+  /* Default look = theme "default". Every colour / font / radius below comes from CSS variables
+     that are replaced at runtime by the theme chosen in Supabase (table "themes"). */
+  :root{
+    --bg:#FBF3F7; --text:#4E3347; --muted:#C0719A; --accent:#D9568A;
+    --card-bg:#FFFFFF; --card-border:#F3E3EC; --card-shadow:0 6px 24px rgba(217,86,138,.12);
+    --input-bg:#FFFFFF; --input-border:#E7C4D5; --stat-bg:#FFF0F6; --row-bg:#FFF7FB; --row-border:#F1DCE6;
+    --btn-bg:#D9568A; --btn-text:#FFFFFF; --btn-border:#D9568A;
+    --btn2-bg:#FFFFFF; --btn2-text:#D9568A; --btn2-border:#D9568A;
+    --yes:#1B7F4B; --no:#B3261E; --err:#B3261E; --radius:18px; --radius-btn:999px;
+    --font-heading:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+    --font-body:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+    --scheme:light; --head-grad:none; --head-fill:currentColor;
+    --bg-img:none; --bg-overlay:none; --card-outline:none; --card-blur:none; --font-script:var(--font-heading); --h1-size:1.7rem; --h1-weight:700;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{ color-scheme:var(--scheme);}
+  body{ font-family:var(--font-body); font-variant-numeric:lining-nums; background:var(--bg-overlay), var(--bg-img), var(--bg); background-size:cover; background-position:center; background-repeat:no-repeat; background-attachment:fixed; color:var(--text); min-height:100vh; padding:1.2rem; transition:background .3s, color .3s;}
+  .wrap{ max-width:900px; margin:0 auto;}
+  h1,.stat b{ background-image:var(--head-grad); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:var(--head-fill);}
+  h1{ font-family:var(--font-script); font-weight:var(--h1-weight); font-size:var(--h1-size); line-height:1.2; padding:.05em .1em; color:var(--accent); margin-bottom:1rem; text-align:center;}
+  .card{ background:var(--card-bg); border:1px solid var(--card-border); border-radius:var(--radius); padding:1.3rem; box-shadow:var(--card-shadow); margin-bottom:1rem; outline:var(--card-outline); outline-offset:-8px; -webkit-backdrop-filter:var(--card-blur); backdrop-filter:var(--card-blur);}
+  label{ display:block; font-size:.78rem; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); margin:.8rem 0 .3rem;}
+  input, select{ width:100%; font-family:inherit; font-size:1rem; padding:.65rem .8rem; border:1.5px solid var(--input-border); border-radius:12px; background:var(--input-bg); color:var(--text);}
+  button{ font-family:inherit; font-size:1rem; font-weight:700; color:var(--btn-text); background:var(--btn-bg); border:1.5px solid var(--btn-border); border-radius:var(--radius-btn); padding:.7rem 1.4rem; cursor:pointer;}
+  button.secondary{ background:var(--btn2-bg); color:var(--btn2-text); border-color:var(--btn2-border);}
+  .row{ display:flex; gap:.6rem; flex-wrap:wrap; align-items:center; justify-content:space-between;}
+  .stats{ display:grid; grid-template-columns:repeat(3,1fr); gap:.7rem; margin:1rem 0;}
+  .stat{ background:var(--stat-bg); border-radius:14px; padding:.9rem; text-align:center;}
+  .stat b{ display:block; font-family:var(--font-heading); font-size:1.9rem; color:var(--accent);}
+  .stat span{ font-size:.75rem; text-transform:uppercase; letter-spacing:.06em; color:var(--muted);}
+  .tablewrap{ overflow-x:auto;}
+  table{ width:100%; border-collapse:collapse; font-size:.95rem;}
+  th, td{ text-align:left; padding:.6rem .5rem; border-bottom:1px solid var(--row-border); vertical-align:top;}
+  th{ font-size:.72rem; text-transform:uppercase; letter-spacing:.06em; color:var(--muted);}
+  .yes{ color:var(--yes); font-weight:700;} .no{ color:var(--no); font-weight:700;}
+  .err{ color:var(--err); font-weight:600; margin-top:.7rem;}
+  .muted{ color:var(--muted); font-size:.9rem;}
+  .tablewrap td{ word-break:break-word; overflow-wrap:anywhere;}
+  .btns{ display:flex; gap:.5rem; flex-wrap:wrap;}
+  @media (max-width: 680px){
+    body{ padding:.8rem;}
+    h1{ font-size:calc(var(--h1-size) * .85);}
+    .card{ padding:1rem;}
+    .row{ flex-direction:column; align-items:stretch;}
+    .btns{ width:100%;}
+    .btns button{ flex:1 1 auto; padding:.65rem .8rem; font-size:.92rem;}
+    .stats{ gap:.5rem;}
+    .stat{ padding:.7rem .3rem;}
+    .stat b{ font-size:1.5rem;}
+    .stat span{ font-size:.62rem; letter-spacing:.03em; display:block;}
+    /* the table becomes one card per guest */
+    table, tbody, tr, td{ display:block; width:100%;}
+    thead{ display:none;}
+    tr{ background:var(--row-bg); border:1px solid var(--row-border); border-radius:14px; padding:.7rem .8rem; margin-bottom:.7rem;}
+    td{ border:none; padding:.25rem 0; display:flex; gap:.6rem; justify-content:space-between; text-align:right;}
+    td::before{ content:attr(data-label); flex:0 0 38%; text-align:left; font-size:.68rem; font-weight:700; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); padding-top:.15rem;}
+    td:empty{ display:none;}
+    td.c-name{ font-weight:800; font-size:1.05rem;}
+  }
+  .hidden{ display:none;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Réponses des invités</h1>
+
+  <!-- LOGIN -->
+  <div class="card" id="login">
+    <p class="muted">Page réservée aux organisateurs.</p>
+    <form id="login-form">
+      <label for="email">E-mail</label>
+      <input type="email" id="email" required autocomplete="username">
+      <label for="pwd">Mot de passe</label>
+      <input type="password" id="pwd" required autocomplete="current-password">
+      <div style="margin-top:1rem"><button type="submit">Se connecter</button></div>
+      <div class="err hidden" id="login-err"></div>
+    </form>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div id="dash" class="hidden">
+    <div class="card">
+      <div class="row">
+        <div style="flex:1; min-width:200px;">
+          <label for="inv-select" style="margin-top:0">Invitation</label>
+          <select id="inv-select"></select>
+        </div>
+        <div class="btns">
+          <button class="secondary" id="refresh">Actualiser</button>
+          <button class="secondary" id="csv">Exporter CSV</button>
+          <button class="secondary" id="logout">Déconnexion</button>
+        </div>
+      </div>
+      <div class="stats">
+        <div class="stat"><b id="s-yes">0</b><span>Réponses</span></div>
+        <div class="stat"><b id="s-people">0</b><span>Personnes attendues</span></div>
+        <div class="stat"><b id="s-no">0</b><span>Absents</span></div>
+      </div>
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>Date</th><th>Nom</th><th>Présence</th><th>Pers.</th><th>Allergies / remarques</th><th>Message</th></tr></thead>
+          <tbody id="rows"></tbody>
+        </table>
+      </div>
+      <div class="muted hidden" id="empty" style="margin-top:.8rem">Aucune réponse pour le moment.</div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const SUPABASE_URL = 'https://sgatagagyfizuyrinmth.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_YdlXEbQn9ZqILsjT6pyAug_ijgzm5fQ';
+  const $ = id => document.getElementById(id);
+  const params = new URLSearchParams(location.search);
+  let token = sessionStorage.getItem('sb_token');
+  let all = [];
+  let invMeta = new Map();          // invitation_id -> { title, theme }
+  let THEMES = {};                  // key -> { fonts_url, vars }
+  let urlThemeKey = null;           // theme found from ?i=slug or ?theme=key (known before login)
+
+  function hdr(){ return { apikey: SUPABASE_KEY, Authorization: 'Bearer ' + token }; }
+  function td(text, cls, label){ const c = document.createElement('td'); c.textContent = text == null ? '' : text; if(cls) c.className = cls; if(label) c.dataset.label = label; return c; }
+
+  /* ---------------- THEMES ---------------- */
+  const ALLOWED_VARS = ['--bg','--text','--muted','--accent','--card-bg','--card-border','--card-shadow','--input-bg','--input-border','--stat-bg','--row-bg','--row-border',
+    '--bg-overlay','--card-outline','--card-blur','--font-script','--h1-size','--h1-weight','--btn-bg','--btn-text','--btn-border','--btn2-bg','--btn2-text','--btn2-border','--yes','--no','--err','--radius','--radius-btn','--font-heading','--font-body','--scheme','--head-grad','--head-fill'];
+  let appliedVars = [];
+  let fontLink = null;
+  function safeValue(k, v){
+    if(typeof v !== 'string' || v.length > 220) return false;
+    if(k === '--scheme') return v === 'light' || v === 'dark';
+    if(/url\s*\(|expression|@import|[{};<>\\]/i.test(v)) return false;
+    return /^[#%\w\s,.()\-'"\/]+$/.test(v);
+  }
+  function applyTheme(key){
+    const t = THEMES[key] || THEMES['default'];
+    const root = document.documentElement;
+    appliedVars.forEach(k => root.style.removeProperty(k)); appliedVars = [];
+    if(t){
+      Object.entries(t.vars || {}).forEach(([k, v]) => { if(ALLOWED_VARS.includes(k) && safeValue(k, v)){ root.style.setProperty(k, v); appliedVars.push(k); } });
+      const bgu = (t.vars || {})['--bg-image-url'];
+      if(typeof bgu === 'string' && /^https:\/\/(lilicrsa\.github\.io|sgatagagyfizuyrinmth\.supabase\.co)\/[\w\-.\/%]+\.(jpe?g|png|webp)$/i.test(bgu)){
+        root.style.setProperty('--bg-img', 'url("' + bgu + '")'); appliedVars.push('--bg-img');
+      }
+      if(t.fonts_url && /^https:\/\/fonts\.googleapis\.com\//.test(t.fonts_url)){
+        if(!fontLink){ fontLink = document.createElement('link'); fontLink.rel = 'stylesheet'; document.head.appendChild(fontLink); }
+        if(fontLink.href !== t.fonts_url) fontLink.href = t.fonts_url;
+      }
+    }
+    document.body.dataset.theme = THEMES[key] ? key : 'default';
+  }
+  async function loadThemes(){
+    try{
+      const res = await fetch(SUPABASE_URL + '/rest/v1/themes?select=key,fonts_url,vars', { headers: { apikey: SUPABASE_KEY } });
+      if(!res.ok) return;
+      (await res.json()).forEach(t => { THEMES[t.key] = t; });
+    }catch(_){}
+  }
+  async function initTheme(){
+    await loadThemes();
+    const direct = params.get('theme');            // ?theme=pirate  (handy to preview)
+    const slug = params.get('i');                  // ?i=farhan      (what you give to the client)
+    if(direct) urlThemeKey = direct;
+    else if(slug){
+      try{
+        const res = await fetch(SUPABASE_URL + '/rest/v1/invitations?slug=eq.' + encodeURIComponent(slug) + '&select=theme', { headers: { apikey: SUPABASE_KEY } });
+        const rows = res.ok ? await res.json() : [];
+        if(rows[0] && rows[0].theme) urlThemeKey = rows[0].theme;
+      }catch(_){}
+    }
+    applyTheme(urlThemeKey || 'default');
+  }
+  // which theme to show on the dashboard: the selected invitation's, else the only one present, else the link's
+  function dashboardThemeKey(){
+    const sel = $('inv-select').value;
+    if(sel && invMeta.get(sel) && invMeta.get(sel).theme) return invMeta.get(sel).theme;
+    if(!sel){
+      const keys = new Set([...invMeta.values()].map(m => m.theme).filter(Boolean));
+      if(keys.size === 1) return [...keys][0];
+    }
+    return urlThemeKey || 'default';
+  }
+
+  /* ---------------- LOGIN + DATA ---------------- */
+  async function login(email, password){
+    const res = await fetch(SUPABASE_URL + '/auth/v1/token?grant_type=password', {
+      method: 'POST', headers: { apikey: SUPABASE_KEY, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }) });
+    const data = await res.json();
+    if(!res.ok || !data.access_token) throw new Error('Identifiants incorrects.');
+    token = data.access_token; sessionStorage.setItem('sb_token', token);
+  }
+
+  async function loadData(){
+    const res = await fetch(SUPABASE_URL + '/rest/v1/rsvp_responses?select=*,invitations(title,slug,theme)&order=created_at.desc', { headers: hdr() });
+    if(res.status === 401 || res.status === 403){ logout(); throw new Error('Session expirée, reconnectez-vous.'); }
+    if(!res.ok) throw new Error('Chargement impossible.');
+    all = await res.json();
+    const sel = $('inv-select'); const current = sel.value;
+    invMeta = new Map(); all.forEach(r => { if(r.invitations) invMeta.set(r.invitation_id, { title: r.invitations.title, theme: r.invitations.theme }); });
+    sel.textContent = '';
+    const optAll = document.createElement('option'); optAll.value = ''; optAll.textContent = 'Toutes les invitations'; sel.appendChild(optAll);
+    invMeta.forEach((m, id) => { const o = document.createElement('option'); o.value = id; o.textContent = m.title; sel.appendChild(o); });
+    sel.value = current;
+    render();
+  }
+
+  function current(){ const id = $('inv-select').value; return id ? all.filter(r => r.invitation_id === id) : all; }
+
+  function render(){
+    applyTheme(dashboardThemeKey());
+    const list = current();
+    const yes = list.filter(r => r.attending);
+    $('s-yes').textContent = list.length;
+    $('s-people').textContent = yes.reduce((n, r) => n + (r.guests_count || 0), 0);
+    $('s-no').textContent = list.length - yes.length;
+    const tb = $('rows'); tb.textContent = '';
+    list.forEach(r => {
+      const tr = document.createElement('tr');
+      tr.appendChild(td(new Date(r.created_at).toLocaleString('fr-FR', { dateStyle: 'short', timeStyle: 'short' }), 'c-date', 'Date'));
+      tr.appendChild(td(r.guest_name, 'c-name', 'Nom'));
+      tr.appendChild(td(r.attending ? 'Présent' : 'Absent', (r.attending ? 'yes' : 'no') + ' c-att', 'Présence'));
+      tr.appendChild(td(r.attending ? r.guests_count : '', 'c-count', 'Personnes'));
+      tr.appendChild(td(r.allergies, 'c-all', 'Allergies / remarques'));
+      tr.appendChild(td(r.message, 'c-msg', 'Message'));
+      tb.appendChild(tr);
+    });
+    $('empty').classList.toggle('hidden', list.length > 0);
+  }
+
+  function csvCell(v){ let s = v == null ? '' : String(v); if(/^[=+\-@]/.test(s)) s = "'" + s; return '"' + s.replace(/"/g, '""') + '"'; }
+  function exportCsv(){
+    const head = ['Date','Invitation','Nom','Présence','Personnes','Allergies / remarques','Message'];
+    const lines = [head.map(csvCell).join(';')];
+    current().forEach(r => lines.push([r.created_at, r.invitations && r.invitations.title, r.guest_name, r.attending ? 'Présent' : 'Absent', r.guests_count, r.allergies, r.message].map(csvCell).join(';')));
+    const blob = new Blob(['\ufeff' + lines.join('\n')], { type: 'text/csv;charset=utf-8' });
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'reponses-invites.csv'; a.click();
+  }
+
+  function show(loggedIn){ $('login').classList.toggle('hidden', loggedIn); $('dash').classList.toggle('hidden', !loggedIn); }
+  function logout(){ token = null; sessionStorage.removeItem('sb_token'); invMeta = new Map(); show(false); applyTheme(urlThemeKey || 'default'); }
+
+  $('login-form').addEventListener('submit', async e => {
+    e.preventDefault(); $('login-err').classList.add('hidden');
+    try{ await login($('email').value.trim(), $('pwd').value); await loadData(); show(true); $('pwd').value = ''; }
+    catch(err){ $('login-err').textContent = err.message; $('login-err').classList.remove('hidden'); }
+  });
+  $('inv-select').addEventListener('change', render);
+  $('refresh').addEventListener('click', () => loadData().catch(err => alert(err.message)));
+  $('csv').addEventListener('click', exportCsv);
+  $('logout').addEventListener('click', logout);
+
+  initTheme().then(() => { if(token){ loadData().then(() => show(true)).catch(() => show(false)); } });
+</script>
+</body>
+</html>
