@@ -602,7 +602,7 @@
       if(prog.length){
         const p = el('div','prog'); p.appendChild(el('h3',null,'Programme'));
         prog.forEach(s=>{
-          const it = el('div','prog-item'); it.appendChild(el('div','t', s.time||''));
+          const it = el('div','prog-item'); if(s.time) it.appendChild(el('div','t', s.time));
           const w = el('div'); w.appendChild(el('div','n', s.title));
           if(s.description) w.appendChild(el('div','d', s.description));
           it.appendChild(w); p.appendChild(it);
