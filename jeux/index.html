@@ -270,7 +270,7 @@
     video.muted = !!musicUrl;          // custom music replaces the video's own sound
     video.currentTime = 0;
     video.play().catch(()=>{ enterSite(); });
-    if(musicUrl) startMusic();
+    if(musicUrl){ musicBtn.style.display = 'flex'; startMusic(); }
   }
   video.addEventListener('ended', enterSite);
   enterBtn.addEventListener('click', startWithSound);
@@ -294,7 +294,7 @@
   ['pointerdown','touchend','click'].forEach(ev => document.addEventListener(ev, ()=>{
     if(musicUrl && started && !musicPlaying && !userPaused) startMusic();
   }, {passive:true}));
-  window.onMusicReady = function(url){ musicUrl = url; musicBtn.style.display = 'flex'; if(started) startMusic(); };
+  window.onMusicReady = function(url){ musicUrl = url; if(started){ musicBtn.style.display = 'flex'; startMusic(); } };
   musicBtn.addEventListener('click', function(){
     if(!musicUrl) return;
     if(bgm.paused || bgm.dataset.src !== musicUrl){ startMusic(); }
