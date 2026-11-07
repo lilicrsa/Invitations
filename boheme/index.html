@@ -324,6 +324,9 @@
   const SUPABASE_URL = 'https://sgatagagyfizuyrinmth.supabase.co';
   const SUPABASE_KEY = 'sb_publishable_YdlXEbQn9ZqILsjT6pyAug_ijgzm5fQ';
   const slug = new URLSearchParams(location.search).get('i') || 'boheme-demo';
+  const PREVIEW = new URLSearchParams(location.search).get('preview');
+  if(PREVIEW){ const _g = document.createElement('script'); _g.src = '../preview-guard.js';
+    _g.onerror = function(){ document.body.textContent = 'Aperçu indisponible pour le moment.'; }; document.head.appendChild(_g); }
 
   function el(tag, cls, text){ const e=document.createElement(tag); if(cls) e.className=cls; if(text!=null) e.textContent=text; return e; }
   function row(icon, label, valueNode){
@@ -407,6 +410,7 @@
       f.querySelectorAll('.dupe').forEach(x=>x.remove());
 
       async function call(mode, matchId){
+        if(PREVIEW) return { status:'created', id:'apercu' };   // aperçu : aucune écriture
         const res = await fetch(SUPABASE_URL+'/rest/v1/rpc/submit_rsvp', { method:'POST',
           headers:{ apikey:SUPABASE_KEY, 'Content-Type':'application/json' },
           body: JSON.stringify({ p_invitation_id: inv.id, p_name: data.name, p_attending: data.attending, p_count: data.count,
@@ -607,11 +611,18 @@
   async function loadInfos(){
     const box = document.getElementById('info-card');
     try{
-      const url = SUPABASE_URL + '/rest/v1/invitations?slug=eq.' + encodeURIComponent(slug)
-        + '&is_published=eq.true&select=*,invitation_programme(*),music_tracks(url,title)';
-      const res = await fetch(url, { headers: { apikey: SUPABASE_KEY } });
-      if(!res.ok) throw new Error('HTTP '+res.status);
-      const data = await res.json();
+      let data;
+      if(PREVIEW){
+        const res = await fetch(SUPABASE_URL + '/rest/v1/rpc/get_preview', { method:'POST', headers:{ apikey:SUPABASE_KEY, 'Content-Type':'application/json' }, body: JSON.stringify({ p_code: PREVIEW }) });
+        if(!res.ok) throw new Error('HTTP '+res.status);
+        const one = await res.json(); data = one ? [one] : [];
+      } else {
+        const url = SUPABASE_URL + '/rest/v1/invitations?slug=eq.' + encodeURIComponent(slug)
+          + '&is_published=eq.true&select=*,invitation_programme(*),music_tracks(url,title)';
+        const res = await fetch(url, { headers: { apikey: SUPABASE_KEY } });
+        if(!res.ok) throw new Error('HTTP '+res.status);
+        data = await res.json();
+      }
       box.textContent = '';
       if(!data.length){ box.appendChild(el('div','status','Invitation introuvable.')); return; }
       const inv = data[0];
