@@ -6,72 +6,71 @@
 <meta name="robots" content="noindex">
 <title>Créer mon invitation animée</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Great+Vibes&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Italiana&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  :root{ --ivoire:#FBF6EA; --or:#B8862B; --or-clair:#E8CB83; --brun:#4A2A1E; --rubis:#8A1230; --muted:#7a6552; --line:rgba(184,134,43,.35); }
+  :root{ --nuit:#0A0E1D; --nuit2:#121831; --champ:#E7D5A8; --champ2:#CDB882; --brume:#A2A9C4; --rubis:#7d1a31; --trait:rgba(231,213,168,.28); --err:#ff9aa8; }
   *{ box-sizing:border-box; }
-  html{ -webkit-text-size-adjust:100%; }
-  body{ margin:0; font-family:'Jost',system-ui,sans-serif; color:var(--brun); background:radial-gradient(1200px 600px at 50% -10%, #fff7e3, var(--ivoire) 60%, #f3e6c8); min-height:100dvh; }
-  .wrap{ max-width:880px; margin:0 auto; padding:1.5rem 16px 4rem; }
-  header{ text-align:center; padding:1.6rem 0 .4rem; }
-  header h1{ font-family:'Great Vibes',cursive; font-weight:400; font-size:clamp(2.4rem,9vw,3.6rem); margin:0; line-height:1.15;
-    background:linear-gradient(100deg,#8C5A12,#C9922E 40%,#B8862B 70%,#8C5A12); -webkit-background-clip:text; background-clip:text; color:transparent; }
-  header p{ font-family:'Cormorant Garamond',serif; font-size:1.25rem; margin:.3rem auto 0; max-width:34rem; color:var(--muted); }
+  html{ -webkit-text-size-adjust:100%; color-scheme:dark; }
+  body{ margin:0; font-family:'Manrope',system-ui,sans-serif; color:var(--champ); background:radial-gradient(900px 500px at 50% -8%, rgba(231,213,168,.12), transparent 70%), var(--nuit); min-height:100dvh; line-height:1.55; }
+  .wrap{ max-width:900px; margin:0 auto; padding:1rem max(16px,env(safe-area-inset-left,0px)) 4rem; }
+  .top{ display:flex; justify-content:space-between; align-items:baseline; gap:1rem; flex-wrap:wrap; padding-bottom:.9rem; border-bottom:1px solid var(--trait); }
+  .top a{ text-decoration:none; } .top .brand{ font:400 1.35rem 'Italiana',serif; letter-spacing:.14em; } .top .back{ color:var(--brume); font-size:.9rem; }
+  header{ text-align:center; padding:1.8rem 0 .4rem; }
+  header h1{ font:400 clamp(2.3rem,7.5vw,3.8rem)/1.08 'Italiana',serif; margin:0; letter-spacing:.02em; text-wrap:balance; }
+  header p{ color:var(--brume); margin:.6rem auto 0; max-width:34rem; }
   .steps{ display:flex; justify-content:center; gap:.4rem; margin:1.4rem 0 1.6rem; flex-wrap:wrap; }
-  .steps span{ font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; font-weight:600; padding:.4rem .8rem; border-radius:999px; border:1px solid var(--line); color:var(--muted); background:rgba(255,255,255,.5); }
-  .steps span.on{ background:linear-gradient(135deg,#D9A94A,#A8761F); color:#fff; border-color:transparent; }
+  .steps span{ font-size:.75rem; font-weight:600; padding:.4rem .85rem; border-radius:999px; border:1px solid var(--trait); color:var(--brume); }
+  .steps span.on{ background:var(--champ); color:var(--nuit); border-color:var(--champ); }
   .panel{ display:none; } .panel.on{ display:block; }
-  h2{ font-family:'Cormorant Garamond',serif; font-size:1.7rem; margin:.2rem 0 .8rem; color:var(--rubis); }
-
+  h2{ font:400 1.9rem 'Italiana',serif; margin:.2rem 0 .9rem; letter-spacing:.02em; }
   .themes{ display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:16px; }
-  .theme{ background:#fff; border:1.5px solid var(--line); border-radius:20px; overflow:hidden; cursor:pointer; text-align:left; padding:0; font:inherit; color:inherit;
-    box-shadow:0 8px 24px rgba(90,60,20,.10); transition:transform .15s, box-shadow .15s; }
-  .theme:hover{ transform:translateY(-3px); box-shadow:0 14px 30px rgba(90,60,20,.18); }
-  .theme video{ width:100%; aspect-ratio:9/16; object-fit:cover; display:block; background:#1d120c; }
-  .theme .b{ padding:.9rem 1rem 1.1rem; }
-  .theme b{ font-family:'Cormorant Garamond',serif; font-size:1.35rem; display:block; }
-  .theme small{ color:var(--muted); display:block; margin-top:.2rem; line-height:1.4; }
-  .theme .go{ display:inline-block; margin-top:.7rem; font-weight:600; font-size:.85rem; color:var(--rubis); }
-
-  .card{ background:rgba(255,255,255,.78); border:1.5px solid var(--line); border-radius:22px; padding:1.3rem 1.1rem 1.5rem; box-shadow:0 10px 30px rgba(90,60,20,.10); }
+  .theme{ background:var(--nuit2); border:1px solid var(--champ2); border-radius:16px; overflow:hidden; cursor:pointer; text-align:left; padding:6px; font:inherit; color:inherit; transition:transform .15s, box-shadow .15s; box-shadow:0 14px 30px rgba(0,0,0,.45); }
+  .theme:hover,.theme:focus-visible{ transform:translateY(-3px); box-shadow:0 0 0 1px var(--champ), 0 18px 36px rgba(0,0,0,.55); outline:none; }
+  .theme video{ width:100%; aspect-ratio:9/16; object-fit:cover; display:block; background:#000; border-radius:10px; }
+  .theme .b{ padding:.9rem .6rem .8rem; }
+  .theme b{ font:400 1.4rem 'Italiana',serif; display:block; letter-spacing:.02em; }
+  .theme small{ color:var(--brume); display:block; margin-top:.2rem; line-height:1.4; }
+  .theme .go{ display:inline-block; margin-top:.7rem; font-weight:600; font-size:.85rem; color:var(--champ); }
+  .card{ background:rgba(231,213,168,.05); border:1px solid var(--trait); border-radius:18px; padding:1.3rem 1.1rem 1.5rem; }
   .chosen{ display:flex; align-items:center; gap:.8rem; margin-bottom:1rem; }
-  .chosen img{ width:96px; border-radius:10px; aspect-ratio:1200/630; object-fit:cover; }
-  .chosen a{ font-size:.85rem; color:var(--rubis); cursor:pointer; text-decoration:underline; }
+  .chosen img{ width:96px; border-radius:8px; aspect-ratio:1200/630; object-fit:cover; }
+  .chosen a{ font-size:.85rem; color:var(--champ2); cursor:pointer; text-decoration:underline; }
   .grid2{ display:grid; grid-template-columns:1fr 1fr; gap:0 14px; }
   @media (max-width:560px){ .grid2{ grid-template-columns:1fr; } }
-  label{ display:block; font-size:.74rem; letter-spacing:.1em; text-transform:uppercase; font-weight:600; margin:.9rem 0 .3rem; color:#6b4a30; }
-  label i{ text-transform:none; letter-spacing:0; font-style:normal; font-weight:400; color:var(--muted); }
-  input[type=text],input[type=email],input[type=tel],input[type=date],input[type=time],textarea{ width:100%; font:inherit; font-size:1rem; padding:.75rem .85rem; border-radius:14px; border:1.5px solid #D9BE84; background:#fffdf8; color:var(--brun); }
+  label{ display:block; font-size:.78rem; letter-spacing:.06em; text-transform:uppercase; font-weight:600; margin:.95rem 0 .3rem; color:var(--champ2); }
+  label i{ text-transform:none; letter-spacing:0; font-style:normal; font-weight:400; color:var(--brume); }
+  input[type=text],input[type=email],input[type=tel],input[type=date],input[type=time],textarea{ width:100%; font:inherit; font-size:1rem; padding:.75rem .85rem; border-radius:12px; border:1px solid rgba(231,213,168,.38); background:#0d1228; color:var(--champ); color-scheme:dark; }
+  input::placeholder,textarea::placeholder{ color:#6f769a; }
   textarea{ min-height:96px; resize:vertical; }
-  input:focus,textarea:focus{ outline:none; border-color:var(--or); box-shadow:0 0 0 3px rgba(184,134,43,.18); }
-  .hint{ font-size:.82rem; color:var(--muted); margin:.3rem 0 0; }
-  .err{ color:#b0262e; font-size:.85rem; margin:.3rem 0 0; }
-  .switch{ display:flex; align-items:center; gap:.6rem; margin-top:1rem; font-size:1rem; text-transform:none; letter-spacing:0; font-weight:500; }
-  .switch input{ width:20px; height:20px; accent-color:#A8761F; }
+  input:focus,textarea:focus{ outline:none; border-color:var(--champ); box-shadow:0 0 0 3px rgba(231,213,168,.18); }
+  .hint{ font-size:.82rem; color:var(--brume); margin:.3rem 0 0; }
+  .err{ color:var(--err); font-size:.88rem; margin:.4rem 0 0; }
+  .switch{ display:flex; align-items:center; gap:.6rem; margin-top:1.1rem; font-size:1rem; text-transform:none; letter-spacing:0; font-weight:500; color:var(--champ); }
+  .switch input{ width:20px; height:20px; accent-color:#E7D5A8; }
   .prog-row{ display:grid; grid-template-columns:92px 1fr auto; gap:8px; margin-bottom:8px; align-items:start; }
   .prog-row .full{ grid-column:2 / 4; }
   @media (max-width:560px){ .prog-row{ grid-template-columns:1fr auto; } .prog-row input:first-child{ grid-column:1 / 3; } .prog-row .full{ grid-column:1 / 3; } }
-  .x{ border:0; background:#f1e3c2; color:#6b4a30; width:38px; height:38px; border-radius:50%; font-size:1.1rem; cursor:pointer; }
-  .btn{ display:inline-block; font:inherit; font-weight:600; letter-spacing:.03em; border:0; cursor:pointer; padding:.9rem 1.6rem; border-radius:999px; color:#fff; text-decoration:none; text-align:center;
-    background:linear-gradient(135deg,#A31740,#5E0B22); box-shadow:0 8px 22px rgba(94,11,34,.32); }
-  .btn.gold{ background:linear-gradient(135deg,#D9A94A,#A8761F); box-shadow:0 8px 22px rgba(168,118,31,.35); }
-  .btn.ghost{ background:#fff; color:var(--rubis); border:1.5px solid var(--rubis); box-shadow:none; }
-  .btn:disabled{ opacity:.6; cursor:default; }
+  .x{ border:1px solid var(--trait); background:none; color:var(--champ); width:38px; height:38px; border-radius:50%; font-size:1.1rem; cursor:pointer; }
+  .btn{ display:inline-block; font:600 .95rem 'Manrope',sans-serif; cursor:pointer; padding:.85rem 1.6rem; border-radius:999px; text-decoration:none; text-align:center; border:1px solid var(--champ); background:var(--champ); color:var(--nuit); }
+  .btn:hover,.btn:focus-visible{ background:#fff3d1; outline:none; }
+  .btn.gold{ background:var(--champ); } .btn.ghost{ background:none; color:var(--champ); } .btn.ghost:hover{ background:rgba(231,213,168,.12); }
+  .btn:disabled{ opacity:.55; cursor:default; }
   .row{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-top:1.3rem; }
-
   .stage{ display:flex; gap:24px; align-items:flex-start; justify-content:center; flex-wrap:wrap; }
-  .phone{ width:min(390px,100%); aspect-ratio:390/760; border-radius:34px; border:9px solid #1d120c; background:#000; overflow:hidden; box-shadow:0 20px 50px rgba(30,15,5,.45); position:relative; }
+  .phone{ width:min(390px,100%); aspect-ratio:390/760; border-radius:34px; border:9px solid #05070f; outline:1px solid var(--champ2); background:#000; overflow:hidden; box-shadow:0 20px 50px rgba(0,0,0,.6); position:relative; }
   .phone iframe{ width:100%; height:100%; border:0; display:block; }
   .side{ flex:1; min-width:260px; max-width:420px; }
-  .note{ background:#fff8e6; border:1px dashed var(--or); border-radius:14px; padding:.8rem .9rem; font-size:.9rem; line-height:1.5; margin:0 0 1rem; }
-  .code{ font:700 1.5rem/1 'Jost',monospace; letter-spacing:.12em; background:#fff; border:1.5px dashed var(--or); border-radius:12px; padding:.8rem 1rem; display:inline-block; margin:.3rem 0 .6rem; user-select:all; }
-  ol.how{ padding-left:1.2rem; line-height:1.6; margin:.4rem 0 0; }
-  .ok{ color:#2f6b34; font-weight:600; }
-  footer{ text-align:center; color:var(--muted); font-size:.8rem; margin-top:2rem; }
+  .note{ border:1px dashed var(--champ2); border-radius:14px; padding:.8rem .9rem; font-size:.92rem; line-height:1.5; margin:0 0 1rem; color:var(--champ); }
+  .code{ font:700 1.5rem/1 'Manrope',monospace; letter-spacing:.12em; border:1px dashed var(--champ2); border-radius:12px; padding:.8rem 1rem; display:inline-block; margin:.3rem 0 .6rem; user-select:all; background:#0d1228; }
+  ol.how{ padding-left:1.2rem; line-height:1.65; margin:.4rem 0 0; color:var(--brume); }
+  .ok{ color:#9fe0a8; font-weight:600; }
+  footer{ text-align:center; color:var(--brume); font-size:.8rem; margin-top:2rem; }
+  hr{ border:0; border-top:1px dashed var(--trait); margin:1.6rem 0 .4rem; }
 </style>
 </head>
 <body>
 <div class="wrap">
+  <div class="top"><a class="brand" href="index.html" id="brand">Atelier Invitation</a><a class="back" href="index.html#modeles">Retour à la collection</a></div>
   <header>
     <h1>Créez votre invitation animée</h1>
     <p>Choisissez un modèle, remplissez vos informations et voyez le rendu réel avant d'acheter.</p>
@@ -88,7 +87,7 @@
   <section class="panel" id="p2">
     <h2>Vos informations</h2>
     <div class="card">
-      <div class="chosen"><img id="chosen-img" alt=""><div><b id="chosen-name" style="font-family:'Cormorant Garamond',serif;font-size:1.3rem"></b><br><a id="change-theme">Changer de modèle</a></div></div>
+      <div class="chosen"><img id="chosen-img" alt=""><div><b id="chosen-name" style="font-family:'Italiana',serif;font-size:1.4rem;font-weight:400"></b><br><a id="change-theme">Changer de modèle</a></div></div>
       <form id="form" novalidate>
         <label for="f-title" id="l-title">Titre</label>
         <input type="text" id="f-title" maxlength="120">
@@ -131,7 +130,7 @@
       <div class="phone"><iframe id="frame" title="Aperçu de votre invitation" allow="autoplay; fullscreen"></iframe></div>
       <div class="side">
         <p class="note"><b>Touchez l'invitation pour l'ouvrir</b>, comme vos invités. C'est un aperçu protégé : filigrane, et l'écran se masque quand vous quittez la page ou tentez une capture. Il reste disponible 14 jours.</p>
-        <p class="note" style="background:#fff">Les réponses saisies dans l'aperçu ne sont pas enregistrées.</p>
+        <p class="note">Les réponses saisies dans l'aperçu ne sont pas enregistrées.</p>
         <div class="row" style="margin-top:.4rem"><button class="btn gold" id="validate">Je valide, commander</button><button class="btn ghost" id="edit">Modifier mes infos</button></div>
       </div>
     </div>
@@ -150,8 +149,8 @@
           <li>Revenez ici pour nous indiquer votre numéro de commande (ci-dessous) : nous publions alors votre invitation et vous envoyons votre lien.</li>
         </ol>
         <div class="row"><a class="btn" id="etsy-btn" target="_blank" rel="noopener">Acheter sur la boutique</a><button class="btn ghost" id="edit2">Modifier mes infos</button></div>
-        <hr style="border:0;border-top:1px dashed var(--line);margin:1.6rem 0 .4rem">
-        <h2 style="font-size:1.35rem">J'ai déjà acheté</h2>
+        <hr>
+        <h2 style="font-size:1.5rem">J'ai déjà acheté</h2>
         <label for="o-num">Numéro de commande</label>
         <input type="text" id="o-num" maxlength="60" placeholder="Ex. 3456789012">
         <label for="o-mail">E-mail <i>(si différent)</i></label>
@@ -294,7 +293,7 @@
 
   // ---- reprise d'un brouillon (?d=CODE ou navigateur)
   (async function resume(){
-    const u = new URLSearchParams(location.search).get('d'); const c = u || code; if(!c) return;
+    const qs = new URLSearchParams(location.search), u = qs.get('d'), tq = qs.get('t'); if(tq && THEMES[tq] && !u){ pick(tq); return; } const c = u || code; if(!c) return;
     try{
       const r = await rpc('get_draft', { p_code:c }); if(!r || !THEMES[r.theme]) return;
       code = c; theme = r.theme; fill(r.data, r.email); pick(r.theme, true);
