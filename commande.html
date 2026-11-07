@@ -23,11 +23,11 @@
   .panel{ display:none; } .panel.on{ display:block; }
   h2{ font-family:'Cormorant Garamond',serif; font-size:1.7rem; margin:.2rem 0 .8rem; color:var(--rubis); }
 
-  .themes{ display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:16px; }
+  .themes{ display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:16px; }
   .theme{ background:#fff; border:1.5px solid var(--line); border-radius:20px; overflow:hidden; cursor:pointer; text-align:left; padding:0; font:inherit; color:inherit;
     box-shadow:0 8px 24px rgba(90,60,20,.10); transition:transform .15s, box-shadow .15s; }
   .theme:hover{ transform:translateY(-3px); box-shadow:0 14px 30px rgba(90,60,20,.18); }
-  .theme img{ width:100%; aspect-ratio:1200/630; object-fit:cover; display:block; background:#e9dcc0; }
+  .theme video{ width:100%; aspect-ratio:9/16; object-fit:cover; display:block; background:#1d120c; }
   .theme .b{ padding:.9rem 1rem 1.1rem; }
   .theme b{ font-family:'Cormorant Garamond',serif; font-size:1.35rem; display:block; }
   .theme small{ color:var(--muted); display:block; margin-top:.2rem; line-height:1.4; }
@@ -175,12 +175,14 @@
   const ETSY_URL = '';   // ← lien de la boutique Etsy (à renseigner)
 
   const THEMES = {
-    boheme: { name:'Bohème doré', img:'boheme/apercu.jpg', desc:'Mariage, fiançailles : or, dentelle et fleurs séchées.',
+    boheme: { name:'Bohème doré', img:'boheme/apercu.jpg', mini:'mini/boheme', desc:'Mariage, fiançailles : or, dentelle et fleurs séchées.',
               titleLabel:'Prénoms des mariés', titleHint:'Ex. Camille & Thomas', title:'', host:'' },
-    noel:   { name:'Étoile de Noël', img:'noel/apercu.jpg', desc:'Fête de Noël, repas de famille ou entre amis : ivoire, rouge et or.',
+    noel:   { name:'Étoile de Noël', img:'noel/apercu.jpg', mini:'mini/noel', desc:'Fête de Noël, repas de famille ou entre amis : ivoire, rouge et or.',
               titleLabel:'Titre de l’invitation', titleHint:'Ex. La Magie de Noël', title:'La Magie de Noël', host:'' },
-    jeux:   { name:'Soirée Jeux — Royal Chic', img:'jeux/apercu.jpg', desc:'Soirée entre filles : rubis, noir et or, jeux de société et coffee corner.',
-              titleLabel:'Titre de l’invitation', titleHint:'Ex. Soirée Jeux entre Filles', title:'Soirée Jeux entre Filles', host:'' }
+    jeux:   { name:'Soirée Jeux — Royal Chic', img:'jeux/apercu.jpg', mini:'mini/jeux', desc:'Soirée entre filles : rubis, noir et or, jeux de société et coffee corner.',
+              titleLabel:'Titre de l’invitation', titleHint:'Ex. Soirée Jeux entre Filles', title:'Soirée Jeux entre Filles', host:'' },
+    'gender-reveal': { name:'Gender Reveal', img:'gender-reveal/apercu.jpg', mini:'mini/gender-reveal', desc:'Révélation du sexe de bébé : rose, bleu, nuages et nounours.',
+              titleLabel:'Titre de l\u2019invitation', titleHint:'Ex. Gender Reveal', title:'Gender Reveal', host:'' }
   };
   const $ = id => document.getElementById(id);
   let theme = null, code = null;
@@ -199,10 +201,14 @@
   }
 
   // ---- 1 : modèles
+  const io = 'IntersectionObserver' in window ? new IntersectionObserver(es => es.forEach(e => { try{ if(e.isIntersecting){ e.target.play().catch(()=>{}); } else { e.target.pause(); } }catch(_){} }), { threshold:.35 }) : null;
   const list = $('themes');
   Object.keys(THEMES).forEach(k => {
     const t = THEMES[k], b = document.createElement('button'); b.type = 'button'; b.className = 'theme';
-    const img = document.createElement('img'); img.src = t.img; img.alt = t.name; img.loading = 'lazy'; b.appendChild(img);
+    const vid = document.createElement('video'); vid.muted = true; vid.loop = true; vid.playsInline = true; vid.setAttribute('playsinline', ''); vid.preload = 'metadata';
+    vid.poster = t.mini + '.jpg';
+    ['mp4','webm'].forEach(x => { const so = document.createElement('source'); so.src = t.mini + '.' + x; so.type = 'video/' + x; vid.appendChild(so); }); vid.setAttribute('aria-label', 'Aperçu animé : ' + t.name); b.appendChild(vid);
+    if(io){ io.observe(vid); } else { vid.autoplay = true; }
     const d = document.createElement('div'); d.className = 'b';
     d.innerHTML = '<b></b><small></small><span class="go">Choisir ce modèle →</span>';
     d.querySelector('b').textContent = t.name; d.querySelector('small').textContent = t.desc; b.appendChild(d);
