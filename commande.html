@@ -57,6 +57,8 @@
   .alert b{ color:var(--champ); } .alert .t{ font:400 1.35rem 'Italiana',serif; display:block; margin-bottom:.3rem; }
   .care{ border-left:3px solid var(--champ2); background:rgba(231,213,168,.06); border-radius:0 10px 10px 0; padding:.7rem .9rem; margin:1rem 0 0; font-size:.9rem; line-height:1.5; color:var(--brume); } .care b{ color:var(--champ); }
   .req{ color:var(--err); } .miss{ border-color:var(--err) !important; box-shadow:0 0 0 3px rgba(255,154,168,.18) !important; }
+  .fsw{ display:flex; gap:8px; margin:.2rem 0 .3rem; } .fsw button{ flex:1; font:inherit; font-weight:600; color:var(--champ); background:#0d1228; border:1px solid var(--trait); border-radius:999px; padding:.6rem .8rem; cursor:pointer; } .fsw button.on{ background:var(--champ); color:var(--nuit); border-color:var(--champ); }
+  #fm button.on{ border-color:var(--champ); background:rgba(231,213,168,.09); } #fm .pr{ color:var(--champ); font-weight:700; margin-top:.35rem; }
   .hint{ font-size:.82rem; color:var(--brume); margin:.3rem 0 0; }
   .err{ color:var(--err); font-size:.88rem; margin:.4rem 0 0; }
   .switch{ display:flex; align-items:center; gap:.6rem; margin-top:1.1rem; font-size:1rem; text-transform:none; letter-spacing:0; font-weight:500; color:var(--champ); }
@@ -155,7 +157,7 @@
           <label class="switch"><input type="checkbox" id="f-rsvp" checked> Permettre aux invités de répondre (présence, nombre de personnes)</label>
         </div>
         <div class="err" id="form-err" role="alert"></div>
-        <div class="row"><button type="submit" class="btn" id="go-preview">Générer mon aperçu</button><button type="button" class="btn ghost" id="back1">Retour</button></div>
+        <div class="row"><button type="submit" class="btn" id="go-preview">Générer mon aperçu</button><button type="button" class="btn ghost" id="back-prev" style="display:none">Revoir mon dernier aperçu</button><button type="button" class="btn ghost" id="back1">Retour</button></div>
       </form>
     </div>
   </section>
@@ -169,6 +171,8 @@
       <div class="side">
         <p class="note"><b>Touchez l'invitation pour l'ouvrir</b>, comme vos invités. Cet aperçu est généré ici, rien n'est envoyé par lien ni enregistré. Il disparaît dans <span class="timer" id="timer">10:00</span> et vos données sont alors effacées.</p>
         <p class="note">Les réponses saisies dans l'aperçu ne sont pas enregistrées.</p>
+        <div class="fsw" id="fsw" role="group" aria-label="Prestation à prévisualiser"><button type="button" data-f="ess">Essentiel</button><button type="button" data-f="sig" class="on">Signature</button></div>
+        <p class="hint" id="fsw-note" style="margin:0 0 .8rem"></p>
         <p class="care" id="care3" style="display:none"><b>Vérifiez tout, jusqu'au moindre détail</b> : noms, date, heure, adresse, programme. Une erreur relevée maintenant vous évite des allers-retours plus tard.</p>
         <div class="row" style="margin-top:.4rem"><button class="btn ghost" id="refull" type="button">Revoir en plein écran</button><button class="btn gold" id="validate">Je valide, commander</button><button class="btn ghost" id="edit">Modifier mes infos</button></div>
         <h3 style="font:400 1.4rem 'Italiana',serif;margin:1.8rem 0 .2rem">Découvrez nos deux prestations</h3>
@@ -188,12 +192,19 @@
     <div class="card">
       <div id="order-a">
         <div id="email-step">
+          <p style="margin-top:0"><b>Quelle prestation souhaitez-vous commander ?</b></p>
+          <div class="modes" id="fm">
+            <button type="button" data-f="ess"><b>Essentiel</b><small>Musique de notre sélection. Pas de choix de musique ni de réponses des invités.</small><span class="pr" data-p="0"></span></button>
+            <button type="button" data-f="sig"><b>Signature</b><small>Votre musique, réponses des invités (présence, nombre de personnes) et page de suivi.</small><span class="pr" data-p="1"></span></button>
+          </div>
+          <div class="err" id="fm-err" role="alert"></div>
+          <p class="hint">Vous pouvez comparer les deux depuis l'aperçu. Prestige (galerie souvenir) : sur devis.</p>
           <p style="margin-top:0">Votre invitation vous plaît ? Indiquez votre e-mail pour recevoir votre code de commande. C'est à cette étape seulement que vos informations sont enregistrées.</p>
           <p class="care" style="margin:0 0 .6rem"><b>Dernier contrôle avant de commander.</b> Vos informations serviront à publier l'invitation : si un détail est faux, revenez le corriger avant de continuer. Certaines modifications restent possibles ensuite, mais elles prennent du temps.</p>
           <label for="f-email">Votre e-mail</label>
           <input type="email" id="f-email" maxlength="160" placeholder="vous@exemple.fr" autocomplete="email">
           <div class="err" id="email-err" role="alert"></div>
-          <div class="row"><button class="btn" id="make-code">Obtenir mon code de commande</button><button class="btn ghost" id="edit3">Modifier mes infos</button></div>
+          <div class="row"><button class="btn" id="make-code">Obtenir mon code de commande</button><button class="btn ghost" id="edit3">Modifier mes infos</button><button class="btn ghost" id="back3">Revoir l'aperçu</button></div>
         </div>
         <div id="code-area" style="display:none">
         <p style="margin-top:0">Votre invitation est prête. Voici votre <b>code de commande</b> à nous communiquer lors de l'achat :</p>
@@ -314,10 +325,11 @@
     $('f-venue').value = d.venue_name || ''; $('f-address').value = d.address || ''; $('f-cname').value = d.contact_name || ''; $('f-cphone').value = d.contact_phone || '';
     $('f-msg').value = d.message || ''; $('f-dress').value = d.dress_code || ''; $('f-rsvp').checked = d.rsvp_enabled !== false; $('f-email').value = email || '';
     prog.textContent = ''; (d.programme || []).forEach(addRow);
+    formule = d.formule || null; document.querySelectorAll('#fm button').forEach(x => x.classList.toggle('on', x.dataset.f === formule));
   }
 
   // ---- aperçu généré sur place : rien n'est enregistré, tout est effacé après 10 minutes
-  let mode = 'express', liveInv = null, blobUrl = null, tEnd = 0, tick = null;
+  let formule = null, pv = 'sig', mode = 'express', liveInv = null, blobUrl = null, tEnd = 0, tick = null;
   function setMode(m){ mode = m; $('rq1').style.display = $('rq2').style.display = m === 'full' ? '' : 'none'; $('go-preview').textContent = m === 'full' ? 'Générer mon aperçu complet' : 'Générer mon aperçu'; if(m !== 'full'){ $('complete-banner').style.display = 'none'; $('modes').style.display = ''; } document.querySelectorAll('#modes button').forEach(b => b.classList.toggle('on', b.dataset.m === m)); $('full-fields').style.display = m === 'full' ? '' : 'none'; if(m === 'full' && !prog.children.length) addRow(); }
   document.querySelectorAll('#modes button').forEach(b => b.addEventListener('click', () => setMode(b.dataset.m)));
   $('f-music').addEventListener('change', () => {
@@ -335,11 +347,12 @@
       d.venue_name = FICT.venue_name; d.address = FICT.address; d.maps_url = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(FICT.venue_name + ' ' + FICT.address);
       d.event_time = d.event_time || FICT.event_time; d.contact_name = FICT.contact_name; d.contact_phone = FICT.contact_phone; d.dress_code = FICT.dress_code; d.programme = FICT.programme; d.rsvp_enabled = true;
     }
+    if(pv === 'ess'){ d.rsvp_enabled = false; }
     return { id:'apercu', slug:'apercu', is_demo:true, theme:theme, card_text: (theme === 'galerie' && d.message) ? { message2:d.message } : {},
       title:d.title, host_names:d.host_names || null, event_date:d.event_date, event_time:d.event_time || null, venue_name:d.venue_name || null, address:d.address || null, maps_url:d.maps_url || null,
       contact_name:d.contact_name || null, contact_phone:d.contact_phone || null, message:d.message || null, dress_code:d.dress_code || null, rsvp_enabled:d.rsvp_enabled !== false,
       invitation_programme:(d.programme || []).map((x, i) => ({ position:i + 1, time:x.time || null, title:x.title, description:x.description || null })),
-      music_tracks: blobUrl ? { url:blobUrl, title:'Votre musique' } : null };
+      music_tracks: (blobUrl && pv !== 'ess') ? { url:blobUrl, title:'Votre musique' } : null };
   }
   function startTimer(){
     clearInterval(tick); tEnd = Date.now() + 10 * 60 * 1000;
@@ -350,7 +363,7 @@
     clearInterval(tick); tick = null; liveInv = null;
     $('frame').src = 'about:blank';
     if(blobUrl){ URL.revokeObjectURL(blobUrl); blobUrl = null; }
-    $('form').reset(); prog.textContent = ''; setMode('express'); $('f-email').value = '';
+    $('form').reset(); prog.textContent = ''; $('back-prev').style.display = 'none'; formule = null; document.querySelectorAll('#fm button').forEach(x => x.classList.remove('on')); setMode('express'); $('f-email').value = '';
     setFull(false); $('stage').style.display = 'none'; $('expired').style.display = 'block'; go(3);
   }
   $('fs-close').addEventListener('click', () => setFull(false)); $('refull').addEventListener('click', () => setFull(true));
@@ -369,11 +382,20 @@
     if(!d.event_date) return err.textContent = 'Merci d’indiquer la date de l’événement.';
     document.querySelectorAll('.miss').forEach(x => x.classList.remove('miss'));
     if(mode === 'full'){ const bad = !d.venue_name ? $('f-venue') : (!d.address ? $('f-address') : null); if(bad){ bad.classList.add('miss'); bad.focus(); return err.textContent = bad === $('f-venue') ? 'Merci d’indiquer le nom du lieu.' : 'Merci d’indiquer l’adresse complète : elle sert aux boutons d’itinéraire.'; } }
-    liveInv = buildInv(d); showPreview();
+    pv = 'sig'; liveInv = buildInv(d); showPreview();
   });
 
   const STD_DEMO = { boheme:'boheme/?i=boheme-demo', noel:'noel/?i=noel-demo', jeux:'jeux/?i=jeux-demo', 'gender-reveal':'gender-reveal/?i=gender-reveal-demo', galerie:'boheme/?i=boheme-demo' };
+  const PRICES = { boheme:[29,59], galerie:[29,59], 'gender-reveal':[19,39], noel:[15,29], jeux:[15,29] };
+  const FNOTE = { ess:'Essentiel : musique de notre sélection, sans réponses des invités.', sig:'Signature : votre musique et les réponses des invités.' };
+  function setPv(f){ pv = f; document.querySelectorAll('#fsw button').forEach(b => b.classList.toggle('on', b.dataset.f === f)); $('fsw-note').textContent = FNOTE[f]; }
+  document.querySelectorAll('#fsw button').forEach(b => b.addEventListener('click', () => { if(!liveInv) return; setPv(b.dataset.f); liveInv = buildInv(collect()); setFull(true); $('frame').src = theme + '/?preview=' + Math.random().toString(36).slice(2, 8).toUpperCase() + '&live=1'; }));
+  function reopenPreview(){ if(!liveInv) return; go(3); $('stage').style.display = ''; $('expired').style.display = 'none'; $('frame').src = theme + '/?preview=' + Math.random().toString(36).slice(2, 8).toUpperCase() + '&live=1'; }
+  $('back-prev').addEventListener('click', reopenPreview); $('back3').addEventListener('click', reopenPreview);
+  document.querySelectorAll('#fm button').forEach(b => b.addEventListener('click', () => { formule = b.dataset.f; document.querySelectorAll('#fm button').forEach(x => x.classList.toggle('on', x === b)); $('fm-err').textContent = ''; }));
+  function showPrices(){ const p = PRICES[theme]; document.querySelectorAll('#fm .pr').forEach(e => { e.textContent = p ? p[+e.dataset.p] + ' €' : ''; }); }
   function showPreview(){
+    setPv('sig'); $('back-prev').style.display = '';
     $('expired').style.display = 'none'; $('stage').style.display = ''; go(3); startTimer(); setFull(true);
     $('demo-std').href = STD_DEMO[theme] || 'boheme/?i=boheme-demo';
     $('care3').style.display = mode === 'full' ? '' : 'none';
@@ -386,10 +408,12 @@
     if(mode === 'express'){
       setMode('full'); $('complete-banner').style.display = ''; $('modes').style.display = 'none'; $('form-err').textContent = ''; go(2);
       setTimeout(() => { const f = $('f-venue'); f.classList.add('miss'); f.focus({ preventScroll:true }); $('complete-banner').scrollIntoView({ behavior:'smooth', block:'start' }); }, 350); return; }
-    go(4);
+    showPrices(); go(4);
   });
   $('make-code').addEventListener('click', async () => {
     const err = $('email-err'); err.textContent = ''; const email = $('f-email').value.trim(), d = collect();
+    if(!formule) return $('fm-err').textContent = 'Merci de choisir la prestation à commander : Essentiel ou Signature.';
+    d.formule = formule; if(formule === 'ess') d.rsvp_enabled = false;
     if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return err.textContent = 'Merci d’indiquer un e-mail valide.';
     const btn = $('make-code'); btn.disabled = true;
     try{
