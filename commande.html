@@ -87,17 +87,17 @@
   .vcap{ text-align:center; color:var(--brume); font-size:.85rem; margin:.9rem 0 0; }
   .how{ max-width:34rem; margin:1rem auto 0; border:1px solid var(--trait); border-radius:14px; padding:.2rem 1rem; } .how summary{ cursor:pointer; padding:.7rem 0; color:var(--champ); font-weight:600; font-size:.95rem; } .how[open] summary{ border-bottom:1px solid var(--trait); margin-bottom:.4rem; } .how .vf{ margin-bottom:1rem; }
 </style>
-<script src="protect.js?v=2"></script>
+<script src="protect.js?v=3"></script>
 </head>
 <body>
 <div class="wrap">
-  <div class="top"><a class="brand" href="index.html" id="brand">Atelier Invitation</a><a class="back" href="index.html#modeles">Retour à la collection</a></div>
+  <div class="top"><a class="brand" href="index.html" id="brand">Maison Opaline</a><a class="back" href="index.html#modeles">Retour à la collection</a></div>
   <header>
     <h1>Créez votre invitation animée</h1>
     <p>Choisissez un modèle et voyez le rendu réel avant d'acheter : l'aperçu est généré ici, pour vous seul, et effacé au bout de 10 minutes.</p>
   </header>
   <details class="how" id="how"><summary>Voir comment ça marche (1 min)</summary>
-    <div class="vf frame tap"><video playsinline preload="none" poster="video/comment-ca-marche.jpg?v=4" aria-label="Vidéo : comment fonctionne l'invitation"><source src="video/comment-ca-marche.mp4?v=4" type="video/mp4"><source src="video/comment-ca-marche.webm?v=4" type="video/webm"></video></div>
+    <div class="vf frame tap"><video playsinline preload="none" poster="video/comment-ca-marche.jpg?v=5" aria-label="Vidéo : comment fonctionne l'invitation"><source src="video/comment-ca-marche.mp4?v=5" type="video/mp4"><source src="video/comment-ca-marche.webm?v=5" type="video/webm"></video></div>
   </details>
   <div class="steps" id="steps"><span data-s="1" class="on">1 · Modèle</span><span data-s="2">2 · Vos infos</span><span data-s="3">3 · Aperçu</span><span data-s="4">4 · Commander</span></div>
 
@@ -222,15 +222,15 @@
   const ETSY_URL = '';   // ← lien de la boutique Etsy (à renseigner)
 
   const THEMES = {
-    boheme: { name:'Bohème doré', img:'boheme/apercu.jpg', mini:'mini/boheme', desc:'Mariage, fiançailles : or, dentelle et fleurs séchées.',
+    boheme: { name:'Bohème doré', img:'boheme/apercu.jpg?v=3', mini:'mini/boheme', desc:'Mariage, fiançailles : or, dentelle et fleurs séchées.',
               titleLabel:'Prénoms des mariés', titleHint:'Ex. Camille & Thomas', title:'', host:'' },
-    noel:   { name:'Étoile de Noël', img:'noel/apercu.jpg', mini:'mini/noel', desc:'Fête de Noël, repas de famille ou entre amis : ivoire, rouge et or.',
+    noel:   { name:'Étoile de Noël', img:'noel/apercu.jpg?v=3', mini:'mini/noel', desc:'Fête de Noël, repas de famille ou entre amis : ivoire, rouge et or.',
               titleLabel:'Titre de l’invitation', titleHint:'Ex. La Magie de Noël', title:'La Magie de Noël', host:'' },
-    jeux:   { name:'Soirée Jeux — Royal Chic', img:'jeux/apercu.jpg', mini:'mini/jeux', desc:'Soirée entre filles : rubis, noir et or, jeux de société et coffee corner.',
+    jeux:   { name:'Soirée Jeux — Royal Chic', img:'jeux/apercu.jpg?v=3', mini:'mini/jeux', desc:'Soirée entre filles : rubis, noir et or, jeux de société et coffee corner.',
               titleLabel:'Titre de l’invitation', titleHint:'Ex. Soirée Jeux entre Filles', title:'Soirée Jeux entre Filles', host:'' },
-    galerie: { name:'Galerie Bohème', img:'galerie/apercu.jpg', mini:'mini/galerie', desc:'Mariage : vos photos défilent sur des cadres dorés dans un jardin, puis la carte.',
+    galerie: { name:'Galerie Bohème', img:'galerie/apercu.jpg?v=3', mini:'mini/galerie', desc:'Mariage : vos photos défilent sur des cadres dorés dans un jardin, puis la carte.',
               titleLabel:'Prénoms des mariés', titleHint:'Ex. Camille & Thomas', title:'', host:'' },
-    'gender-reveal': { name:'Gender Reveal', img:'gender-reveal/apercu.jpg', mini:'mini/gender-reveal', desc:'Révélation du sexe de bébé : rose, bleu, nuages et nounours.',
+    'gender-reveal': { name:'Gender Reveal', img:'gender-reveal/apercu.jpg?v=3', mini:'mini/gender-reveal', desc:'Révélation du sexe de bébé : rose, bleu, nuages et nounours.',
               titleLabel:'Titre de l\u2019invitation', titleHint:'Ex. Gender Reveal', title:'Gender Reveal', host:'' }
   };
   const $ = id => document.getElementById(id);
@@ -256,8 +256,8 @@
   Object.keys(THEMES).forEach(k => {
     const t = THEMES[k], b = document.createElement('button'); b.type = 'button'; b.className = 'theme';
     const vid = document.createElement('video'); vid.muted = true; vid.loop = true; vid.playsInline = true; vid.setAttribute('playsinline', ''); vid.preload = 'metadata'; vid.setAttribute('controlsList','nodownload noremoteplayback'); vid.setAttribute('disablePictureInPicture',''); vid.disableRemotePlayback = true;
-    vid.poster = t.mini + '.jpg?v=2';
-    ['mp4','webm'].forEach(x => { const so = document.createElement('source'); so.src = t.mini + '.' + x + '?v=2'; so.type = 'video/' + x; vid.appendChild(so); }); vid.setAttribute('aria-label', 'Aperçu animé : ' + t.name); b.appendChild(vid);
+    vid.poster = t.mini + '.jpg?v=3';
+    ['mp4','webm'].forEach(x => { const so = document.createElement('source'); so.src = t.mini + '.' + x + '?v=3'; so.type = 'video/' + x; vid.appendChild(so); }); vid.setAttribute('aria-label', 'Aperçu animé : ' + t.name); b.appendChild(vid);
     if(io){ io.observe(vid); } else { vid.autoplay = true; }
     const d = document.createElement('div'); d.className = 'b';
     d.innerHTML = '<b></b><small></small><span class="go">Choisir ce modèle →</span>';
@@ -266,7 +266,7 @@
   });
   function pick(k, keepValues){
     theme = k; const t = THEMES[k];
-    $('chosen-img').src = t.img + '?v=2'; $('chosen-name').textContent = t.name;
+    $('chosen-img').src = t.img + '?v=3'; $('chosen-name').textContent = t.name;
     $('l-title').textContent = t.titleLabel; $('h-title').textContent = t.titleHint;
     if(!keepValues){ if(!$('f-title').value || Object.values(THEMES).some(x => x.title === $('f-title').value)) $('f-title').value = t.title; }
     go(2);

@@ -18,7 +18,7 @@
   try{
     var slug = new URLSearchParams(location.search).get('i') || '';
     if((slug === '' || /-demo$/.test(slug)) && /\/(boheme|noel|jeux|galerie|gender-reveal)\//.test(location.pathname) && !new URLSearchParams(location.search).get('preview')){
-      var svg = "<svg xmlns='http://www.w3.org/2000/svg' width='300' height='150'><g transform='rotate(-24 150 75)'><text x='150' y='80' text-anchor='middle' font-family='system-ui,sans-serif' font-size='17' font-weight='800' letter-spacing='2' fill='rgba(0,0,0,0.22)' transform='translate(1.5 1.5)'>ATELIER INVITATION</text><text x='150' y='80' text-anchor='middle' font-family='system-ui,sans-serif' font-size='17' font-weight='800' letter-spacing='2' fill='rgba(255,255,255,0.34)'>ATELIER INVITATION</text></g></svg>";
+      var svg = "<svg xmlns='http://www.w3.org/2000/svg' width='300' height='150'><g transform='rotate(-24 150 75)'><text x='150' y='80' text-anchor='middle' font-family='system-ui,sans-serif' font-size='17' font-weight='800' letter-spacing='2' fill='rgba(0,0,0,0.22)' transform='translate(1.5 1.5)'>MAISON OPALINE</text><text x='150' y='80' text-anchor='middle' font-family='system-ui,sans-serif' font-size='17' font-weight='800' letter-spacing='2' fill='rgba(255,255,255,0.34)'>MAISON OPALINE</text></g></svg>";
       var w = document.createElement('div');
       w.style.cssText = 'position:fixed;inset:0;z-index:2147482000;pointer-events:none;background-image:url("data:image/svg+xml;utf8,' + encodeURIComponent(svg) + '")';
       document.addEventListener('DOMContentLoaded', function(){ document.body.appendChild(w); });

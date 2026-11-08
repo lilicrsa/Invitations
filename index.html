@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Atelier Invitation — invitations animées</title>
+<title>Maison Opaline — invitations animées</title>
 <meta name="description" content="Invitations animées pour mariages, fêtes et naissances : une vidéo d'ouverture, une carte, les réponses de vos invités. Aperçu avant achat.">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Atelier Invitation — invitations animées">
+<meta property="og:title" content="Maison Opaline — des invitations qui font naître l'émerveillement">
 <meta property="og:description" content="Touchez pour entrer et découvrez la collection.">
 <meta property="og:image" content="https://lilicrsa.github.io/Invitations/jeux/apercu.jpg">
 <meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
@@ -30,6 +30,7 @@
   /* ---------- porte d'entrée ---------- */
   .gate{ min-height:100dvh; display:flex; flex-direction:column; padding-block:max(1.4rem,env(safe-area-inset-top,0px)) max(1.4rem,env(safe-area-inset-bottom,0px));
     background:radial-gradient(ellipse 60% 45% at 50% 38%, rgba(231,213,168,.13), transparent 70%); position:relative; overflow:hidden; margin-inline:calc(-1 * max(16px,env(safe-area-inset-left,0px))); padding-inline:max(16px,env(safe-area-inset-left,0px)); }
+  .brand-sub{ font:500 .62rem 'Manrope',sans-serif; letter-spacing:.32em; text-transform:uppercase; color:var(--champ2); opacity:.85; margin:.15rem 0 0 .1rem; }
   .gate .brand{ font:400 1.5rem 'Italiana',serif; letter-spacing:.16em; }
   .gate main{ flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:1.8rem; padding-block:2rem; }
   .gate h1{ font-size:clamp(2.6rem,8vw,5.4rem); line-height:1.05; max-width:14ch; }
@@ -168,7 +169,7 @@
   .vcap{ text-align:center; color:var(--brume); font-size:.85rem; margin:.9rem 0 0; }
   .result{ text-align:center; margin:3rem auto 2.4rem; max-width:34rem; } .result .rt{ font:400 clamp(1.8rem,5vw,2.6rem)/1.1 'Italiana',serif; color:var(--champ); margin:0; } .result .lead{ color:var(--brume); margin:.9rem auto 0; }
 </style>
-<script src="protect.js?v=2"></script>
+<script src="protect.js?v=3"></script>
 </head>
 <body>
 <div class="fx" id="fx"></div>
@@ -176,7 +177,7 @@
 
 <!-- PORTE D'ENTRÉE -->
 <header class="gate" id="gate">
-  <div class="brand" data-brand></div>
+  <div class="brandbox"><div class="brand" data-brand></div><div class="brand-sub">Invitations animées</div></div>
   <main>
     <div class="eyebrow" style="margin:0;font-size:.68rem;letter-spacing:.14em">Mariage · Bébé · Anniversaire · Fêtes</div>
     <h1>Faites-les vibrer avant même le grand jour.</h1>
@@ -221,7 +222,7 @@
       <p class="eyebrow">Et ensuite</p>
       <h3 class="rt">Appréciez le résultat</h3>
       <p class="lead">Un simple lien, et vos proches entrent dans votre histoire : une vidéo, une musique, une carte qui s'ouvre pour eux. Puis leurs réponses reviennent, une à une, comme autant de sourires.</p>
-      <div class="vf frame tap"><video playsinline preload="none" poster="video/comment-ca-marche.jpg?v=4" aria-label="Vidéo : comment fonctionne l'invitation"><source src="video/comment-ca-marche.mp4?v=4" type="video/mp4"><source src="video/comment-ca-marche.webm?v=4" type="video/webm"></video></div>
+      <div class="vf frame tap"><video playsinline preload="none" poster="video/comment-ca-marche.jpg?v=5" aria-label="Vidéo : comment fonctionne l'invitation"><source src="video/comment-ca-marche.mp4?v=5" type="video/mp4"><source src="video/comment-ca-marche.webm?v=5" type="video/webm"></video></div>
       <p class="vcap">Touchez pour lancer, avec le son.</p>
     </div>
     <div class="incl">
@@ -246,14 +247,14 @@
       <div><h2>Une idée précise ?</h2><p>Une carte et une vidéo créées pour vous, à votre image : écrivez-nous pour un devis.</p></div>
       <a class="btn" id="contact-btn" href="devis.html">Demander un devis</a>
     </div>
-    <footer><span data-brand></span><span>Invitations animées sur mesure</span></footer>
+    <footer><span data-brand></span><span>Des invitations qui font naître l’émerveillement</span></footer>
   </div></section>
 </div>
 
 <script>
 (function(){
   // ---- à renseigner ----
-  var BRAND = 'Atelier Invitation';
+  var BRAND = 'Maison Opaline';
   var CONTACT_URL = '';   // lien de contact ou de la boutique (Etsy, e-mail…) : bouton « Demander un devis »
   // ----------------------
   var MODELS = {
@@ -278,9 +279,9 @@
   document.title = BRAND + ' — invitations animées';
 
   function mkVideo(k, label){
-    var v = document.createElement('video'); v.muted = true; v.loop = true; v.playsInline = true; v.setAttribute('playsinline',''); v.preload = 'metadata'; v.setAttribute('controlsList','nodownload noremoteplayback'); v.setAttribute('disablePictureInPicture',''); v.disableRemotePlayback = true; v.poster = 'mini/' + k + '.jpg?v=2';
+    var v = document.createElement('video'); v.muted = true; v.loop = true; v.playsInline = true; v.setAttribute('playsinline',''); v.preload = 'metadata'; v.setAttribute('controlsList','nodownload noremoteplayback'); v.setAttribute('disablePictureInPicture',''); v.disableRemotePlayback = true; v.poster = 'mini/' + k + '.jpg?v=3';
     v.setAttribute('aria-label', label);
-    ['mp4','webm'].forEach(function(x){ var s = document.createElement('source'); s.src = 'mini/' + k + '.' + x + '?v=2'; s.type = 'video/' + x; v.appendChild(s); });
+    ['mp4','webm'].forEach(function(x){ var s = document.createElement('source'); s.src = 'mini/' + k + '.' + x + '?v=3'; s.type = 'video/' + x; v.appendChild(s); });
     return v;
   }
   var io = 'IntersectionObserver' in window ? new IntersectionObserver(function(es){ es.forEach(function(e){ try{ if(e.isIntersecting) e.target.play().catch(function(){}); else e.target.pause(); }catch(_){} }); }, { threshold:.5 }) : null;
@@ -307,7 +308,7 @@
     var c = document.createElement('article'); c.className = 'uni'; c.style.setProperty('--tint', u.tint);
     var fr = document.createElement('div'); fr.className = 'frame';
     if(u.cover){ var v = mkVideo(u.cover, 'Aperçu animé : ' + u.n); fr.appendChild(v); watch(v); }
-    else { var im = document.createElement('img'); im.className = 'ph'; im.src = 'univers/' + u.id + '.jpg?v=2'; im.alt = u.n; fr.appendChild(im); }
+    else { var im = document.createElement('img'); im.className = 'ph'; im.src = 'univers/' + u.id + '.jpg?v=3'; im.alt = u.n; fr.appendChild(im); }
     c.appendChild(fr);
     var h = document.createElement('h3'); h.textContent = u.n; c.appendChild(h);
     var t = document.createElement('p'); t.className = 'tag'; t.textContent = u.tag; c.appendChild(t);
