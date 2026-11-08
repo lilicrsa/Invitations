@@ -166,7 +166,7 @@
   .vf.frame.tap::after{ content:''; position:absolute; left:50%; top:50%; width:64px; height:64px; margin:-32px 0 0 -32px; border-radius:50%; background:rgba(10,12,24,.5) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23E7D5A8' d='M9 6.5v11l9-5.5z'/%3E%3C/svg%3E") center/32px no-repeat; border:1px solid rgba(231,213,168,.6); transition:opacity .25s; pointer-events:none; }
   .vf.playing::after{ opacity:0 !important; }
   .vcap{ text-align:center; color:var(--brume); font-size:.85rem; margin:.9rem 0 0; }
-  #video .sec{ text-align:center; padding-block:clamp(2.4rem,6vw,4rem); } #video .lead{ color:var(--brume); max-width:34rem; margin:.8rem auto 0; }
+  .result{ text-align:center; margin:3rem auto 2.4rem; max-width:34rem; } .result .rt{ font:400 clamp(1.8rem,5vw,2.6rem)/1.1 'Italiana',serif; color:var(--champ); margin:0; } .result .lead{ color:var(--brume); margin:.9rem auto 0; }
 </style>
 <script src="protect.js?v=2"></script>
 </head>
@@ -193,14 +193,6 @@
     <a class="l" href="#modeles">Modèles</a><a class="l" href="#fonctionnement">Fonctionnement</a><a class="l" href="#questions">Questions</a>
   </div></nav>
 
-  <section id="video"><div class="wrap sec">
-    <p class="eyebrow">En une minute</p>
-    <h2>Voyez comment ça marche</h2>
-    <p class="lead">Vous envoyez un lien, vos invités découvrent l'invitation, répondent d'un geste, et vous suivez les réponses en direct.</p>
-    <div class="vf frame tap"><video playsinline preload="none" poster="video/comment-ca-marche.jpg" aria-label="Vidéo : comment fonctionne l'invitation"><source src="video/comment-ca-marche.mp4" type="video/mp4"><source src="video/comment-ca-marche.webm" type="video/webm"></video></div>
-    <p class="vcap">Touchez pour lancer, avec le son.</p>
-  </div></section>
-
   <section id="modeles">
     <div class="valance"></div>
     <div class="wrap sec" style="padding-top:2.4rem">
@@ -224,6 +216,13 @@
       <div><div class="n">1</div><h3>Choisissez</h3><p>Un modèle dans la collection.</p></div>
       <div><div class="n">2</div><h3>Personnalisez</h3><p>Date, lieu, programme, message. Vous voyez le rendu réel avant d'acheter.</p></div>
       <div><div class="n">3</div><h3>Partagez</h3><p>Après votre commande, nous publions l'invitation. Vous envoyez le lien par message.</p></div>
+    </div>
+    <div class="result" id="video">
+      <p class="eyebrow">Et ensuite</p>
+      <h3 class="rt">Appréciez le résultat</h3>
+      <p class="lead">Un simple lien, et vos proches entrent dans votre histoire : une vidéo, une musique, une carte qui s'ouvre pour eux. Puis leurs réponses reviennent, une à une, comme autant de sourires.</p>
+      <div class="vf frame tap"><video playsinline preload="none" poster="video/comment-ca-marche.jpg" aria-label="Vidéo : comment fonctionne l'invitation"><source src="video/comment-ca-marche.mp4" type="video/mp4"><source src="video/comment-ca-marche.webm" type="video/webm"></video></div>
+      <p class="vcap">Touchez pour lancer, avec le son.</p>
     </div>
     <div class="incl">
       <div><b>Ce que vos invités voient.</b> Une vidéo d'ouverture, la carte à votre date, puis l'heure, le lieu, l'itinéraire et un compte à rebours.</div>
