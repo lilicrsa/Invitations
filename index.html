@@ -99,6 +99,17 @@
   .screen h3{ font-size:1.7rem; margin-top:1.1rem; } .screen .occ{ color:var(--brume); font-size:.9rem; margin:.15rem 0 .9rem; }
   .screen .acts{ display:flex; gap:.5rem; flex-wrap:wrap; justify-content:center; } .screen .acts .btn{ padding:.55rem 1rem; font-size:.85rem; }
   .world .car .uni-track{ --cw:min(72vw,280px); }
+  .pricing{ margin:3rem auto 2rem; max-width:62rem; text-align:center; }
+  .pricing h3{ font:400 1.7rem 'Italiana',serif; color:var(--champ); margin:0 0 1.4rem; }
+  .tiers{ display:grid; grid-template-columns:repeat(auto-fit,minmax(15rem,1fr)); gap:1rem; text-align:left; }
+  .tier{ border:1px solid var(--champ2); border-radius:16px; padding:1.4rem 1.2rem; background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.01)); display:flex; flex-direction:column; gap:.6rem; }
+  .tier.hot{ border-color:var(--champ); box-shadow:0 0 40px -12px var(--tint,rgba(231,213,168,.5)); }
+  .tier h4{ margin:0; font:400 1.3rem 'Italiana',serif; color:var(--champ); }
+  .tier .tp{ font:400 2rem 'Italiana',serif; }
+  .tier .td{ margin:0; color:var(--brume); font-size:.9rem; }
+  .tier ul{ margin:.2rem 0 .8rem; padding-left:1.1rem; color:#d9d3c4; font-size:.92rem; line-height:1.55; flex:1; }
+  .tier .btn{ align-self:flex-start; }
+  .pricing .devis{ margin:2rem auto .8rem; color:var(--brume); max-width:30rem; }
   .soon.big{ font:400 clamp(1.8rem,6vw,2.6rem) 'Italiana',serif; color:var(--champ); margin:5rem auto; }
   .soon{ text-align:center; color:var(--brume); max-width:26rem; margin:3rem auto; }
 
@@ -122,7 +133,7 @@
   @media (max-width:760px){ .steps{ grid-template-columns:1fr; } .steps > div,.steps > div + div{ padding:1.4rem 0 0; border-left:0; } .incl{ grid-template-columns:1fr; } }
 
   /* ---------- tarifs ---------- */
-  .offers{ display:grid; grid-template-columns:1fr 1fr; margin-top:2.4rem; border:1px solid var(--trait); border-radius:18px; overflow:hidden; background:linear-gradient(180deg,rgba(231,213,168,.05),transparent); }
+  .offers{ display:grid; grid-template-columns:repeat(3,1fr); margin-top:2.4rem; border:1px solid var(--trait); border-radius:18px; overflow:hidden; background:linear-gradient(180deg,rgba(231,213,168,.05),transparent); }
   .offer{ padding:2rem clamp(1.2rem,3vw,2.4rem); display:flex; flex-direction:column; gap:1rem; } .offer + .offer{ border-left:1px solid var(--trait); background:rgba(231,213,168,.05); }
   .offer h3{ font-size:2rem; } .price{ font:400 3rem/1 'Italiana',serif; } .price small{ font:500 .85rem 'Manrope',sans-serif; color:var(--brume); }
   .offer ul{ list-style:none; margin:0; padding:0; display:grid; gap:.5rem; color:var(--brume); } .offer li::before{ content:'\2713\00a0\00a0'; color:var(--champ); }
@@ -200,15 +211,18 @@
   </div></section>
 
   <section id="tarifs"><div class="wrap sec">
-    <h2>Deux formules</h2>
-    <p class="lead">Le même modèle, avec ou sans le suivi des réponses.</p>
+    <h2>Trois formules</h2>
+    <p class="lead">Les prix varient selon l'événement. Choisissez un univers pour voir les tarifs.</p>
     <div class="offers">
-      <div class="offer"><h3>Essentiel</h3><div class="price">24 €<small>&nbsp; tarif provisoire</small></div>
-        <ul><li>Vidéo d'ouverture et carte personnalisée</li><li>Date, heure, lieu et boutons d'itinéraire</li><li>Compte à rebours</li></ul>
-        <a class="btn" href="commande.html">Commencer</a></div>
-      <div class="offer"><h3>Signature</h3><div class="price">44 €<small>&nbsp; tarif provisoire</small></div>
-        <ul><li>Tout l'Essentiel</li><li>Musique d'ambiance</li><li>Réponses des invités et page de suivi</li></ul>
-        <a class="btn solid" href="commande.html">Commencer</a></div>
+      <div class="offer"><h3>Essentiel</h3><div class="price">dès 15 €</div>
+        <ul><li>Vidéo d'ouverture et carte à vos noms et textes</li><li>Musique de notre sélection</li><li>Compte à rebours, dress code, programme</li></ul>
+        <a class="btn" href="#modeles">Voir les univers</a></div>
+      <div class="offer"><h3>Signature</h3><div class="price">dès 29 €</div>
+        <ul><li>Tout l'Essentiel</li><li>Musique de votre choix</li><li>Réponses des invités et page de suivi</li></ul>
+        <a class="btn solid" href="#modeles">Voir les univers</a></div>
+      <div class="offer"><h3>Prestige</h3><div class="price">dès 129 €</div>
+        <ul><li>Tout Signature</li><li>Galerie souvenir avec vos photos</li><li>Univers complet sur devis</li></ul>
+        <a class="btn" href="#modeles">Voir les univers</a></div>
     </div>
     <p class="fine">Votre lien reste actif jusqu'à trois mois après l'événement.</p>
   </div></section>
@@ -247,13 +261,13 @@
     noel:{ n:'Étoile de Noël', occ:'Fêtes de fin d’année', demo:'noel/?i=noel-demo' }
   };
   var UNIVERS = [
-    { id:'mariage', n:'Mariage', tag:'Doux et romantique', cover:'galerie', models:['galerie','boheme'], fx:'bloom', wash:'#f7dccb', tint:'rgba(244,196,176,.24)',
+    { id:'mariage', prices:[29,59,129], n:'Mariage', tag:'Doux et romantique', cover:'galerie', models:['galerie','boheme'], fx:'bloom', wash:'#f7dccb', tint:'rgba(244,196,176,.24)',
       intro:'Une entrée tout en douceur, des photos, des fleurs et de la lumière.' },
-    { id:'bebe', n:'Bébé', tag:'Mignon et pastel', cover:'gender-reveal', models:['gender-reveal'], fx:'bubbles', wash:'#d9e9f8', tint:'rgba(160,205,240,.24)',
+    { id:'bebe', prices:[19,39,null], n:'Bébé', tag:'Mignon et pastel', cover:'gender-reveal', models:['gender-reveal'], fx:'bubbles', wash:'#d9e9f8', tint:'rgba(160,205,240,.24)',
       intro:'Annonces, révélations et premiers anniversaires, en couleurs tendres.' },
-    { id:'anniversaire', n:'Anniversaire', tag:'Festif', cover:null, models:[], fx:'confetti', wash:'#fbe3a8', tint:'rgba(255,190,80,.22)', soon:true,
+    { id:'anniversaire', prices:[15,29,null], n:'Anniversaire', tag:'Festif', cover:null, models:[], fx:'confetti', wash:'#fbe3a8', tint:'rgba(255,190,80,.22)', soon:true,
       intro:'Des invitations qui font la fête, pour petits et grands.' },
-    { id:'fetes', n:'Réceptions et fêtes', tag:'Élégant et chaleureux', cover:'noel', models:['jeux','noel'], fx:'portal', wash:'#efe1b8', tint:'rgba(231,213,168,.22)',
+    { id:'fetes', prices:[15,29,null], n:'Réceptions et fêtes', tag:'Élégant et chaleureux', cover:'noel', models:['jeux','noel'], fx:'portal', wash:'#efe1b8', tint:'rgba(231,213,168,.22)',
       intro:'Soirées, repas et fêtes de fin d’année, dans un décor soigné.' }
   ];
   document.querySelectorAll('[data-brand]').forEach(function(e){ e.textContent = BRAND; });
@@ -374,6 +388,31 @@
     swap(); fx.className = 'fx';
   }
 
+  var TIERS = [
+    { n:'Essentiel', d:'Pour une invitation simple et soignée', f:['Vidéo d’ouverture et carte à vos noms et textes','Musique de notre sélection','Compte à rebours','Dress code, programme, infos pratiques'] },
+    { n:'Signature', d:'Pour suivre les réponses et choisir votre musique', f:['Tout l’Essentiel','Musique de votre choix','Réponses des invités','Page de suivi des réponses'], hot:true },
+    { n:'Prestige', d:'La galerie souvenir, avec vos photos', f:['Tout Signature','Galerie photo animée avec vos photos','Vidéo d’ouverture sur mesure'] }
+  ];
+  function pricing(u){
+    var box = document.createElement('section'); box.className = 'pricing';
+    var h = document.createElement('h3'); h.textContent = 'Les formules ' + (u.id === 'mariage' ? 'mariage' : u.n.toLowerCase()); box.appendChild(h);
+    var g = document.createElement('div'); g.className = 'tiers';
+    TIERS.forEach(function(t, i){
+      var p = u.prices[i], c = document.createElement('div'); c.className = 'tier' + (t.hot ? ' hot' : '');
+      var a = document.createElement('h4'); a.textContent = t.n; c.appendChild(a);
+      var pr = document.createElement('div'); pr.className = 'tp'; pr.textContent = p ? p + ' €' : 'Bientôt'; c.appendChild(pr);
+      var d = document.createElement('p'); d.className = 'td'; d.textContent = t.d; c.appendChild(d);
+      var ul = document.createElement('ul'); t.f.forEach(function(x){ var li = document.createElement('li'); li.textContent = x; ul.appendChild(li); }); c.appendChild(ul);
+      if(p){ var b = document.createElement('a'); b.className = 'btn' + (t.hot ? ' solid' : ''); b.href = 'commande.html?f=' + t.n.toLowerCase() + '&u=' + u.id; b.textContent = 'Choisir'; c.appendChild(b); }
+      g.appendChild(c);
+    });
+    box.appendChild(g);
+    var q = document.createElement('p'); q.className = 'devis'; q.innerHTML = 'Vous rêvez d’un <strong>univers complet</strong> créé pour vous ? Il fait l’objet d’un devis en ligne.';
+    var qb = document.createElement('a'); qb.className = 'btn'; qb.textContent = 'Demander un devis';
+    qb.href = CONTACT_URL || '#contact'; if(CONTACT_URL){ qb.target = '_blank'; qb.rel = 'noopener'; } else qb.addEventListener('click', function(e){ e.preventDefault(); closeWorld(); setTimeout(function(){ var c = document.getElementById('contact'); if(c) c.scrollIntoView({ behavior:'smooth' }); }, 450); });
+    box.appendChild(q); box.appendChild(qb);
+    return box;
+  }
   function openWorld(u, btn){
     lastBtn = btn;
     enterFx(u, function(){
@@ -401,7 +440,7 @@
       if(u.models.length < 2) dots.style.display = 'none';
       var more = document.createElement('p'); more.className = 'soon'; more.textContent = u.soon ? '' : (u.models.length < 2 ? 'D’autres modèles arrivent bientôt dans cet univers.' : '');
       if(u.soon){ car.style.display = 'none'; more.className = 'soon big'; more.textContent = 'Bientôt disponible'; }
-      wrap.appendChild(more); world.appendChild(wrap);
+      wrap.appendChild(more); wrap.appendChild(pricing(u)); world.appendChild(wrap);
       carousel(tr, dots, null);
       body.classList.add('inworld'); world.scrollTop = 0;
     });
