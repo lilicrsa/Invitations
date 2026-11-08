@@ -221,7 +221,7 @@
         <ul><li>Tout l'Essentiel</li><li>Musique de votre choix</li><li>Réponses des invités et page de suivi</li></ul>
         <a class="btn solid" href="#modeles">Voir les univers</a></div>
       <div class="offer"><h3>Prestige</h3><div class="price">dès 89 €</div>
-        <ul><li>Tout Signature</li><li>Galerie souvenir avec vos photos</li><li>Univers complet sur devis, dès 65 €</li></ul>
+        <ul><li>Tout Signature</li><li>Galerie souvenir avec vos photos</li><li>Univers complet sur devis</li></ul>
         <a class="btn" href="#modeles">Voir les univers</a></div>
     </div>
     <p class="fine">Votre lien reste actif jusqu'à trois mois après l'événement.</p>
@@ -241,7 +241,7 @@
   <section id="contact"><div class="wrap">
     <div class="band">
       <div><h2>Une idée précise ?</h2><p>Une carte et une vidéo créées pour vous, à votre image : écrivez-nous pour un devis.</p></div>
-      <a class="btn" id="contact-btn" href="commande.html">Demander un devis</a>
+      <a class="btn" id="contact-btn" href="devis.html">Demander un devis</a>
     </div>
     <footer><span data-brand></span><span>Invitations animées sur mesure</span></footer>
   </div></section>
@@ -271,7 +271,7 @@
       intro:'Soirées, repas et fêtes de fin d’année, dans un décor soigné.' }
   ];
   document.querySelectorAll('[data-brand]').forEach(function(e){ e.textContent = BRAND; });
-  var cb = document.getElementById('contact-btn'); if(CONTACT_URL){ cb.href = CONTACT_URL; cb.target = '_blank'; cb.rel = 'noopener'; }
+  
   document.title = BRAND + ' — invitations animées';
 
   function mkVideo(k, label){
@@ -407,9 +407,9 @@
       g.appendChild(c);
     });
     box.appendChild(g);
-    var q = document.createElement('p'); q.className = 'devis'; q.innerHTML = 'Vous rêvez d’un <strong>univers complet</strong> créé pour vous ? Il fait l’objet d’un devis en ligne, <strong>à partir de ' + u.devis[0] + ' € (Essentiel), ' + u.devis[1] + ' € (Signature), ' + u.devis[2] + ' € (Prestige)</strong>.';
+    var q = document.createElement('p'); q.className = 'devis'; q.innerHTML = 'Vous rêvez d’un <strong>univers complet</strong> créé pour vous ? Décrivez-nous votre projet : le prix est fixé sur devis, selon la complexité.';
     var qb = document.createElement('a'); qb.className = 'btn'; qb.textContent = 'Demander un devis';
-    qb.href = CONTACT_URL || '#contact'; if(CONTACT_URL){ qb.target = '_blank'; qb.rel = 'noopener'; } else qb.addEventListener('click', function(e){ e.preventDefault(); closeWorld(); setTimeout(function(){ var c = document.getElementById('contact'); if(c) c.scrollIntoView({ behavior:'smooth' }); }, 450); });
+    qb.href = 'devis.html?u=' + u.id;
     box.appendChild(q); box.appendChild(qb);
     return box;
   }
