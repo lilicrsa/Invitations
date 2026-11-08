@@ -281,8 +281,7 @@
   UNIVERS.forEach(function(u){
     var c = document.createElement('article'); c.className = 'uni'; c.style.setProperty('--tint', u.tint);
     var fr = document.createElement('div'); fr.className = 'frame';
-    if(u.cover){ var v = mkVideo(u.cover, 'Aperçu animé : ' + u.n); fr.appendChild(v); watch(v); }
-    else { var ph = document.createElement('div'); ph.className = 'ph'; ph.textContent = 'Bientôt'; fr.appendChild(ph); }
+    var im = document.createElement('img'); im.className = 'ph'; im.src = 'univers/' + u.id + '.jpg'; im.alt = u.n; im.loading = 'lazy'; fr.appendChild(im);
     c.appendChild(fr);
     var h = document.createElement('h3'); h.textContent = u.n; c.appendChild(h);
     var t = document.createElement('p'); t.className = 'tag'; t.textContent = u.tag; c.appendChild(t);
