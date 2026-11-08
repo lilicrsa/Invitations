@@ -99,7 +99,7 @@
   /* ---------- entrée : portail en arche ---------- */
   .fx{ position:fixed; inset:0; z-index:120; pointer-events:none; overflow:hidden; display:none; }
   .fx.on{ display:block; }
-  .fx .veil{ position:absolute; inset:0; background:radial-gradient(ellipse at 50% 55%,rgba(18,24,49,.6),rgba(6,8,18,.82)); opacity:0; }
+  .fx .veil{ position:absolute; inset:0; background:radial-gradient(ellipse at 50% 55%,rgba(18,24,49,.35),rgba(6,8,18,.55)); opacity:0; }
   .fx svg{ position:absolute; left:50%; top:50%; width:min(62vw,300px); height:auto; margin:-30vh 0 0 calc(min(62vw,300px) / -2); overflow:visible; filter:drop-shadow(0 0 10px rgba(231,213,168,.75)); }
   .fx .wash{ position:absolute; left:50%; top:50%; width:170vmax; height:170vmax; margin:-85vmax 0 0 -85vmax; border-radius:50%; opacity:1; transform:scale(0); }
   .fx b{ position:absolute; display:block; font-weight:400; }
@@ -308,19 +308,19 @@
     var outer = mk('M16 296 V112 A84 84 0 0 1 184 112 V296', 2.6, 1), inner = mk('M34 296 V114 A66 66 0 0 1 166 114 V296', 1, .6);
     fx.appendChild(svg);
     [outer, inner].forEach(function(p){ var L = p.getTotalLength(); p.style.strokeDasharray = L; p.style.strokeDashoffset = L; });
-    for(var i = 0; i < 22; i++){ var d = document.createElement('i'); d.style.left = (30 + Math.random() * 40) + '%'; d.style.top = (45 + Math.random() * 40) + '%'; fx.appendChild(d);
-      d.animate([{ transform:'translateY(0) scale(.6)', opacity:0 }, { opacity:.95, offset:.3 }, { transform:'translateY(' + -(80 + Math.random() * 220) + 'px) scale(1.2)', opacity:0 }], { duration:1300 + Math.random() * 700, delay:Math.random() * 800, easing:'ease-out', fill:'forwards' }); }
-    var wh = document.createElement('div'); wh.className = 'wash'; wh.style.background = 'radial-gradient(circle,#fffaf0 0,' + wash + ' 26%,' + wash + ' 44%,rgba(255,250,240,0) 62%)'; fx.appendChild(wh);
-    veil.animate([{ opacity:0 }, { opacity:1 }], { duration:420, easing:'ease-out', fill:'forwards' });
+    for(var i = 0; i < 12; i++){ var d = document.createElement('i'); d.style.left = (30 + Math.random() * 40) + '%'; d.style.top = (45 + Math.random() * 40) + '%'; fx.appendChild(d);
+      d.animate([{ transform:'translateY(0) scale(.6)', opacity:0 }, { opacity:.95, offset:.3 }, { transform:'translateY(' + -(80 + Math.random() * 220) + 'px) scale(1.2)', opacity:0 }], { duration:2000 + Math.random() * 900, delay:Math.random() * 1000, easing:'ease-out', fill:'forwards' }); }
+    var wh = document.createElement('div'); wh.className = 'wash'; wh.style.background = 'radial-gradient(circle,' + wash + ' 0,' + wash + ' 40%,rgba(255,250,240,0) 66%)'; fx.appendChild(wh);
+    veil.animate([{ opacity:0 }, { opacity:1 }], { duration:900, easing:'cubic-bezier(.37,0,.63,1)', fill:'forwards' });
     glow.animate([{ opacity:0 }, { opacity:1 }], { duration:1200, delay:300, fill:'forwards' });
-    var dr = { duration:1100, easing:'cubic-bezier(.5,0,.2,1)', fill:'forwards' };
+    var dr = { duration:1500, easing:'cubic-bezier(.37,0,.63,1)', fill:'forwards' };
     outer.animate([{ strokeDashoffset:outer.getTotalLength() }, { strokeDashoffset:0 }], dr);
-    inner.animate([{ strokeDashoffset:inner.getTotalLength() }, { strokeDashoffset:0 }], { duration:1200, delay:200, easing:dr.easing, fill:'forwards' });
-    svg.animate([{ transform:'scale(.9)', opacity:1 }, { transform:'scale(1)', opacity:1, offset:.58 }, { transform:'scale(5)', opacity:0 }], { duration:2300, easing:'cubic-bezier(.55,0,.25,1)', fill:'forwards' });
-    var wa = wh.animate([{ transform:'scale(0)' }, { transform:'scale(0)', offset:.5 }, { transform:'scale(1)' }], { duration:2200, easing:'cubic-bezier(.45,0,.2,1)', fill:'forwards' });
+    inner.animate([{ strokeDashoffset:inner.getTotalLength() }, { strokeDashoffset:0 }], { duration:1600, delay:250, easing:dr.easing, fill:'forwards' });
+    svg.animate([{ transform:'scale(.94)', opacity:0 }, { transform:'scale(1)', opacity:1, offset:.3 }, { transform:'scale(1.35)', opacity:.9, offset:.68 }, { transform:'scale(2.2)', opacity:0 }], { duration:3000, easing:'cubic-bezier(.37,0,.63,1)', fill:'forwards' });
+    var wa = wh.animate([{ transform:'scale(.2)', opacity:0 }, { transform:'scale(.2)', opacity:0, offset:.4 }, { transform:'scale(1)', opacity:.96 }], { duration:3000, easing:'cubic-bezier(.37,0,.63,1)', fill:'forwards' });
     wa.onfinish = function(){
       swap();
-      var o = fx.animate([{ opacity:1 }, { opacity:0 }], { duration:800, easing:'ease-out', fill:'forwards' });
+      var o = fx.animate([{ opacity:1 }, { opacity:0 }], { duration:1400, easing:'cubic-bezier(.37,0,.63,1)', fill:'forwards' });
       o.onfinish = function(){ fx.className = 'fx'; fx.innerHTML = ''; fx.getAnimations().forEach(function(x){ x.cancel(); }); };
     };
   }
@@ -328,7 +328,7 @@
   // ---- une entrée douce par univers ----
   function endFx(swap){
     swap();
-    var o = fx.animate([{ opacity:1 }, { opacity:0 }], { duration:1000, easing:'ease-out', fill:'forwards' });
+    var o = fx.animate([{ opacity:1 }, { opacity:0 }], { duration:1500, easing:'cubic-bezier(.37,0,.63,1)', fill:'forwards' });
     o.onfinish = function(){ fx.className = 'fx'; fx.innerHTML = ''; fx.getAnimations().forEach(function(x){ x.cancel(); }); };
   }
   function enterFx(u, swap){
@@ -337,29 +337,29 @@
     if(kind === 'portal'){ portal(u.wash, swap); return; }
     fx.className = 'fx on'; fx.innerHTML = '';
     if(kind === 'bloom'){
-      var b = document.createElement('div'); b.className = 'wash'; b.style.background = 'radial-gradient(circle,#fff8ec 0,#f7dccb 30%,rgba(247,220,203,0) 62%)'; fx.appendChild(b);
-      var a = b.animate([{ transform:'scale(0)', opacity:.0 }, { opacity:1, offset:.25 }, { transform:'scale(1)', opacity:1 }], { duration:1500, easing:'cubic-bezier(.45,0,.25,1)', fill:'forwards' });
+      var b = document.createElement('div'); b.className = 'wash'; b.style.background = 'radial-gradient(circle,#fbe9dc 0,#f6dccb 38%,rgba(247,220,203,0) 66%)'; fx.appendChild(b);
+      var a = b.animate([{ transform:'scale(.3)', opacity:0 }, { transform:'scale(.6)', opacity:.6, offset:.45 }, { transform:'scale(1)', opacity:.96 }], { duration:2300, easing:'cubic-bezier(.37,0,.63,1)', fill:'forwards' });
       a.onfinish = function(){ endFx(swap); };
       return;
     }
     if(kind === 'bubbles'){
       var cols = ['#ffd9e6','#d6ecff','#fff4cc','#e3d9ff','#d9f5e6'], last = null;
-      for(var i = 0; i < 20; i++){ var d = document.createElement('b'), sz = 60 + Math.random() * 130;
-        d.style.cssText = 'left:' + (Math.random() * 100 - 6) + '%;width:' + sz + 'px;height:' + sz + 'px;border-radius:50%;bottom:' + (-sz) + 'px;background:radial-gradient(circle at 32% 28%,rgba(255,255,255,.95),' + cols[i % 5] + ' 62%);opacity:.8';
-        fx.appendChild(d); last = d.animate([{ transform:'translate(0,0)' }, { transform:'translate(' + (Math.random() * 40 - 20) + 'px,' + -(H + sz + 80) + 'px)' }], { duration:1700 + Math.random() * 900, delay:Math.random() * 500, easing:'cubic-bezier(.35,.5,.35,1)', fill:'forwards' }); }
+      for(var i = 0; i < 13; i++){ var d = document.createElement('b'), sz = 50 + Math.random() * 100;
+        d.style.cssText = 'left:' + (Math.random() * 100 - 6) + '%;width:' + sz + 'px;height:' + sz + 'px;border-radius:50%;bottom:' + (-sz) + 'px;background:radial-gradient(circle at 32% 28%,rgba(255,255,255,.95),' + cols[i % 5] + ' 62%);opacity:.6';
+        fx.appendChild(d); last = d.animate([{ transform:'translate(0,0)' }, { transform:'translate(' + (Math.random() * 60 - 30) + 'px,' + -(H + sz + 80) + 'px)' }], { duration:2600 + Math.random() * 1200, delay:Math.random() * 700, easing:'cubic-bezier(.37,0,.63,1)', fill:'forwards' }); }
       var w = document.createElement('div'); w.className = 'soft'; w.style.background = 'linear-gradient(180deg,#e8f3ff,#ffe9f1)'; fx.appendChild(w);
-      var wa = w.animate([{ opacity:0 }, { opacity:.92 }], { duration:800, delay:1250, easing:'ease-in-out', fill:'forwards' });
+      var wa = w.animate([{ opacity:0 }, { opacity:.85 }], { duration:1400, delay:1500, easing:'cubic-bezier(.37,0,.63,1)', fill:'forwards' });
       wa.onfinish = function(){ endFx(swap); };
       return;
     }
     if(kind === 'confetti'){
       var cc = ['#ff7a8c','#ffcf5a','#58d3b2','#7aa2f0','#be8bff','#ffffff'], cx = W / 2, cy = H * .7;
-      for(var j = 0; j < 50; j++){ var p = document.createElement('b'), ang = -Math.PI / 2 + (Math.random() - .5) * 2.4, dist = 120 + Math.random() * Math.min(W, H) * .8;
+      for(var j = 0; j < 34; j++){ var p = document.createElement('b'), ang = -Math.PI / 2 + (Math.random() - .5) * 2.4, dist = 120 + Math.random() * Math.min(W, H) * .8;
         p.style.cssText = 'left:' + cx + 'px;top:' + cy + 'px;width:' + (5 + Math.random() * 6) + 'px;height:' + (8 + Math.random() * 8) + 'px;background:' + cc[j % 6] + ';border-radius:2px';
         var ex = Math.cos(ang) * dist, ey = Math.sin(ang) * dist; fx.appendChild(p);
-        p.animate([{ transform:'translate(0,0) rotate(0)', opacity:0 }, { opacity:1, offset:.12 }, { transform:'translate(' + ex + 'px,' + ey + 'px) rotate(' + (Math.random() * 540) + 'deg)', opacity:1, offset:.6 }, { transform:'translate(' + (ex * 1.1) + 'px,' + (ey + 220) + 'px) rotate(' + (Math.random() * 900) + 'deg)', opacity:0 }], { duration:1900, delay:Math.random() * 200, easing:'cubic-bezier(.2,.6,.3,1)', fill:'forwards' }); }
-      var w2 = document.createElement('div'); w2.className = 'soft'; w2.style.background = 'radial-gradient(ellipse at 50% 70%,#2a2150,#14152e)'; fx.appendChild(w2);
-      var a2 = w2.animate([{ opacity:0 }, { opacity:.9 }], { duration:700, delay:700, easing:'ease-in-out', fill:'forwards' });
+        p.animate([{ transform:'translate(0,0) rotate(0)', opacity:0 }, { opacity:1, offset:.12 }, { transform:'translate(' + ex + 'px,' + ey + 'px) rotate(' + (Math.random() * 540) + 'deg)', opacity:1, offset:.6 }, { transform:'translate(' + (ex * 1.1) + 'px,' + (ey + 220) + 'px) rotate(' + (Math.random() * 900) + 'deg)', opacity:0 }], { duration:2800, delay:Math.random() * 300, easing:'cubic-bezier(.25,.55,.35,1)', fill:'forwards' }); }
+      var w2 = document.createElement('div'); w2.className = 'soft'; w2.style.background = 'radial-gradient(ellipse at 50% 70%,#2b2552,#1a1c3a)'; fx.appendChild(w2);
+      var a2 = w2.animate([{ opacity:0 }, { opacity:.8 }], { duration:1400, delay:1000, easing:'cubic-bezier(.37,0,.63,1)', fill:'forwards' });
       a2.onfinish = function(){ endFx(swap); };
       return;
     }
