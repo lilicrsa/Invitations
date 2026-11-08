@@ -28,19 +28,15 @@
   :focus-visible{ outline:2px solid var(--champ); outline-offset:3px; }
 
   /* ---------- rideau (transition) : velours en plis souples, galon et franges dorés ---------- */
-  .curtain{ position:fixed; top:0; bottom:0; width:50.6%; z-index:100; pointer-events:none; overflow:hidden; will-change:transform;
-    transition:transform 1.05s cubic-bezier(.65,0,.2,1);
+  .curtain{ position:fixed; top:0; bottom:0; width:50.6%; z-index:100; pointer-events:none; overflow:hidden; visibility:hidden; will-change:transform;
     background:
       linear-gradient(180deg,rgba(0,0,0,.55) 0,rgba(0,0,0,0) 14%,rgba(0,0,0,0) 80%,rgba(0,0,0,.5) 100%),
       repeating-linear-gradient(90deg,#3b0713 0,#6f1629 22px,#9b2a45 40px,#6a1428 58px,#3b0713 88px); }
-  .curtain::before{ content:''; position:absolute; inset:0 -90px; transition:transform 1.05s cubic-bezier(.65,0,.2,1);
-    background:repeating-linear-gradient(90deg,rgba(255,200,205,0) 0,rgba(255,200,205,.16) 30px,rgba(255,200,205,0) 64px,rgba(0,0,0,.28) 104px,rgba(0,0,0,0) 150px); mix-blend-mode:soft-light; }
+  .curtain::before{ content:''; position:absolute; inset:0; mix-blend-mode:soft-light;
+    background:repeating-linear-gradient(90deg,rgba(255,200,205,0) 0,rgba(255,200,205,.16) 30px,rgba(255,200,205,0) 64px,rgba(0,0,0,.28) 104px,rgba(0,0,0,0) 150px); }
   .curtain::after{ content:''; position:absolute; top:0; bottom:0; width:7px; background:linear-gradient(90deg,#8a6420,#f1dc98 45%,#b88a32); box-shadow:0 0 12px rgba(231,213,168,.4); }
-  .curtain.l{ left:0; transform:translateX(-101%) skewX(-2.5deg); transform-origin:top left; } .curtain.r{ right:0; transform:translateX(101%) skewX(-2.5deg); transform-origin:top right; }
+  .curtain.l{ left:0; transform-origin:0 0; } .curtain.r{ right:0; transform-origin:100% 0; }
   .curtain.l::after{ right:0; } .curtain.r::after{ left:0; }
-  .curtain.l::before{ transform:translateX(-60px); } .curtain.r::before{ transform:translateX(60px); }
-  body.closed .curtain.l,body.closed .curtain.r{ transform:translateX(0) skewX(0); box-shadow:0 0 70px rgba(0,0,0,.7); }
-  body.closed .curtain::before{ transform:translateX(0); }
 
   /* ---------- porte d'entrée ---------- */
   .gate{ min-height:100dvh; display:flex; flex-direction:column; padding-block:max(1.4rem,env(safe-area-inset-top,0px)) max(1.4rem,env(safe-area-inset-bottom,0px));
@@ -307,13 +303,32 @@
 
   // ---- entrées : chaque univers a la sienne ----
   var body = document.body, reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // ---- rideau : les pans se rassemblent sur les côtés, comme un vrai rideau de velours ----
+  var cL = document.querySelector('.curtain.l'), cR = document.querySelector('.curtain.r');
+  function drape(close, done){
+    if(reduce){ if(done) done(); return; }
+    var dur = close ? 1250 : 1500, ease = 'cubic-bezier(.45,.05,.25,1)';
+    function kf(side){   // side: 1 = gauche, -1 = droite
+      var open = 'scaleX(.07) skewX(0deg)', mid = 'scaleX(' + (close ? .55 : .5) + ') skewX(' + (side * (close ? 4.5 : -4) ) + 'deg)', sh = 'scaleX(1.012) skewX(' + (side * (close ? -1.2 : 1) ) + 'deg)', shut = 'scaleX(1) skewX(0deg)';
+      return close ? [{ transform:open, offset:0 }, { transform:mid, offset:.55 }, { transform:sh, offset:.86 }, { transform:shut, offset:1 }]
+                   : [{ transform:shut, offset:0 }, { transform:sh, offset:.14 }, { transform:mid, offset:.5 }, { transform:open, offset:1 }];
+    }
+    cL.style.visibility = cR.style.visibility = 'visible';
+    var aL = cL.animate(kf(1), { duration:dur, easing:ease, fill:'forwards' });
+    var aR = cR.animate(kf(-1), { duration:dur, delay:close ? 90 : 60, easing:ease, fill:'forwards' });
+    aR.onfinish = function(){
+      if(!close){ cL.style.visibility = cR.style.visibility = 'hidden'; }
+      if(done) done();
+      setTimeout(function(){ if(!close){ aL.cancel(); aR.cancel(); } }, 0);
+    };
+  }
   var fx = document.getElementById('fx'), world = document.getElementById('world'), lastBtn = null;
   function run(kind, swap){
     if(reduce){ swap(); return; }
     fx.className = 'fx on'; fx.innerHTML = '';
     var done = function(){ fx.className = 'fx'; fx.innerHTML = ''; };
     var W = innerWidth, H = innerHeight;
-    if(kind === 'curtain'){ fx.className = 'fx'; body.classList.add('closed'); setTimeout(function(){ swap(); setTimeout(function(){ body.classList.remove('closed'); }, 140); }, 950); return; }
+    if(kind === 'curtain'){ fx.className = 'fx'; drape(true, function(){ swap(); setTimeout(function(){ drape(false); }, 160); }); return; }
     if(kind === 'bloom'){
       var b = document.createElement('div'); b.className = 'bloom'; fx.appendChild(b);
       var a = b.animate([{ transform:'scale(0)' }, { transform:'scale(1)' }], { duration:850, easing:'cubic-bezier(.5,0,.2,1)', fill:'forwards' });
@@ -389,12 +404,11 @@
   function enter(){
     try{ sessionStorage.setItem('entered','1'); }catch(_){}
     if(reduce){ body.classList.add('in'); window.scrollTo(0,0); document.getElementById('modeles').scrollIntoView(); return; }
-    body.classList.add('closed');
-    setTimeout(function(){
+    drape(true, function(){
       body.classList.add('in'); document.documentElement.style.scrollBehavior = 'auto';
       document.getElementById('modeles').scrollIntoView(); document.documentElement.style.scrollBehavior = '';
-      setTimeout(function(){ body.classList.remove('closed'); }, 120);
-    }, 950);
+      setTimeout(function(){ drape(false); }, 160);
+    });
   }
   document.getElementById('ring').addEventListener('click', enter);
   document.getElementById('home').addEventListener('click', function(){ try{ sessionStorage.removeItem('entered'); }catch(_){} body.classList.remove('in'); window.scrollTo(0,0); });
