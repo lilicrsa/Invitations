@@ -53,6 +53,10 @@
   .timer{ font-weight:700; color:var(--champ); }
   .expired{ display:none; text-align:center; padding:2rem 1rem; }
   .demos{ display:grid; gap:.6rem; margin-top:1.2rem; }
+  .alert{ border:1px solid var(--champ); background:rgba(231,213,168,.09); border-radius:14px; padding:.9rem 1rem; margin:0 0 1rem; font-size:.95rem; line-height:1.5; }
+  .alert b{ color:var(--champ); } .alert .t{ font:400 1.35rem 'Italiana',serif; display:block; margin-bottom:.3rem; }
+  .care{ border-left:3px solid var(--champ2); background:rgba(231,213,168,.06); border-radius:0 10px 10px 0; padding:.7rem .9rem; margin:1rem 0 0; font-size:.9rem; line-height:1.5; color:var(--brume); } .care b{ color:var(--champ); }
+  .req{ color:var(--err); } .miss{ border-color:var(--err) !important; box-shadow:0 0 0 3px rgba(255,154,168,.18) !important; }
   .hint{ font-size:.82rem; color:var(--brume); margin:.3rem 0 0; }
   .err{ color:var(--err); font-size:.88rem; margin:.4rem 0 0; }
   .switch{ display:flex; align-items:center; gap:.6rem; margin-top:1.1rem; font-size:1rem; text-transform:none; letter-spacing:0; font-weight:500; color:var(--champ); }
@@ -113,6 +117,7 @@
     <h2>Vos informations</h2>
     <div class="card">
       <div class="chosen"><img id="chosen-img" alt=""><div><b id="chosen-name" style="font-family:'Italiana',serif;font-size:1.4rem;font-weight:400"></b><br><a id="change-theme">Changer de modèle</a></div></div>
+      <div class="alert" id="complete-banner" style="display:none"><span class="t">Dernière étape avant de commander</span>Votre aperçu express contenait des informations fictives (lieu, adresse, programme…). <b>Complétez maintenant les champs ci-dessous</b> : vos informations déjà saisies sont conservées. Vous générerez ensuite un <b>aperçu complet</b> à valider avant la commande.<br><br><b>Relisez chaque information avec attention</b> : l'invitation sera publiée à partir de ces données. Certaines choses pourront être ajustées en cours de route, mais mieux vaut qu'elles soient justes dès maintenant : chaque correction demande du temps et peut retarder la publication.</div>
       <div class="modes" id="modes">
         <button type="button" data-m="express" class="on"><b>Aperçu express</b><small>Vos noms, la date et votre message. Le reste est fictif, pour voir vite.</small></button>
         <button type="button" data-m="full"><b>Aperçu complet</b><small>Toutes vos informations, comme l'invitation finale.</small></button>
@@ -133,10 +138,10 @@
         <div id="full-fields" style="display:none">
           <label for="f-host">Organisateur(s) <i>(facultatif)</i></label>
           <input type="text" id="f-host" maxlength="120" placeholder="Ex. Famille Martin">
-          <label for="f-venue">Nom du lieu</label>
+          <label for="f-venue">Nom du lieu <span class="req" id="rq1" style="display:none">*</span></label>
           <input type="text" id="f-venue" maxlength="60" placeholder="Ex. Salle des Fêtes">
           <p class="hint">Ce nom s'affiche sur la carte : restez court.</p>
-          <label for="f-address">Adresse complète <i>(pour les boutons d'itinéraire)</i></label>
+          <label for="f-address">Adresse complète <span class="req" id="rq2" style="display:none">*</span> <i>(pour les boutons d'itinéraire)</i></label>
           <input type="text" id="f-address" maxlength="240" placeholder="Ex. 12 rue des Lilas, 75000 Paris">
           <div class="grid2">
             <div><label for="f-cname">Contact <i>(prénom)</i></label><input type="text" id="f-cname" maxlength="80"></div>
@@ -164,6 +169,7 @@
       <div class="side">
         <p class="note"><b>Touchez l'invitation pour l'ouvrir</b>, comme vos invités. Cet aperçu est généré ici, rien n'est envoyé par lien ni enregistré. Il disparaît dans <span class="timer" id="timer">10:00</span> et vos données sont alors effacées.</p>
         <p class="note">Les réponses saisies dans l'aperçu ne sont pas enregistrées.</p>
+        <p class="care" id="care3" style="display:none"><b>Vérifiez tout, jusqu'au moindre détail</b> : noms, date, heure, adresse, programme. Une erreur relevée maintenant vous évite des allers-retours plus tard.</p>
         <div class="row" style="margin-top:.4rem"><button class="btn ghost" id="refull" type="button">Revoir en plein écran</button><button class="btn gold" id="validate">Je valide, commander</button><button class="btn ghost" id="edit">Modifier mes infos</button></div>
         <h3 style="font:400 1.4rem 'Italiana',serif;margin:1.8rem 0 .2rem">Découvrez nos deux prestations</h3>
         <p class="hint" style="margin-top:0">Deux démos complètes, pour voir la différence.</p>
@@ -183,6 +189,7 @@
       <div id="order-a">
         <div id="email-step">
           <p style="margin-top:0">Votre invitation vous plaît ? Indiquez votre e-mail pour recevoir votre code de commande. C'est à cette étape seulement que vos informations sont enregistrées.</p>
+          <p class="care" style="margin:0 0 .6rem"><b>Dernier contrôle avant de commander.</b> Vos informations serviront à publier l'invitation : si un détail est faux, revenez le corriger avant de continuer. Certaines modifications restent possibles ensuite, mais elles prennent du temps.</p>
           <label for="f-email">Votre e-mail</label>
           <input type="email" id="f-email" maxlength="160" placeholder="vous@exemple.fr" autocomplete="email">
           <div class="err" id="email-err" role="alert"></div>
@@ -311,7 +318,7 @@
 
   // ---- aperçu généré sur place : rien n'est enregistré, tout est effacé après 10 minutes
   let mode = 'express', liveInv = null, blobUrl = null, tEnd = 0, tick = null;
-  function setMode(m){ mode = m; document.querySelectorAll('#modes button').forEach(b => b.classList.toggle('on', b.dataset.m === m)); $('full-fields').style.display = m === 'full' ? '' : 'none'; if(m === 'full' && !prog.children.length) addRow(); }
+  function setMode(m){ mode = m; $('rq1').style.display = $('rq2').style.display = m === 'full' ? '' : 'none'; $('go-preview').textContent = m === 'full' ? 'Générer mon aperçu complet' : 'Générer mon aperçu'; if(m !== 'full'){ $('complete-banner').style.display = 'none'; $('modes').style.display = ''; } document.querySelectorAll('#modes button').forEach(b => b.classList.toggle('on', b.dataset.m === m)); $('full-fields').style.display = m === 'full' ? '' : 'none'; if(m === 'full' && !prog.children.length) addRow(); }
   document.querySelectorAll('#modes button').forEach(b => b.addEventListener('click', () => setMode(b.dataset.m)));
   $('f-music').addEventListener('change', () => {
     const f = $('f-music').files[0]; const err = $('form-err'); err.textContent = '';
@@ -360,7 +367,8 @@
     const d = collect();
     if(!d.title) return err.textContent = 'Merci d’indiquer le titre.';
     if(!d.event_date) return err.textContent = 'Merci d’indiquer la date de l’événement.';
-    if(mode === 'full' && !d.venue_name) return err.textContent = 'Merci d’indiquer le nom du lieu.';
+    document.querySelectorAll('.miss').forEach(x => x.classList.remove('miss'));
+    if(mode === 'full'){ const bad = !d.venue_name ? $('f-venue') : (!d.address ? $('f-address') : null); if(bad){ bad.classList.add('miss'); bad.focus(); return err.textContent = bad === $('f-venue') ? 'Merci d’indiquer le nom du lieu.' : 'Merci d’indiquer l’adresse complète : elle sert aux boutons d’itinéraire.'; } }
     liveInv = buildInv(d); showPreview();
   });
 
@@ -368,13 +376,16 @@
   function showPreview(){
     $('expired').style.display = 'none'; $('stage').style.display = ''; go(3); startTimer(); setFull(true);
     $('demo-std').href = STD_DEMO[theme] || 'boheme/?i=boheme-demo';
+    $('care3').style.display = mode === 'full' ? '' : 'none';
     $('frame').src = theme + '/?preview=' + Math.random().toString(36).slice(2, 8).toUpperCase() + '&live=1';
   }
   $('edit').addEventListener('click', () => go(2)); $('edit2').addEventListener('click', () => go(2)); $('edit3').addEventListener('click', () => go(2));
 
   // ---- 4 : commande
   $('validate').addEventListener('click', () => {
-    if(mode === 'express'){ setMode('full'); go(2); $('form-err').textContent = 'Complétez vos informations (lieu, adresse, programme…) pour commander.'; return; }
+    if(mode === 'express'){
+      setMode('full'); $('complete-banner').style.display = ''; $('modes').style.display = 'none'; $('form-err').textContent = ''; go(2);
+      setTimeout(() => { const f = $('f-venue'); f.classList.add('miss'); f.focus({ preventScroll:true }); $('complete-banner').scrollIntoView({ behavior:'smooth', block:'start' }); }, 350); return; }
     go(4);
   });
   $('make-code').addEventListener('click', async () => {
