@@ -71,10 +71,11 @@
   window.addEventListener('pointerdown', activate, true); window.addEventListener('touchstart', activate, true); window.addEventListener('keydown', activate, true);
   document.addEventListener('visibilitychange', function(){ if(document.hidden) hide(); });
   window.addEventListener('pagehide', function(){ hide(); });
-  window.addEventListener('blur', function(){ if(everActive) hide(); });
+  var embedded = false; try{ embedded = window.top !== window; }catch(_){ embedded = true; }
+  window.addEventListener('blur', function(){ if(everActive && !embedded) hide(); });
   window.addEventListener('beforeprint', function(){ hide('Impression désactivée.', 2000); });
   setInterval(function(){
-    if(everActive && !blocked && !document.hasFocus()) hide();
+    if(everActive && !embedded && !blocked && !document.hasFocus()) hide();
     // surveillance : si le filigrane ou l'écran noir a été retiré / masqué, on bloque
     var ok = document.getElementById(ID + '-wm') && document.getElementById(ID + '-bo');
     if(!ok){ document.body.appendChild(wm); document.body.appendChild(bo); document.body.appendChild(tagEl); hide('Aperçu protégé.', 1500); return; }
