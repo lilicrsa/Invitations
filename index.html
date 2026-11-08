@@ -60,20 +60,53 @@
   .sec h2{ font-size:clamp(2rem,5vw,3.2rem); line-height:1.1; }
   .lead{ color:var(--brume); max-width:36rem; margin:.8rem 0 0; }
 
-  /* ---------- collection : salles de projection ---------- */
+  /* ---------- univers : carrousel ---------- */
   .valance{ height:26px; margin-inline:calc(-1 * max(16px,env(safe-area-inset-left,0px))); background:radial-gradient(circle at 20px 0,#7d1a31 19px,transparent 20px) 0 0/40px 26px repeat-x, #4a0b1b; box-shadow:0 8px 20px rgba(0,0,0,.5); }
-  .hall{ margin-top:2.6rem; display:grid; grid-template-columns:repeat(4,1fr); gap:clamp(.9rem,2vw,1.6rem); }
-  .screen{ display:flex; flex-direction:column; min-width:0; }
-  .screen .frame{ position:relative; border:1px solid var(--champ2); border-radius:14px; padding:7px; background:linear-gradient(180deg,var(--nuit2),#0c1022); box-shadow:0 0 0 1px rgba(0,0,0,.6), 0 18px 40px rgba(0,0,0,.55), 0 -28px 60px -30px rgba(231,213,168,.35); }
+  .eyebrow{ font:600 .72rem 'Manrope',sans-serif; letter-spacing:.22em; text-transform:uppercase; color:var(--champ2); margin:0 0 .7rem; }
+  .uni-head{ text-align:center; }
+  .uni-head .lead{ margin-inline:auto; }
+  html{ overflow-x:clip; }
+  .car{ position:relative; margin-top:2.2rem; width:100vw; left:50%; margin-left:-50vw; }
+  .uni-track{ display:flex; gap:clamp(.8rem,2.4vw,1.6rem); overflow-x:auto; scroll-snap-type:x mandatory; scrollbar-width:none; padding:1.6rem 0 2rem; padding-inline:calc(50% - var(--cw)/2); --cw:min(74vw,300px); -webkit-overflow-scrolling:touch; }
+  .uni-track::-webkit-scrollbar{ display:none; }
+  .uni{ flex:0 0 var(--cw); scroll-snap-align:center; display:flex; flex-direction:column; align-items:center; text-align:center; transition:transform .45s cubic-bezier(.2,.7,.2,1), opacity .45s; transform:scale(.86); opacity:.5; }
+  .uni.on{ transform:scale(1); opacity:1; }
+  .uni .frame{ position:relative; width:100%; border:1px solid var(--champ2); border-radius:200px 200px 16px 16px; padding:8px; background:linear-gradient(180deg,var(--nuit2),#0c1022); box-shadow:0 0 0 1px rgba(0,0,0,.6), 0 24px 50px rgba(0,0,0,.55), 0 -30px 70px -30px var(--tint,rgba(231,213,168,.4)); overflow:hidden; }
+  .uni video,.uni .ph{ width:100%; aspect-ratio:3/4.3; object-fit:cover; border-radius:192px 192px 10px 10px; background:#000; display:block; }
+  .uni .ph{ display:flex; align-items:center; justify-content:center; background:radial-gradient(circle at 30% 25%,rgba(255,196,80,.28),transparent 40%),radial-gradient(circle at 75% 60%,rgba(255,120,150,.22),transparent 40%),radial-gradient(circle at 40% 85%,rgba(120,200,255,.2),transparent 40%),#0c1022; color:var(--champ2); font:400 1.4rem 'Italiana',serif; letter-spacing:.1em; }
+  .uni h3{ font-size:clamp(1.7rem,4.4vw,2.1rem); margin-top:1.3rem; }
+  .uni .tag{ color:var(--brume); font-size:.92rem; margin:.3rem 0 1rem; max-width:19rem; }
+  .uni .count{ font:600 .7rem 'Manrope',sans-serif; letter-spacing:.18em; text-transform:uppercase; color:var(--champ2); margin-bottom:.9rem; }
+  .uni .btn[disabled]{ opacity:.45; cursor:default; } .uni .btn[disabled]:hover{ background:none; color:var(--champ); }
+  .car .arr{ position:absolute; top:42%; width:46px; height:46px; border-radius:50%; border:1px solid var(--champ2); background:rgba(10,14,29,.8); color:var(--champ); font-size:1.2rem; cursor:pointer; display:none; z-index:2; }
+  .car .arr.p{ left:max(14px,calc(50% - 470px)); } .car .arr.n{ right:max(14px,calc(50% - 470px)); }
+  @media (hover:hover) and (min-width:700px){ .car .arr{ display:block; } }
+  .dots{ display:flex; justify-content:center; gap:.6rem; margin-top:.2rem; }
+  .dots button{ width:8px; height:8px; padding:0; border-radius:50%; border:1px solid var(--champ2); background:none; cursor:pointer; transition:background .2s,transform .2s; }
+  .dots button[aria-current=true]{ background:var(--champ); transform:scale(1.25); }
+
+  /* ---------- dans un univers ---------- */
+  .world{ position:fixed; inset:0; z-index:70; overflow-y:auto; background:var(--nuit); color:var(--champ); display:none; -webkit-overflow-scrolling:touch; padding-inline:max(16px,env(safe-area-inset-left,0px)); padding-bottom:max(2rem,env(safe-area-inset-bottom,0px)); }
+  body.inworld .world{ display:block; } body.inworld{ overflow:hidden; }
+  .world::before{ content:''; position:fixed; inset:0; pointer-events:none; background:radial-gradient(ellipse 70% 50% at 50% 0%,var(--tint,rgba(231,213,168,.2)),transparent 70%); }
+  .world .top{ position:sticky; top:0; z-index:3; display:flex; align-items:center; justify-content:space-between; gap:1rem; padding:max(.8rem,env(safe-area-inset-top,0px)) 0 .8rem; background:linear-gradient(180deg,var(--nuit) 60%,transparent); }
+  .world .back{ background:none; border:1px solid var(--trait); color:var(--champ); font:500 .88rem 'Manrope',sans-serif; padding:.5rem 1rem; border-radius:999px; cursor:pointer; }
+  .world .intro{ text-align:center; position:relative; padding:1rem 0 0; }
+  .world .intro h2{ font-size:clamp(2.2rem,7vw,3.8rem); line-height:1.05; } .world .intro p{ color:var(--brume); max-width:30rem; margin:.8rem auto 0; }
+  .screen{ display:flex; flex-direction:column; align-items:center; text-align:center; }
+  .screen .frame{ width:100%; border:1px solid var(--champ2); border-radius:14px; padding:7px; background:linear-gradient(180deg,var(--nuit2),#0c1022); box-shadow:0 0 0 1px rgba(0,0,0,.6), 0 18px 40px rgba(0,0,0,.55), 0 -28px 60px -30px var(--tint,rgba(231,213,168,.35)); }
   .screen video{ width:100%; aspect-ratio:9/16; object-fit:cover; border-radius:8px; background:#000; }
-  .screen h3{ font-size:1.5rem; margin-top:1.1rem; }
-  .screen .occ{ color:var(--brume); font-size:.9rem; margin:.15rem 0 .9rem; }
-  .screen .acts{ display:flex; gap:.5rem; flex-wrap:wrap; margin-top:auto; }
-  .screen .acts .btn{ padding:.55rem 1rem; font-size:.85rem; }
-  @media (max-width:900px){
-    .hall{ grid-template-columns:none; grid-auto-flow:column; grid-auto-columns:min(74%,290px); overflow-x:auto; scroll-snap-type:x mandatory; padding:0 0 1rem; margin-inline:calc(-1 * max(16px,env(safe-area-inset-left,0px))); padding-inline:max(16px,env(safe-area-inset-left,0px)); scrollbar-width:none; }
-    .hall::-webkit-scrollbar{ display:none; } .screen{ scroll-snap-align:center; }
-  }
+  .screen h3{ font-size:1.7rem; margin-top:1.1rem; } .screen .occ{ color:var(--brume); font-size:.9rem; margin:.15rem 0 .9rem; }
+  .screen .acts{ display:flex; gap:.5rem; flex-wrap:wrap; justify-content:center; } .screen .acts .btn{ padding:.55rem 1rem; font-size:.85rem; }
+  .world .car .uni-track{ --cw:min(72vw,280px); }
+  .soon{ text-align:center; color:var(--brume); max-width:26rem; margin:3rem auto; }
+
+  /* ---------- entrées dans un univers ---------- */
+  .fx{ position:fixed; inset:0; z-index:120; pointer-events:none; overflow:hidden; display:none; }
+  .fx.on{ display:block; }
+  .fx i{ position:absolute; display:block; }
+  .bloom{ position:absolute; left:50%; top:50%; width:140vmax; height:140vmax; margin:-70vmax 0 0 -70vmax; border-radius:50%; background:radial-gradient(circle,#fff8ec 0,#f7dfc6 35%,#e9b99a 62%,rgba(233,185,154,0) 72%); transform:scale(0); }
+  .wash{ position:absolute; inset:0; opacity:0; }
 
   /* ---------- fonctionnement ---------- */
   .steps{ display:grid; grid-template-columns:repeat(3,1fr); gap:0; margin-top:2.4rem; border-top:1px solid var(--trait); }
@@ -105,11 +138,13 @@
   .band h2{ font-size:clamp(1.8rem,4vw,2.6rem); } .band p{ color:var(--brume); margin:.5rem 0 0; max-width:32rem; }
   footer{ padding:2.4rem 0 max(2.4rem,env(safe-area-inset-bottom,0px)); color:var(--brume); font-size:.88rem; display:flex; justify-content:space-between; gap:1rem; flex-wrap:wrap; border-top:1px solid var(--trait); margin-top:3rem; }
 
-  @media (prefers-reduced-motion:reduce){ html{ scroll-behavior:auto; } .ring::after,.spark{ animation:none; } .curtain{ transition:none; } }
+  @media (prefers-reduced-motion:reduce){ html{ scroll-behavior:auto; } .ring::after,.spark{ animation:none; } .curtain{ transition:none; } .uni{ transition:none; } }
 </style>
 </head>
 <body>
 <div class="curtain l"></div><div class="curtain r"></div>
+<div class="fx" id="fx"></div>
+<div class="world" id="world" role="dialog" aria-modal="true" aria-label="Univers"></div>
 
 <!-- PORTE D'ENTRÉE -->
 <header class="gate" id="gate">
@@ -132,9 +167,17 @@
   <section id="modeles">
     <div class="valance"></div>
     <div class="wrap sec" style="padding-top:2.4rem">
-      <h2>La collection</h2>
-      <p class="lead">Quatre modèles, chacun avec sa vidéo d'ouverture, sa carte et sa musique. Touchez « Voir la démo » pour ouvrir l'invitation comme vos invités.</p>
-      <div class="hall" id="hall"></div>
+      <div class="uni-head">
+        <p class="eyebrow">La collection</p>
+        <h2>Choisissez votre univers</h2>
+        <p class="lead">Chaque occasion a son ambiance. Entrez dans un univers pour découvrir ses invitations, avec vidéo d'ouverture, carte et musique.</p>
+      </div>
+      <div class="car" id="uni-car">
+        <button class="arr p" type="button" aria-label="Univers précédent">‹</button>
+        <div class="uni-track" id="uni-track" tabindex="0" aria-label="Les univers"></div>
+        <button class="arr n" type="button" aria-label="Univers suivant">›</button>
+        <div class="dots" id="uni-dots"></div>
+      </div>
     </div>
   </section>
 
@@ -191,37 +234,149 @@
   var BRAND = 'Atelier Invitation';
   var CONTACT_URL = '';   // lien de contact ou de la boutique (Etsy, e-mail…) : bouton « Demander un devis »
   // ----------------------
-  var MODELS = [
-    { k:'jeux',   n:'Royal Chic',     occ:'Soirée entre amies', demo:'jeux/?i=jeux-demo' },
-    { k:'noel',   n:'Étoile de Noël', occ:'Fêtes de fin d’année', demo:'noel/?i=noel-demo' },
-    { k:'boheme', n:'Bohème doré',    occ:'Mariage, fiançailles', demo:'boheme/?i=boheme-demo' },
-    { k:'gender-reveal', n:'Gender Reveal', occ:'Annonce de bébé', demo:'gender-reveal/?i=gender-reveal-demo' }
+  var MODELS = {
+    galerie:{ n:'Galerie Bohème', occ:'Mariage, galerie de photos', demo:'galerie/?i=galerie-demo' },
+    boheme:{ n:'Bohème doré', occ:'Mariage, fiançailles', demo:'boheme/?i=boheme-demo' },
+    'gender-reveal':{ n:'Gender Reveal', occ:'Annonce de bébé', demo:'gender-reveal/?i=gender-reveal-demo' },
+    jeux:{ n:'Royal Chic', occ:'Soirée entre amies', demo:'jeux/?i=jeux-demo' },
+    noel:{ n:'Étoile de Noël', occ:'Fêtes de fin d’année', demo:'noel/?i=noel-demo' }
+  };
+  var UNIVERS = [
+    { id:'mariage', n:'Mariage', tag:'Doux et romantique', cover:'galerie', models:['galerie','boheme'], fx:'bloom', tint:'rgba(244,196,176,.24)',
+      intro:'Une entrée tout en douceur, des photos, des fleurs et de la lumière.' },
+    { id:'bebe', n:'Bébé', tag:'Mignon et pastel', cover:'gender-reveal', models:['gender-reveal'], fx:'bubbles', tint:'rgba(160,205,240,.24)',
+      intro:'Annonces, révélations et premiers anniversaires, en couleurs tendres.' },
+    { id:'anniversaire', n:'Anniversaire', tag:'Festif', cover:null, models:[], fx:'confetti', tint:'rgba(255,190,80,.22)', soon:true,
+      intro:'Des invitations qui font la fête, pour petits et grands.' },
+    { id:'fetes', n:'Réceptions et fêtes', tag:'Élégant et chaleureux', cover:'jeux', models:['jeux','noel'], fx:'curtain', tint:'rgba(231,213,168,.22)',
+      intro:'Soirées, repas et fêtes de fin d’année, dans un décor soigné.' }
   ];
   document.querySelectorAll('[data-brand]').forEach(function(e){ e.textContent = BRAND; });
   var cb = document.getElementById('contact-btn'); if(CONTACT_URL){ cb.href = CONTACT_URL; cb.target = '_blank'; cb.rel = 'noopener'; }
   document.title = BRAND + ' — invitations animées';
 
-  // ---- collection : une salle par modèle, la vidéo tourne quand elle est visible ----
-  var hall = document.getElementById('hall');
-  var io = 'IntersectionObserver' in window ? new IntersectionObserver(function(es){ es.forEach(function(e){ try{ if(e.isIntersecting) e.target.play().catch(function(){}); else e.target.pause(); }catch(_){} }); }, { threshold:.4 }) : null;
-  MODELS.forEach(function(m){
-    var f = document.createElement('article'); f.className = 'screen';
+  function mkVideo(k, label){
+    var v = document.createElement('video'); v.muted = true; v.loop = true; v.playsInline = true; v.setAttribute('playsinline',''); v.preload = 'metadata'; v.poster = 'mini/' + k + '.jpg';
+    v.setAttribute('aria-label', label);
+    ['mp4','webm'].forEach(function(x){ var s = document.createElement('source'); s.src = 'mini/' + k + '.' + x; s.type = 'video/' + x; v.appendChild(s); });
+    return v;
+  }
+  var io = 'IntersectionObserver' in window ? new IntersectionObserver(function(es){ es.forEach(function(e){ try{ if(e.isIntersecting) e.target.play().catch(function(){}); else e.target.pause(); }catch(_){} }); }, { threshold:.5 }) : null;
+  function watch(v){ if(io) io.observe(v); else v.autoplay = true; }
+
+  // ---- carrousel (défilement tactile + flèches + points) ----
+  function carousel(track, dotsEl, arrows, onActive){
+    var items = Array.prototype.slice.call(track.children), cur = 0, dots = [];
+    function mid(){ var r = track.getBoundingClientRect(), c = r.left + r.width / 2, best = 0, bd = 1e9; items.forEach(function(it, i){ var b = it.getBoundingClientRect(), d = Math.abs(b.left + b.width / 2 - c); if(d < bd){ bd = d; best = i; } }); return best; }
+    function mark(i){ cur = i; items.forEach(function(it, k){ it.classList.toggle('on', k === i); }); dots.forEach(function(d, k){ d.setAttribute('aria-current', k === i ? 'true' : 'false'); }); if(onActive) onActive(i); }
+    function go(i){ i = Math.max(0, Math.min(items.length - 1, i)); var it = items[i], r = track.getBoundingClientRect(), b = it.getBoundingClientRect(); track.scrollBy({ left: (b.left + b.width / 2) - (r.left + r.width / 2), behavior:'smooth' }); mark(i); }
+    items.forEach(function(it, i){ var d = document.createElement('button'); d.type = 'button'; d.setAttribute('aria-label', 'Aller à ' + (i + 1)); d.addEventListener('click', function(){ go(i); }); dotsEl.appendChild(d); dots.push(d); });
+    var t; track.addEventListener('scroll', function(){ clearTimeout(t); t = setTimeout(function(){ var m = mid(); if(m !== cur) mark(m); }, 60); }, { passive:true });
+    if(arrows){ arrows[0].addEventListener('click', function(){ go(cur - 1); }); arrows[1].addEventListener('click', function(){ go(cur + 1); }); }
+    track.addEventListener('keydown', function(e){ if(e.key === 'ArrowRight'){ e.preventDefault(); go(cur + 1); } if(e.key === 'ArrowLeft'){ e.preventDefault(); go(cur - 1); } });
+    items.forEach(function(it, i){ it.addEventListener('click', function(e){ if(i !== cur && !e.target.closest('button,a')){ go(i); } }); });
+    mark(0);
+    return { go:go, refresh:function(){ go(0); } };
+  }
+
+  // ---- les 4 univers ----
+  var track = document.getElementById('uni-track'), uCar = document.getElementById('uni-car');
+  UNIVERS.forEach(function(u){
+    var c = document.createElement('article'); c.className = 'uni'; c.style.setProperty('--tint', u.tint);
     var fr = document.createElement('div'); fr.className = 'frame';
-    var v = document.createElement('video'); v.muted = true; v.loop = true; v.playsInline = true; v.setAttribute('playsinline',''); v.preload = 'metadata'; v.poster = 'mini/' + m.k + '.jpg';
-    v.setAttribute('aria-label', 'Aperçu animé : ' + m.n);
-    ['mp4','webm'].forEach(function(x){ var s = document.createElement('source'); s.src = 'mini/' + m.k + '.' + x; s.type = 'video/' + x; v.appendChild(s); });
-    fr.appendChild(v); f.appendChild(fr);
-    var h = document.createElement('h3'); h.textContent = m.n; f.appendChild(h);
-    var o = document.createElement('p'); o.className = 'occ'; o.textContent = m.occ; f.appendChild(o);
-    var a = document.createElement('div'); a.className = 'acts';
-    var d = document.createElement('a'); d.className = 'btn'; d.href = m.demo; d.target = '_blank'; d.rel = 'noopener'; d.textContent = 'Voir la démo';
-    var c = document.createElement('a'); c.className = 'btn solid'; c.href = 'commande.html?t=' + encodeURIComponent(m.k); c.textContent = 'Personnaliser';
-    a.appendChild(d); a.appendChild(c); f.appendChild(a); hall.appendChild(f);
-    if(io) io.observe(v); else v.autoplay = true;
+    if(u.cover){ var v = mkVideo(u.cover, 'Aperçu animé : ' + u.n); fr.appendChild(v); watch(v); }
+    else { var ph = document.createElement('div'); ph.className = 'ph'; ph.textContent = 'Bientôt'; fr.appendChild(ph); }
+    c.appendChild(fr);
+    var h = document.createElement('h3'); h.textContent = u.n; c.appendChild(h);
+    var t = document.createElement('p'); t.className = 'tag'; t.textContent = u.tag; c.appendChild(t);
+    var n = document.createElement('div'); n.className = 'count'; n.textContent = u.soon ? 'Modèles en préparation' : (u.models.length + (u.models.length > 1 ? ' modèles' : ' modèle')); c.appendChild(n);
+    var b = document.createElement('button'); b.type = 'button'; b.className = 'btn solid'; b.textContent = 'Entrer dans l’univers';
+    b.addEventListener('click', function(){ openWorld(u, b); }); c.appendChild(b);
+    track.appendChild(c);
   });
+  carousel(track, document.getElementById('uni-dots'), [uCar.querySelector('.arr.p'), uCar.querySelector('.arr.n')]);
+
+  // ---- entrées : chaque univers a la sienne ----
+  var body = document.body, reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var fx = document.getElementById('fx'), world = document.getElementById('world'), lastBtn = null;
+  function run(kind, swap){
+    if(reduce){ swap(); return; }
+    fx.className = 'fx on'; fx.innerHTML = '';
+    var done = function(){ fx.className = 'fx'; fx.innerHTML = ''; };
+    var W = innerWidth, H = innerHeight;
+    if(kind === 'curtain'){ fx.className = 'fx'; body.classList.add('closed'); setTimeout(function(){ swap(); setTimeout(function(){ body.classList.remove('closed'); }, 140); }, 950); return; }
+    if(kind === 'bloom'){
+      var b = document.createElement('div'); b.className = 'bloom'; fx.appendChild(b);
+      var a = b.animate([{ transform:'scale(0)' }, { transform:'scale(1)' }], { duration:850, easing:'cubic-bezier(.5,0,.2,1)', fill:'forwards' });
+      a.onfinish = function(){ swap(); var o = fx.animate([{ opacity:1 }, { opacity:0 }], { duration:700, easing:'ease-out', fill:'forwards' }); o.onfinish = done; };
+      return;
+    }
+    if(kind === 'bubbles'){
+      var cols = ['#ffd9e6','#d6ecff','#fff4cc','#e3d9ff','#d9f5e6'], n = 34, last = null;
+      for(var i = 0; i < n; i++){ var d = document.createElement('i'), s = 90 + Math.random() * 220; d.style.cssText = 'left:' + (Math.random() * 100 - 8) + '%;width:' + s + 'px;height:' + s + 'px;border-radius:50%;bottom:' + (-s) + 'px;background:radial-gradient(circle at 32% 28%,#fff,' + cols[i % 5] + ' 60%);opacity:.96';
+        fx.appendChild(d); last = d.animate([{ transform:'translateY(0)' }, { transform:'translateY(' + -(H + s + 60) + 'px)' }], { duration:900 + Math.random() * 500, delay:Math.random() * 380, easing:'cubic-bezier(.3,.6,.4,1)', fill:'forwards' }); }
+      var w = document.createElement('div'); w.className = 'wash'; w.style.background = 'linear-gradient(180deg,#e3f1ff,#ffe3ee)'; fx.appendChild(w);
+      var wa = w.animate([{ opacity:0 }, { opacity:1 }], { duration:500, delay:850, fill:'forwards' });
+      wa.onfinish = function(){ swap(); var o = fx.animate([{ opacity:1 }, { opacity:0 }], { duration:700, fill:'forwards' }); o.onfinish = done; };
+      return;
+    }
+    if(kind === 'confetti'){
+      var cc = ['#ff5d73','#ffc43d','#3ec9a7','#5b8def','#b06bff','#fff'], cx = W / 2, cy = H * .66;
+      for(var j = 0; j < 90; j++){ var p = document.createElement('i'), ang = Math.random() * Math.PI * 2, dist = 140 + Math.random() * Math.max(W, H) * .8;
+        p.style.cssText = 'left:' + cx + 'px;top:' + cy + 'px;width:' + (6 + Math.random() * 8) + 'px;height:' + (10 + Math.random() * 10) + 'px;background:' + cc[j % 6] + ';border-radius:2px';
+        fx.appendChild(p); p.animate([{ transform:'translate(0,0) rotate(0)', opacity:1 }, { transform:'translate(' + Math.cos(ang) * dist + 'px,' + (Math.sin(ang) * dist - 120) + 'px) rotate(' + (Math.random() * 900) + 'deg)', opacity:1 }], { duration:900, easing:'cubic-bezier(.1,.7,.3,1)', fill:'forwards' }); }
+      var w2 = document.createElement('div'); w2.className = 'wash'; w2.style.background = '#1b1030'; fx.appendChild(w2);
+      var a2 = w2.animate([{ opacity:0 }, { opacity:1 }], { duration:350, delay:650, fill:'forwards' });
+      a2.onfinish = function(){ swap(); var o = fx.animate([{ opacity:1 }, { opacity:0 }], { duration:600, fill:'forwards' }); o.onfinish = done; };
+      return;
+    }
+    swap(); done();
+  }
+
+  function openWorld(u, btn){
+    if(u.soon){ showSoon(btn); return; }
+    lastBtn = btn;
+    run(u.fx, function(){
+      world.innerHTML = ''; world.style.setProperty('--tint', u.tint);
+      var top = document.createElement('div'); top.className = 'top';
+      var back = document.createElement('button'); back.type = 'button'; back.className = 'back'; back.textContent = '‹ Les univers'; back.addEventListener('click', closeWorld);
+      var br = document.createElement('div'); br.className = 'eyebrow'; br.style.margin = '0'; br.textContent = 'Univers ' + u.n;
+      top.appendChild(back); top.appendChild(br); world.appendChild(top);
+      var wrap = document.createElement('div'); wrap.className = 'wrap';
+      var intro = document.createElement('div'); intro.className = 'intro';
+      var h = document.createElement('h2'); h.textContent = u.n; var p = document.createElement('p'); p.textContent = u.intro; intro.appendChild(h); intro.appendChild(p); wrap.appendChild(intro);
+      var car = document.createElement('div'); car.className = 'car'; var tr = document.createElement('div'); tr.className = 'uni-track';
+      var dots = document.createElement('div'); dots.className = 'dots';
+      u.models.forEach(function(k){
+        var m = MODELS[k], f = document.createElement('article'); f.className = 'uni screen';
+        var fr = document.createElement('div'); fr.className = 'frame'; var v = mkVideo(k, 'Aperçu animé : ' + m.n); fr.appendChild(v); f.appendChild(fr); watch(v);
+        var t = document.createElement('h3'); t.textContent = m.n; f.appendChild(t);
+        var o = document.createElement('p'); o.className = 'tag'; o.textContent = m.occ; f.appendChild(o);
+        var a = document.createElement('div'); a.className = 'acts';
+        var d = document.createElement('a'); d.className = 'btn'; d.href = m.demo; d.target = '_blank'; d.rel = 'noopener'; d.textContent = 'Voir la démo';
+        var c = document.createElement('a'); c.className = 'btn solid'; c.href = 'commande.html?t=' + encodeURIComponent(k); c.textContent = 'Personnaliser';
+        a.appendChild(d); a.appendChild(c); f.appendChild(a); tr.appendChild(f);
+      });
+      car.appendChild(tr); car.appendChild(dots); wrap.appendChild(car);
+      if(u.models.length < 2) dots.style.display = 'none';
+      var more = document.createElement('p'); more.className = 'soon'; more.textContent = u.models.length < 2 ? 'D’autres modèles arrivent bientôt dans cet univers.' : '';
+      wrap.appendChild(more); world.appendChild(wrap);
+      carousel(tr, dots, null);
+      body.classList.add('inworld'); world.scrollTop = 0;
+    });
+  }
+  function closeWorld(){
+    var kind = reduce ? 'x' : 'fade';
+    var finish = function(){ body.classList.remove('inworld'); world.innerHTML = ''; if(lastBtn) try{ lastBtn.focus({ preventScroll:true }); }catch(_){} };
+    if(reduce){ finish(); return; }
+    var o = world.animate([{ opacity:1 }, { opacity:0 }], { duration:350, fill:'forwards' }); o.onfinish = function(){ finish(); world.getAnimations().forEach(function(a){ a.cancel(); }); };
+  }
+  document.addEventListener('keydown', function(e){ if(e.key === 'Escape' && body.classList.contains('inworld')) closeWorld(); });
+  function showSoon(btn){
+    var n = btn.parentNode.querySelector('.count'); n.textContent = 'Les modèles arrivent bientôt'; btn.disabled = true; btn.textContent = 'Bientôt disponible';
+  }
 
   // ---- entrée : le rideau se ferme, on arrive sur la collection, le rideau s'ouvre ----
-  var body = document.body, reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   function enter(){
     try{ sessionStorage.setItem('entered','1'); }catch(_){}
     if(reduce){ body.classList.add('in'); window.scrollTo(0,0); document.getElementById('modeles').scrollIntoView(); return; }

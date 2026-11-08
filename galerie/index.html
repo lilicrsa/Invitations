@@ -490,7 +490,7 @@
   function deriveCard(inv){
     const t = inv.card_text || {};
     let names = t.names;
-    if(names == null) names = String(inv.host_names || '').replace(/\s*&\s*/g,' et ');
+    if(names == null) names = String(inv.host_names || inv.title || '').replace(/\s*&\s*/g,' et ');
     return { names: names || '', msg1: t.message1 != null ? t.message1 : DEF_MSG1, msg2: t.message2 != null ? t.message2 : DEF_MSG2,
              photo: t.photo || '', pos: t.photo_pos || '' };
   }
