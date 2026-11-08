@@ -2,13 +2,14 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
+<link rel="icon" type="image/png" href="logo/favicon.png?v=1">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Maison Opaline — invitations animées</title>
 <meta name="description" content="Invitations animées pour mariages, fêtes et naissances : une vidéo d'ouverture, une carte, les réponses de vos invités. Aperçu avant achat.">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Maison Opaline — des invitations qui font naître l'émerveillement">
 <meta property="og:description" content="Touchez pour entrer et découvrez la collection.">
-<meta property="og:image" content="https://lilicrsa.github.io/Invitations/jeux/apercu.jpg">
+<meta property="og:image" content="https://lilicrsa.github.io/Invitations/logo/og.jpg?v=1">
 <meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -30,6 +31,7 @@
   /* ---------- porte d'entrée ---------- */
   .gate{ min-height:100dvh; display:flex; flex-direction:column; padding-block:max(1.4rem,env(safe-area-inset-top,0px)) max(1.4rem,env(safe-area-inset-bottom,0px));
     background:radial-gradient(ellipse 60% 45% at 50% 38%, rgba(231,213,168,.13), transparent 70%); position:relative; overflow:hidden; margin-inline:calc(-1 * max(16px,env(safe-area-inset-left,0px))); padding-inline:max(16px,env(safe-area-inset-left,0px)); }
+  .brandbox{ display:flex; align-items:center; gap:.6rem; } .brandbox .logo{ height:62px; width:auto; margin:-6px 0 -6px -6px; pointer-events:none; } .nav .brand{ display:inline-flex; align-items:center; gap:.5rem; } .nav .brand .logo{ height:32px; width:auto; pointer-events:none; }
   .brand-sub{ font:500 .62rem 'Manrope',sans-serif; letter-spacing:.32em; text-transform:uppercase; color:var(--champ2); opacity:.85; margin:.15rem 0 0 .1rem; }
   .gate .brand{ font:400 1.5rem 'Italiana',serif; letter-spacing:.16em; }
   .gate main{ flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:1.8rem; padding-block:2rem; }
@@ -177,7 +179,7 @@
 
 <!-- PORTE D'ENTRÉE -->
 <header class="gate" id="gate">
-  <div class="brandbox"><div class="brand" data-brand></div><div class="brand-sub">Invitations animées</div></div>
+  <div class="brandbox"><img class="logo" src="logo/emblem.png?v=1" alt="" width="84" height="62"><div><div class="brand" data-brand></div><div class="brand-sub">Invitations animées</div></div></div>
   <main>
     <div class="eyebrow" style="margin:0;font-size:.68rem;letter-spacing:.14em">Mariage · Bébé · Anniversaire · Fêtes</div>
     <h1>Faites-les vibrer avant même le grand jour.</h1>
@@ -190,7 +192,7 @@
 <!-- SITE -->
 <div class="site">
   <nav class="nav"><div class="wrap">
-    <button class="brand" id="home" type="button" data-brand aria-label="Retour à l'entrée"></button>
+    <button class="brand" id="home" type="button" aria-label="Retour à l'entrée"><img class="logo" src="logo/emblem.png?v=1" alt="" width="42" height="31"><span data-brand></span></button>
     <a class="l" href="#modeles">Modèles</a><a class="l" href="#fonctionnement">Fonctionnement</a><a class="l" href="#questions">Questions</a>
   </div></nav>
 
@@ -222,7 +224,7 @@
       <p class="eyebrow">Et ensuite</p>
       <h3 class="rt">Appréciez le résultat</h3>
       <p class="lead">Un simple lien, et vos proches entrent dans votre histoire : une vidéo, une musique, une carte qui s'ouvre pour eux. Puis leurs réponses reviennent, une à une, comme autant de sourires.</p>
-      <div class="vf frame tap"><video playsinline preload="none" poster="video/comment-ca-marche.jpg?v=5" aria-label="Vidéo : comment fonctionne l'invitation"><source src="video/comment-ca-marche.mp4?v=5" type="video/mp4"><source src="video/comment-ca-marche.webm?v=5" type="video/webm"></video></div>
+      <div class="vf frame tap"><video playsinline preload="none" poster="video/comment-ca-marche.jpg?v=6" aria-label="Vidéo : comment fonctionne l'invitation"><source src="video/comment-ca-marche.mp4?v=6" type="video/mp4"><source src="video/comment-ca-marche.webm?v=6" type="video/webm"></video></div>
       <p class="vcap">Touchez pour lancer, avec le son.</p>
     </div>
     <div class="incl">

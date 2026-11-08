@@ -2,6 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
+<link rel="icon" type="image/png" href="logo/favicon.png?v=1">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex">
 <title>Créer mon invitation animée</title>
@@ -14,7 +15,7 @@
   body{ margin:0; font-family:'Manrope',system-ui,sans-serif; color:var(--champ); background:radial-gradient(900px 500px at 50% -8%, rgba(231,213,168,.12), transparent 70%), var(--nuit); min-height:100dvh; line-height:1.55; }
   .wrap{ max-width:900px; margin:0 auto; padding:1rem max(16px,env(safe-area-inset-left,0px)) 4rem; }
   .top{ display:flex; justify-content:space-between; align-items:baseline; gap:1rem; flex-wrap:wrap; padding-bottom:.9rem; border-bottom:1px solid var(--trait); }
-  .top a{ text-decoration:none; } .top .brand{ font:400 1.35rem 'Italiana',serif; letter-spacing:.14em; } .top .back{ color:var(--brume); font-size:.9rem; }
+  .top a{ text-decoration:none; } .top .brand{ color:var(--champ); font:400 1.35rem 'Italiana',serif; letter-spacing:.14em; } .top .back{ color:var(--brume); font-size:.9rem; }
   header{ text-align:center; padding:1.8rem 0 .4rem; }
   header h1{ font:400 clamp(2.3rem,7.5vw,3.8rem)/1.08 'Italiana',serif; margin:0; letter-spacing:.02em; text-wrap:balance; }
   header p{ color:var(--brume); margin:.6rem auto 0; max-width:34rem; }
@@ -91,13 +92,13 @@
 </head>
 <body>
 <div class="wrap">
-  <div class="top"><a class="brand" href="index.html" id="brand">Maison Opaline</a><a class="back" href="index.html#modeles">Retour à la collection</a></div>
+  <div class="top"><a class="brand" href="index.html" id="brand"><img src="logo/emblem.png?v=1" alt="" style="height:34px;width:auto;vertical-align:middle;margin-right:.4rem;pointer-events:none">Maison Opaline</a><a class="back" href="index.html#modeles">Retour à la collection</a></div>
   <header>
     <h1>Créez votre invitation animée</h1>
     <p>Choisissez un modèle et voyez le rendu réel avant d'acheter : l'aperçu est généré ici, pour vous seul, et effacé au bout de 10 minutes.</p>
   </header>
   <details class="how" id="how"><summary>Voir comment ça marche (1 min)</summary>
-    <div class="vf frame tap"><video playsinline preload="none" poster="video/comment-ca-marche.jpg?v=5" aria-label="Vidéo : comment fonctionne l'invitation"><source src="video/comment-ca-marche.mp4?v=5" type="video/mp4"><source src="video/comment-ca-marche.webm?v=5" type="video/webm"></video></div>
+    <div class="vf frame tap"><video playsinline preload="none" poster="video/comment-ca-marche.jpg?v=6" aria-label="Vidéo : comment fonctionne l'invitation"><source src="video/comment-ca-marche.mp4?v=6" type="video/mp4"><source src="video/comment-ca-marche.webm?v=6" type="video/webm"></video></div>
   </details>
   <div class="steps" id="steps"><span data-s="1" class="on">1 · Modèle</span><span data-s="2">2 · Vos infos</span><span data-s="3">3 · Aperçu</span><span data-s="4">4 · Commander</span></div>
 
