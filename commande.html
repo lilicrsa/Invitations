@@ -246,8 +246,8 @@
   Object.keys(THEMES).forEach(k => {
     const t = THEMES[k], b = document.createElement('button'); b.type = 'button'; b.className = 'theme';
     const vid = document.createElement('video'); vid.muted = true; vid.loop = true; vid.playsInline = true; vid.setAttribute('playsinline', ''); vid.preload = 'metadata'; vid.setAttribute('controlsList','nodownload noremoteplayback'); vid.setAttribute('disablePictureInPicture',''); vid.disableRemotePlayback = true;
-    vid.poster = t.mini + '.jpg';
-    ['mp4','webm'].forEach(x => { const so = document.createElement('source'); so.src = t.mini + '.' + x; so.type = 'video/' + x; vid.appendChild(so); }); vid.setAttribute('aria-label', 'Aperçu animé : ' + t.name); b.appendChild(vid);
+    vid.poster = t.mini + '.jpg?v=2';
+    ['mp4','webm'].forEach(x => { const so = document.createElement('source'); so.src = t.mini + '.' + x + '?v=2'; so.type = 'video/' + x; vid.appendChild(so); }); vid.setAttribute('aria-label', 'Aperçu animé : ' + t.name); b.appendChild(vid);
     if(io){ io.observe(vid); } else { vid.autoplay = true; }
     const d = document.createElement('div'); d.className = 'b';
     d.innerHTML = '<b></b><small></small><span class="go">Choisir ce modèle →</span>';
@@ -256,7 +256,7 @@
   });
   function pick(k, keepValues){
     theme = k; const t = THEMES[k];
-    $('chosen-img').src = t.img; $('chosen-name').textContent = t.name;
+    $('chosen-img').src = t.img + '?v=2'; $('chosen-name').textContent = t.name;
     $('l-title').textContent = t.titleLabel; $('h-title').textContent = t.titleHint;
     if(!keepValues){ if(!$('f-title').value || Object.values(THEMES).some(x => x.title === $('f-title').value)) $('f-title').value = t.title; }
     go(2);

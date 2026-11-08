@@ -264,9 +264,9 @@
   document.title = BRAND + ' — invitations animées';
 
   function mkVideo(k, label){
-    var v = document.createElement('video'); v.muted = true; v.loop = true; v.playsInline = true; v.setAttribute('playsinline',''); v.preload = 'metadata'; v.setAttribute('controlsList','nodownload noremoteplayback'); v.setAttribute('disablePictureInPicture',''); v.disableRemotePlayback = true; v.poster = 'mini/' + k + '.jpg';
+    var v = document.createElement('video'); v.muted = true; v.loop = true; v.playsInline = true; v.setAttribute('playsinline',''); v.preload = 'metadata'; v.setAttribute('controlsList','nodownload noremoteplayback'); v.setAttribute('disablePictureInPicture',''); v.disableRemotePlayback = true; v.poster = 'mini/' + k + '.jpg?v=2';
     v.setAttribute('aria-label', label);
-    ['mp4','webm'].forEach(function(x){ var s = document.createElement('source'); s.src = 'mini/' + k + '.' + x; s.type = 'video/' + x; v.appendChild(s); });
+    ['mp4','webm'].forEach(function(x){ var s = document.createElement('source'); s.src = 'mini/' + k + '.' + x + '?v=2'; s.type = 'video/' + x; v.appendChild(s); });
     return v;
   }
   var io = 'IntersectionObserver' in window ? new IntersectionObserver(function(es){ es.forEach(function(e){ try{ if(e.isIntersecting) e.target.play().catch(function(){}); else e.target.pause(); }catch(_){} }); }, { threshold:.5 }) : null;
@@ -293,7 +293,7 @@
     var c = document.createElement('article'); c.className = 'uni'; c.style.setProperty('--tint', u.tint);
     var fr = document.createElement('div'); fr.className = 'frame';
     if(u.cover){ var v = mkVideo(u.cover, 'Aperçu animé : ' + u.n); fr.appendChild(v); watch(v); }
-    else { var im = document.createElement('img'); im.className = 'ph'; im.src = 'univers/' + u.id + '.jpg'; im.alt = u.n; fr.appendChild(im); }
+    else { var im = document.createElement('img'); im.className = 'ph'; im.src = 'univers/' + u.id + '.jpg?v=2'; im.alt = u.n; fr.appendChild(im); }
     c.appendChild(fr);
     var h = document.createElement('h3'); h.textContent = u.n; c.appendChild(h);
     var t = document.createElement('p'); t.className = 'tag'; t.textContent = u.tag; c.appendChild(t);
