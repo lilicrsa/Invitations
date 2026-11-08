@@ -93,14 +93,17 @@
   .screen h3{ font-size:1.7rem; margin-top:1.1rem; } .screen .occ{ color:var(--brume); font-size:.9rem; margin:.15rem 0 .9rem; }
   .screen .acts{ display:flex; gap:.5rem; flex-wrap:wrap; justify-content:center; } .screen .acts .btn{ padding:.55rem 1rem; font-size:.85rem; }
   .world .car .uni-track{ --cw:min(72vw,280px); }
+  .soon.big{ font:400 clamp(1.8rem,6vw,2.6rem) 'Italiana',serif; color:var(--champ); margin:5rem auto; }
   .soon{ text-align:center; color:var(--brume); max-width:26rem; margin:3rem auto; }
 
   /* ---------- entrée : portail en arche ---------- */
   .fx{ position:fixed; inset:0; z-index:120; pointer-events:none; overflow:hidden; display:none; }
   .fx.on{ display:block; }
-  .fx .veil{ position:absolute; inset:0; background:radial-gradient(ellipse at 50% 55%,rgba(18,24,49,.88),rgba(6,8,18,.97)); opacity:0; }
+  .fx .veil{ position:absolute; inset:0; background:radial-gradient(ellipse at 50% 55%,rgba(18,24,49,.6),rgba(6,8,18,.82)); opacity:0; }
   .fx svg{ position:absolute; left:50%; top:50%; width:min(62vw,300px); height:auto; margin:-30vh 0 0 calc(min(62vw,300px) / -2); overflow:visible; filter:drop-shadow(0 0 10px rgba(231,213,168,.75)); }
   .fx .wash{ position:absolute; left:50%; top:50%; width:170vmax; height:170vmax; margin:-85vmax 0 0 -85vmax; border-radius:50%; opacity:1; transform:scale(0); }
+  .fx b{ position:absolute; display:block; font-weight:400; }
+  .fx .soft{ position:absolute; inset:0; opacity:0; }
   .fx i{ position:absolute; display:block; width:4px; height:4px; border-radius:50%; background:#f6e7bd; box-shadow:0 0 8px 2px rgba(246,231,189,.8); opacity:0; }
 
   /* ---------- fonctionnement ---------- */
@@ -236,13 +239,13 @@
     noel:{ n:'Étoile de Noël', occ:'Fêtes de fin d’année', demo:'noel/?i=noel-demo' }
   };
   var UNIVERS = [
-    { id:'mariage', n:'Mariage', tag:'Doux et romantique', cover:'galerie', models:['galerie','boheme'], wash:'#f7dccb', tint:'rgba(244,196,176,.24)',
+    { id:'mariage', n:'Mariage', tag:'Doux et romantique', cover:'galerie', models:['galerie','boheme'], fx:'bloom', wash:'#f7dccb', tint:'rgba(244,196,176,.24)',
       intro:'Une entrée tout en douceur, des photos, des fleurs et de la lumière.' },
-    { id:'bebe', n:'Bébé', tag:'Mignon et pastel', cover:'gender-reveal', models:['gender-reveal'], wash:'#d9e9f8', tint:'rgba(160,205,240,.24)',
+    { id:'bebe', n:'Bébé', tag:'Mignon et pastel', cover:'gender-reveal', models:['gender-reveal'], fx:'bubbles', wash:'#d9e9f8', tint:'rgba(160,205,240,.24)',
       intro:'Annonces, révélations et premiers anniversaires, en couleurs tendres.' },
-    { id:'anniversaire', n:'Anniversaire', tag:'Festif', cover:null, models:[], wash:'#fbe3a8', tint:'rgba(255,190,80,.22)', soon:true,
+    { id:'anniversaire', n:'Anniversaire', tag:'Festif', cover:null, models:[], fx:'confetti', wash:'#fbe3a8', tint:'rgba(255,190,80,.22)', soon:true,
       intro:'Des invitations qui font la fête, pour petits et grands.' },
-    { id:'fetes', n:'Réceptions et fêtes', tag:'Élégant et chaleureux', cover:'jeux', models:['jeux','noel'], wash:'#efe1b8', tint:'rgba(231,213,168,.22)',
+    { id:'fetes', n:'Réceptions et fêtes', tag:'Élégant et chaleureux', cover:'jeux', models:['jeux','noel'], fx:'portal', wash:'#efe1b8', tint:'rgba(231,213,168,.22)',
       intro:'Soirées, repas et fêtes de fin d’année, dans un décor soigné.' }
   ];
   document.querySelectorAll('[data-brand]').forEach(function(e){ e.textContent = BRAND; });
@@ -322,10 +325,50 @@
     };
   }
 
+  // ---- une entrée douce par univers ----
+  function endFx(swap){
+    swap();
+    var o = fx.animate([{ opacity:1 }, { opacity:0 }], { duration:1000, easing:'ease-out', fill:'forwards' });
+    o.onfinish = function(){ fx.className = 'fx'; fx.innerHTML = ''; fx.getAnimations().forEach(function(x){ x.cancel(); }); };
+  }
+  function enterFx(u, swap){
+    if(reduce || !fx.animate){ swap(); return; }
+    var W = innerWidth, H = innerHeight, kind = u.fx;
+    if(kind === 'portal'){ portal(u.wash, swap); return; }
+    fx.className = 'fx on'; fx.innerHTML = '';
+    if(kind === 'bloom'){
+      var b = document.createElement('div'); b.className = 'wash'; b.style.background = 'radial-gradient(circle,#fff8ec 0,#f7dccb 30%,rgba(247,220,203,0) 62%)'; fx.appendChild(b);
+      var a = b.animate([{ transform:'scale(0)', opacity:.0 }, { opacity:1, offset:.25 }, { transform:'scale(1)', opacity:1 }], { duration:1500, easing:'cubic-bezier(.45,0,.25,1)', fill:'forwards' });
+      a.onfinish = function(){ endFx(swap); };
+      return;
+    }
+    if(kind === 'bubbles'){
+      var cols = ['#ffd9e6','#d6ecff','#fff4cc','#e3d9ff','#d9f5e6'], last = null;
+      for(var i = 0; i < 20; i++){ var d = document.createElement('b'), sz = 60 + Math.random() * 130;
+        d.style.cssText = 'left:' + (Math.random() * 100 - 6) + '%;width:' + sz + 'px;height:' + sz + 'px;border-radius:50%;bottom:' + (-sz) + 'px;background:radial-gradient(circle at 32% 28%,rgba(255,255,255,.95),' + cols[i % 5] + ' 62%);opacity:.8';
+        fx.appendChild(d); last = d.animate([{ transform:'translate(0,0)' }, { transform:'translate(' + (Math.random() * 40 - 20) + 'px,' + -(H + sz + 80) + 'px)' }], { duration:1700 + Math.random() * 900, delay:Math.random() * 500, easing:'cubic-bezier(.35,.5,.35,1)', fill:'forwards' }); }
+      var w = document.createElement('div'); w.className = 'soft'; w.style.background = 'linear-gradient(180deg,#e8f3ff,#ffe9f1)'; fx.appendChild(w);
+      var wa = w.animate([{ opacity:0 }, { opacity:.92 }], { duration:800, delay:1250, easing:'ease-in-out', fill:'forwards' });
+      wa.onfinish = function(){ endFx(swap); };
+      return;
+    }
+    if(kind === 'confetti'){
+      var cc = ['#ff7a8c','#ffcf5a','#58d3b2','#7aa2f0','#be8bff','#ffffff'], cx = W / 2, cy = H * .7;
+      for(var j = 0; j < 50; j++){ var p = document.createElement('b'), ang = -Math.PI / 2 + (Math.random() - .5) * 2.4, dist = 120 + Math.random() * Math.min(W, H) * .8;
+        p.style.cssText = 'left:' + cx + 'px;top:' + cy + 'px;width:' + (5 + Math.random() * 6) + 'px;height:' + (8 + Math.random() * 8) + 'px;background:' + cc[j % 6] + ';border-radius:2px';
+        var ex = Math.cos(ang) * dist, ey = Math.sin(ang) * dist; fx.appendChild(p);
+        p.animate([{ transform:'translate(0,0) rotate(0)', opacity:0 }, { opacity:1, offset:.12 }, { transform:'translate(' + ex + 'px,' + ey + 'px) rotate(' + (Math.random() * 540) + 'deg)', opacity:1, offset:.6 }, { transform:'translate(' + (ex * 1.1) + 'px,' + (ey + 220) + 'px) rotate(' + (Math.random() * 900) + 'deg)', opacity:0 }], { duration:1900, delay:Math.random() * 200, easing:'cubic-bezier(.2,.6,.3,1)', fill:'forwards' }); }
+      var w2 = document.createElement('div'); w2.className = 'soft'; w2.style.background = 'radial-gradient(ellipse at 50% 70%,#2a2150,#14152e)'; fx.appendChild(w2);
+      var a2 = w2.animate([{ opacity:0 }, { opacity:.9 }], { duration:700, delay:700, easing:'ease-in-out', fill:'forwards' });
+      a2.onfinish = function(){ endFx(swap); };
+      return;
+    }
+    swap(); fx.className = 'fx';
+  }
+
   function openWorld(u, btn){
-    if(u.soon){ showSoon(btn); return; }
     lastBtn = btn;
-    portal(u.wash, function(){
+    enterFx(u, function(){
       world.innerHTML = ''; world.style.setProperty('--tint', u.tint);
       var top = document.createElement('div'); top.className = 'top';
       var back = document.createElement('button'); back.type = 'button'; back.className = 'back'; back.textContent = '‹ Les univers'; back.addEventListener('click', closeWorld);
@@ -348,7 +391,8 @@
       });
       car.appendChild(tr); car.appendChild(dots); wrap.appendChild(car);
       if(u.models.length < 2) dots.style.display = 'none';
-      var more = document.createElement('p'); more.className = 'soon'; more.textContent = u.models.length < 2 ? 'D’autres modèles arrivent bientôt dans cet univers.' : '';
+      var more = document.createElement('p'); more.className = 'soon'; more.textContent = u.soon ? '' : (u.models.length < 2 ? 'D’autres modèles arrivent bientôt dans cet univers.' : '');
+      if(u.soon){ car.style.display = 'none'; more.className = 'soon big'; more.textContent = 'Bientôt disponible'; }
       wrap.appendChild(more); world.appendChild(wrap);
       carousel(tr, dots, null);
       body.classList.add('inworld'); world.scrollTop = 0;
