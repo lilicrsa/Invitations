@@ -321,6 +321,15 @@
   const SUPABASE_KEY = 'sb_publishable_YdlXEbQn9ZqILsjT6pyAug_ijgzm5fQ';
   const slug = new URLSearchParams(location.search).get('i') || 'galerie-demo';
   const PREVIEW = new URLSearchParams(location.search).get('preview');
+  const LIVE = new URLSearchParams(location.search).get('live');
+  function waitLive(){ return new Promise(function(res){
+    window.addEventListener('message', async function h(e){
+      if(e.origin !== location.origin || !e.data || e.data.type !== 'live') return;
+      window.removeEventListener('message', h); const inv = e.data.inv;
+      if(!(inv.music_tracks && inv.music_tracks.url)){ try{ const r = await fetch(SUPABASE_URL + '/rest/v1/invitations?slug=eq.' + encodeURIComponent(slug) + '&select=music_tracks(url,title)', { headers:{ apikey:SUPABASE_KEY } }); const j = await r.json(); if(j[0]) inv.music_tracks = j[0].music_tracks; }catch(_){} }
+      res(inv); });
+    try{ parent.postMessage({ type:'live-ready' }, location.origin); }catch(_){}
+  }); }
   if(PREVIEW){ const _g = document.createElement('script'); _g.src = '../preview-guard.js';
     _g.onerror = function(){ document.body.textContent = 'Aperçu indisponible pour le moment.'; }; document.head.appendChild(_g); }
 
@@ -559,7 +568,8 @@
     const box = document.getElementById('info-card');
     try{
       let data;
-      if(PREVIEW){
+      if(LIVE){ const one = await waitLive(); data = one ? [one] : []; }
+      else if(PREVIEW){
         const res = await fetch(SUPABASE_URL + '/rest/v1/rpc/get_preview', { method:'POST', headers:{ apikey:SUPABASE_KEY, 'Content-Type':'application/json' }, body: JSON.stringify({ p_code: PREVIEW }) });
         if(!res.ok) throw new Error('HTTP '+res.status);
         const one = await res.json(); data = one ? [one] : [];

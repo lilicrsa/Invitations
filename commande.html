@@ -43,6 +43,15 @@
   input::placeholder,textarea::placeholder{ color:#6f769a; }
   textarea{ min-height:96px; resize:vertical; }
   input:focus,textarea:focus{ outline:none; border-color:var(--champ); box-shadow:0 0 0 3px rgba(231,213,168,.18); }
+  .modes{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:0 0 .6rem; }
+  .modes button{ font:inherit; color:var(--champ); text-align:left; background:#0d1228; border:1px solid var(--trait); border-radius:14px; padding:.8rem .9rem; cursor:pointer; }
+  .modes button.on{ border-color:var(--champ); background:rgba(231,213,168,.09); }
+  .modes b{ font:400 1.2rem 'Italiana',serif; display:block; } .modes small{ color:var(--brume); display:block; line-height:1.35; margin-top:.2rem; }
+  @media (max-width:560px){ .modes{ grid-template-columns:1fr; } }
+  input[type=file]{ width:100%; font:inherit; color:var(--brume); }
+  .timer{ font-weight:700; color:var(--champ); }
+  .expired{ display:none; text-align:center; padding:2rem 1rem; }
+  .demos{ display:grid; gap:.6rem; margin-top:1.2rem; }
   .hint{ font-size:.82rem; color:var(--brume); margin:.3rem 0 0; }
   .err{ color:var(--err); font-size:.88rem; margin:.4rem 0 0; }
   .switch{ display:flex; align-items:center; gap:.6rem; margin-top:1.1rem; font-size:1rem; text-transform:none; letter-spacing:0; font-weight:500; color:var(--champ); }
@@ -73,7 +82,7 @@
   <div class="top"><a class="brand" href="index.html" id="brand">Atelier Invitation</a><a class="back" href="index.html#modeles">Retour à la collection</a></div>
   <header>
     <h1>Créez votre invitation animée</h1>
-    <p>Choisissez un modèle, remplissez vos informations et voyez le rendu réel avant d'acheter.</p>
+    <p>Choisissez un modèle et voyez le rendu réel avant d'acheter : l'aperçu est généré ici, pour vous seul, et effacé au bout de 10 minutes.</p>
   </header>
   <div class="steps" id="steps"><span data-s="1" class="on">1 · Modèle</span><span data-s="2">2 · Vos infos</span><span data-s="3">3 · Aperçu</span><span data-s="4">4 · Commander</span></div>
 
@@ -88,37 +97,44 @@
     <h2>Vos informations</h2>
     <div class="card">
       <div class="chosen"><img id="chosen-img" alt=""><div><b id="chosen-name" style="font-family:'Italiana',serif;font-size:1.4rem;font-weight:400"></b><br><a id="change-theme">Changer de modèle</a></div></div>
+      <div class="modes" id="modes">
+        <button type="button" data-m="express" class="on"><b>Aperçu express</b><small>Vos noms, la date et votre message. Le reste est fictif, pour voir vite.</small></button>
+        <button type="button" data-m="full"><b>Aperçu complet</b><small>Toutes vos informations, comme l'invitation finale.</small></button>
+      </div>
       <form id="form" novalidate>
         <label for="f-title" id="l-title">Titre</label>
         <input type="text" id="f-title" maxlength="120">
         <p class="hint" id="h-title"></p>
-        <label for="f-host">Organisateur(s) <i>(facultatif)</i></label>
-        <input type="text" id="f-host" maxlength="120" placeholder="Ex. Famille Martin">
         <div class="grid2">
           <div><label for="f-date">Date de l'événement</label><input type="date" id="f-date"></div>
-          <div><label for="f-time">Heure</label><input type="time" id="f-time"></div>
-        </div>
-        <label for="f-venue">Nom du lieu</label>
-        <input type="text" id="f-venue" maxlength="60" placeholder="Ex. Salle des Fêtes">
-        <p class="hint">Ce nom s'affiche sur la carte : restez court.</p>
-        <label for="f-address">Adresse complète <i>(pour les boutons d'itinéraire)</i></label>
-        <input type="text" id="f-address" maxlength="240" placeholder="Ex. 12 rue des Lilas, 75000 Paris">
-        <div class="grid2">
-          <div><label for="f-cname">Contact <i>(prénom)</i></label><input type="text" id="f-cname" maxlength="80"></div>
-          <div><label for="f-cphone">Téléphone du contact</label><input type="tel" id="f-cphone" maxlength="30"></div>
+          <div><label for="f-time">Heure <i>(facultatif)</i></label><input type="time" id="f-time"></div>
         </div>
         <label for="f-msg">Message pour vos invités <i>(facultatif)</i></label>
         <textarea id="f-msg" maxlength="600"></textarea>
-        <label for="f-dress">Dress code <i>(facultatif)</i></label>
-        <input type="text" id="f-dress" maxlength="160" placeholder="Ex. Tenue élégante">
-        <label>Programme <i>(facultatif, 8 étapes maximum — l'heure est facultative)</i></label>
-        <div id="prog"></div>
-        <button type="button" class="btn ghost" id="add-prog" style="padding:.55rem 1.1rem">+ Ajouter une étape</button>
-        <label class="switch"><input type="checkbox" id="f-rsvp" checked> Permettre aux invités de répondre (présence, nombre de personnes)</label>
-        <label for="f-email">Votre e-mail <i>(pour retrouver votre aperçu)</i></label>
-        <input type="email" id="f-email" maxlength="160" placeholder="vous@exemple.fr" autocomplete="email">
+        <label for="f-music">Votre musique <i>(facultatif, fichier audio de 15 Mo maximum)</i></label>
+        <input type="file" id="f-music" accept="audio/*">
+        <p class="hint">Elle reste sur votre appareil et n'est utilisée que pour cet aperçu.</p>
+        <div id="full-fields" style="display:none">
+          <label for="f-host">Organisateur(s) <i>(facultatif)</i></label>
+          <input type="text" id="f-host" maxlength="120" placeholder="Ex. Famille Martin">
+          <label for="f-venue">Nom du lieu</label>
+          <input type="text" id="f-venue" maxlength="60" placeholder="Ex. Salle des Fêtes">
+          <p class="hint">Ce nom s'affiche sur la carte : restez court.</p>
+          <label for="f-address">Adresse complète <i>(pour les boutons d'itinéraire)</i></label>
+          <input type="text" id="f-address" maxlength="240" placeholder="Ex. 12 rue des Lilas, 75000 Paris">
+          <div class="grid2">
+            <div><label for="f-cname">Contact <i>(prénom)</i></label><input type="text" id="f-cname" maxlength="80"></div>
+            <div><label for="f-cphone">Téléphone du contact</label><input type="tel" id="f-cphone" maxlength="30"></div>
+          </div>
+          <label for="f-dress">Dress code <i>(facultatif)</i></label>
+          <input type="text" id="f-dress" maxlength="160" placeholder="Ex. Tenue élégante">
+          <label>Programme <i>(facultatif, 8 étapes maximum — l'heure est facultative)</i></label>
+          <div id="prog"></div>
+          <button type="button" class="btn ghost" id="add-prog" style="padding:.55rem 1.1rem">+ Ajouter une étape</button>
+          <label class="switch"><input type="checkbox" id="f-rsvp" checked> Permettre aux invités de répondre (présence, nombre de personnes)</label>
+        </div>
         <div class="err" id="form-err" role="alert"></div>
-        <div class="row"><button type="submit" class="btn" id="go-preview">Voir mon aperçu</button><button type="button" class="btn ghost" id="back1">Retour</button></div>
+        <div class="row"><button type="submit" class="btn" id="go-preview">Générer mon aperçu</button><button type="button" class="btn ghost" id="back1">Retour</button></div>
       </form>
     </div>
   </section>
@@ -126,14 +142,21 @@
   <!-- 3 : aperçu -->
   <section class="panel" id="p3">
     <h2>Votre aperçu</h2>
-    <div class="stage">
+    <div class="stage" id="stage">
       <div class="phone"><iframe id="frame" title="Aperçu de votre invitation" allow="autoplay; fullscreen"></iframe></div>
       <div class="side">
-        <p class="note"><b>Touchez l'invitation pour l'ouvrir</b>, comme vos invités. C'est un aperçu protégé : filigrane, et l'écran se masque quand vous quittez la page ou tentez une capture. Il reste disponible 14 jours.</p>
+        <p class="note"><b>Touchez l'invitation pour l'ouvrir</b>, comme vos invités. Cet aperçu est généré ici, rien n'est envoyé par lien ni enregistré. Il disparaît dans <span class="timer" id="timer">10:00</span> et vos données sont alors effacées.</p>
         <p class="note">Les réponses saisies dans l'aperçu ne sont pas enregistrées.</p>
         <div class="row" style="margin-top:.4rem"><button class="btn gold" id="validate">Je valide, commander</button><button class="btn ghost" id="edit">Modifier mes infos</button></div>
+        <h3 style="font:400 1.4rem 'Italiana',serif;margin:1.8rem 0 .2rem">Découvrez nos deux prestations</h3>
+        <p class="hint" style="margin-top:0">Deux démos complètes, pour voir la différence.</p>
+        <div class="demos">
+          <a class="btn ghost" id="demo-std" target="_blank" rel="noopener">Essentiel et Signature : voir la démo</a>
+          <a class="btn ghost" id="demo-pre" href="galerie/?i=galerie-demo" target="_blank" rel="noopener">Prestige, galerie souvenir : voir la démo</a>
+        </div>
       </div>
     </div>
+    <div class="expired" id="expired"><h2>Aperçu expiré</h2><p>Pour votre confidentialité, l'aperçu et vos données ont été effacés au bout de 10 minutes.</p><div class="row" style="justify-content:center"><button class="btn" id="again">Créer un nouvel aperçu</button></div></div>
   </section>
 
   <!-- 4 : commande -->
@@ -141,6 +164,14 @@
     <h2>Dernière étape : la commande</h2>
     <div class="card">
       <div id="order-a">
+        <div id="email-step">
+          <p style="margin-top:0">Votre invitation vous plaît ? Indiquez votre e-mail pour recevoir votre code de commande. C'est à cette étape seulement que vos informations sont enregistrées.</p>
+          <label for="f-email">Votre e-mail</label>
+          <input type="email" id="f-email" maxlength="160" placeholder="vous@exemple.fr" autocomplete="email">
+          <div class="err" id="email-err" role="alert"></div>
+          <div class="row"><button class="btn" id="make-code">Obtenir mon code de commande</button><button class="btn ghost" id="edit3">Modifier mes infos</button></div>
+        </div>
+        <div id="code-area" style="display:none">
         <p style="margin-top:0">Votre invitation est prête. Voici votre <b>code de commande</b> à nous communiquer lors de l'achat :</p>
         <div class="code" id="code-box">—</div> <button class="btn ghost" id="copy" style="padding:.5rem 1rem">Copier</button>
         <ol class="how">
@@ -157,6 +188,7 @@
         <input type="email" id="o-mail" maxlength="160">
         <div class="err" id="order-err" role="alert"></div>
         <div class="row"><button class="btn" id="send-order">Envoyer mon numéro de commande</button></div>
+        </div>
       </div>
       <div id="order-b" style="display:none">
         <p class="ok" style="font-size:1.2rem">Merci, c'est bien reçu ✨</p>
@@ -164,7 +196,7 @@
       </div>
     </div>
   </section>
-  <footer>Aperçu valable 14 jours · Aucune donnée n'est utilisée sans votre accord</footer>
+  <footer>Aperçu effacé après 10 minutes · Aucune donnée n'est enregistrée sans votre accord</footer>
 </div>
 
 <script>
@@ -259,29 +291,86 @@
     prog.textContent = ''; (d.programme || []).forEach(addRow);
   }
 
-  $('form').addEventListener('submit', async e => {
+  // ---- aperçu généré sur place : rien n'est enregistré, tout est effacé après 10 minutes
+  let mode = 'express', liveInv = null, blobUrl = null, tEnd = 0, tick = null;
+  function setMode(m){ mode = m; document.querySelectorAll('#modes button').forEach(b => b.classList.toggle('on', b.dataset.m === m)); $('full-fields').style.display = m === 'full' ? '' : 'none'; if(m === 'full' && !prog.children.length) addRow(); }
+  document.querySelectorAll('#modes button').forEach(b => b.addEventListener('click', () => setMode(b.dataset.m)));
+  $('f-music').addEventListener('change', () => {
+    const f = $('f-music').files[0]; const err = $('form-err'); err.textContent = '';
+    if(blobUrl){ URL.revokeObjectURL(blobUrl); blobUrl = null; }
+    if(!f) return;
+    if(!/^audio\//.test(f.type)){ err.textContent = 'Merci de choisir un fichier audio.'; $('f-music').value = ''; return; }
+    if(f.size > 15 * 1024 * 1024){ err.textContent = 'Ce fichier dépasse 15 Mo.'; $('f-music').value = ''; return; }
+    blobUrl = URL.createObjectURL(f);
+  });
+  const FICT = { venue_name:'Domaine des Lilas', address:'12 rue des Lilas, 75000 Paris', event_time:'16h00', contact_name:'Camille', contact_phone:'06 00 00 00 00', dress_code:'Tenue élégante',
+    programme:[{ time:'16h00', title:'Accueil des invités', description:'' }, { time:'17h00', title:'Cérémonie', description:'' }, { time:'19h00', title:'Dîner', description:'' }, { time:'21h00', title:'Soirée dansante', description:'' }] };
+  function buildInv(d){
+    if(mode === 'express'){
+      d.venue_name = FICT.venue_name; d.address = FICT.address; d.maps_url = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(FICT.venue_name + ' ' + FICT.address);
+      d.event_time = d.event_time || FICT.event_time; d.contact_name = FICT.contact_name; d.contact_phone = FICT.contact_phone; d.dress_code = FICT.dress_code; d.programme = FICT.programme; d.rsvp_enabled = true;
+    }
+    return { id:'apercu', slug:'apercu', is_demo:true, theme:theme, card_text: (theme === 'galerie' && d.message) ? { message2:d.message } : {},
+      title:d.title, host_names:d.host_names || null, event_date:d.event_date, event_time:d.event_time || null, venue_name:d.venue_name || null, address:d.address || null, maps_url:d.maps_url || null,
+      contact_name:d.contact_name || null, contact_phone:d.contact_phone || null, message:d.message || null, dress_code:d.dress_code || null, rsvp_enabled:d.rsvp_enabled !== false,
+      invitation_programme:(d.programme || []).map((x, i) => ({ position:i + 1, time:x.time || null, title:x.title, description:x.description || null })),
+      music_tracks: blobUrl ? { url:blobUrl, title:'Votre musique' } : null };
+  }
+  function startTimer(){
+    clearInterval(tick); tEnd = Date.now() + 10 * 60 * 1000;
+    const upd = () => { const r = Math.max(0, Math.round((tEnd - Date.now()) / 1000)); $('timer').textContent = String(Math.floor(r / 60)).padStart(2, '0') + ':' + String(r % 60).padStart(2, '0'); if(r <= 0) expire(); };
+    upd(); tick = setInterval(upd, 1000);
+  }
+  function expire(){
+    clearInterval(tick); tick = null; liveInv = null;
+    $('frame').src = 'about:blank';
+    if(blobUrl){ URL.revokeObjectURL(blobUrl); blobUrl = null; }
+    $('form').reset(); prog.textContent = ''; setMode('express'); $('f-email').value = '';
+    $('stage').style.display = 'none'; $('expired').style.display = 'block'; go(3);
+  }
+  $('again').addEventListener('click', () => { $('expired').style.display = 'none'; $('stage').style.display = ''; go(1); });
+  window.addEventListener('message', e => {
+    if(e.origin !== location.origin || !e.data || e.data.type !== 'live-ready' || !liveInv) return;
+    if(e.source !== $('frame').contentWindow) return;
+    e.source.postMessage({ type:'live', inv:liveInv }, location.origin);
+  });
+
+  $('form').addEventListener('submit', e => {
     e.preventDefault(); const err = $('form-err'); err.textContent = '';
-    const d = collect(), email = $('f-email').value.trim();
+    const d = collect();
     if(!d.title) return err.textContent = 'Merci d’indiquer le titre.';
     if(!d.event_date) return err.textContent = 'Merci d’indiquer la date de l’événement.';
-    if(!d.venue_name) return err.textContent = 'Merci d’indiquer le nom du lieu.';
+    if(mode === 'full' && !d.venue_name) return err.textContent = 'Merci d’indiquer le nom du lieu.';
+    liveInv = buildInv(d); showPreview();
+  });
+
+  const STD_DEMO = { boheme:'boheme/?i=boheme-demo', noel:'noel/?i=noel-demo', jeux:'jeux/?i=jeux-demo', 'gender-reveal':'gender-reveal/?i=gender-reveal-demo', galerie:'boheme/?i=boheme-demo' };
+  function showPreview(){
+    $('expired').style.display = 'none'; $('stage').style.display = ''; go(3); startTimer();
+    $('demo-std').href = STD_DEMO[theme] || 'boheme/?i=boheme-demo';
+    $('frame').src = theme + '/?preview=' + Math.random().toString(36).slice(2, 8).toUpperCase() + '&live=1';
+  }
+  $('edit').addEventListener('click', () => go(2)); $('edit2').addEventListener('click', () => go(2)); $('edit3').addEventListener('click', () => go(2));
+
+  // ---- 4 : commande
+  $('validate').addEventListener('click', () => {
+    if(mode === 'express'){ setMode('full'); go(2); $('form-err').textContent = 'Complétez vos informations (lieu, adresse, programme…) pour commander.'; return; }
+    go(4);
+  });
+  $('make-code').addEventListener('click', async () => {
+    const err = $('email-err'); err.textContent = ''; const email = $('f-email').value.trim(), d = collect();
     if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return err.textContent = 'Merci d’indiquer un e-mail valide.';
-    const btn = $('go-preview'); btn.disabled = true; btn.textContent = 'Préparation…';
+    const btn = $('make-code'); btn.disabled = true;
     try{
       let ok = false;
       if(code) ok = await rpc('update_draft', { p_code:code, p_theme:theme, p_data:d, p_email:email });
       if(!ok){ code = await rpc('create_draft', { p_theme:theme, p_data:d, p_email:email }); }
       try{ localStorage.setItem('draftCode', code); }catch(_){}
-      showPreview();
-    }catch(x){ err.textContent = 'Oups, l’aperçu n’a pas pu être créé. Réessayez dans un instant.'; }
-    btn.disabled = false; btn.textContent = 'Voir mon aperçu';
+      clearInterval(tick); tick = null;
+      $('code-box').textContent = code; $('email-step').style.display = 'none'; $('code-area').style.display = '';
+    }catch(_){ err.textContent = 'Oups, l’enregistrement a échoué. Réessayez dans un instant.'; }
+    btn.disabled = false;
   });
-
-  function showPreview(){ go(3); $('frame').src = theme + '/?preview=' + encodeURIComponent(code); }
-  $('edit').addEventListener('click', () => go(2)); $('edit2').addEventListener('click', () => go(2));
-
-  // ---- 4 : commande
-  $('validate').addEventListener('click', () => { $('code-box').textContent = code; go(4); });
   $('copy').addEventListener('click', async () => { try{ await navigator.clipboard.writeText(code); $('copy').textContent = 'Copié ✓'; }catch(_){ $('copy').textContent = 'Sélectionnez le code'; } });
   const eb = $('etsy-btn');
   if(ETSY_URL){ eb.href = ETSY_URL; } else { eb.removeAttribute('href'); eb.style.opacity = '.55'; eb.textContent = 'Boutique : lien bientôt disponible'; }
@@ -298,7 +387,7 @@
     const qs = new URLSearchParams(location.search), u = qs.get('d'), tq = qs.get('t'); if(tq && THEMES[tq] && !u){ pick(tq); return; } const c = u || code; if(!c) return;
     try{
       const r = await rpc('get_draft', { p_code:c }); if(!r || !THEMES[r.theme]) return;
-      code = c; theme = r.theme; fill(r.data, r.email); pick(r.theme, true);
+      code = c; theme = r.theme; fill(r.data, r.email); setMode('full'); pick(r.theme, true); $('email-step').style.display = 'none'; $('code-area').style.display = ''; $('code-box').textContent = code;
       if(r.status !== 'draft'){ $('code-box2').textContent = code; $('order-a').style.display = 'none'; $('order-b').style.display = ''; $('code-box').textContent = code; go(4); }
     }catch(_){}
   })();
