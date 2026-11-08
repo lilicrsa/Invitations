@@ -220,8 +220,8 @@
       <div class="offer"><h3>Signature</h3><div class="price">dès 29 €</div>
         <ul><li>Tout l'Essentiel</li><li>Musique de votre choix</li><li>Réponses des invités et page de suivi</li></ul>
         <a class="btn solid" href="#modeles">Voir les univers</a></div>
-      <div class="offer"><h3>Prestige</h3><div class="price">dès 129 €</div>
-        <ul><li>Tout Signature</li><li>Galerie souvenir avec vos photos</li><li>Univers complet sur devis</li></ul>
+      <div class="offer"><h3>Prestige</h3><div class="price">dès 89 €</div>
+        <ul><li>Tout Signature</li><li>Galerie souvenir avec vos photos</li><li>Univers complet sur devis, dès 109 €</li></ul>
         <a class="btn" href="#modeles">Voir les univers</a></div>
     </div>
     <p class="fine">Votre lien reste actif jusqu'à trois mois après l'événement.</p>
@@ -261,13 +261,13 @@
     noel:{ n:'Étoile de Noël', occ:'Fêtes de fin d’année', demo:'noel/?i=noel-demo' }
   };
   var UNIVERS = [
-    { id:'mariage', prices:[29,59,129], n:'Mariage', tag:'Doux et romantique', cover:'galerie', models:['galerie','boheme'], fx:'bloom', wash:'#f7dccb', tint:'rgba(244,196,176,.24)',
+    { id:'mariage', prices:[29,59,89], devis:139, n:'Mariage', tag:'Doux et romantique', cover:'galerie', models:['galerie','boheme'], fx:'bloom', wash:'#f7dccb', tint:'rgba(244,196,176,.24)',
       intro:'Une entrée tout en douceur, des photos, des fleurs et de la lumière.' },
-    { id:'bebe', prices:[19,39,null], n:'Bébé', tag:'Mignon et pastel', cover:'gender-reveal', models:['gender-reveal'], fx:'bubbles', wash:'#d9e9f8', tint:'rgba(160,205,240,.24)',
+    { id:'bebe', prices:[19,39,null], devis:129, n:'Bébé', tag:'Mignon et pastel', cover:'gender-reveal', models:['gender-reveal'], fx:'bubbles', wash:'#d9e9f8', tint:'rgba(160,205,240,.24)',
       intro:'Annonces, révélations et premiers anniversaires, en couleurs tendres.' },
-    { id:'anniversaire', prices:[15,29,null], n:'Anniversaire', tag:'Festif', cover:null, models:[], fx:'confetti', wash:'#fbe3a8', tint:'rgba(255,190,80,.22)', soon:true,
+    { id:'anniversaire', prices:[15,29,null], devis:109, n:'Anniversaire', tag:'Festif', cover:null, models:[], fx:'confetti', wash:'#fbe3a8', tint:'rgba(255,190,80,.22)', soon:true,
       intro:'Des invitations qui font la fête, pour petits et grands.' },
-    { id:'fetes', prices:[15,29,null], n:'Réceptions et fêtes', tag:'Élégant et chaleureux', cover:'noel', models:['jeux','noel'], fx:'portal', wash:'#efe1b8', tint:'rgba(231,213,168,.22)',
+    { id:'fetes', prices:[15,29,null], devis:109, n:'Réceptions et fêtes', tag:'Élégant et chaleureux', cover:'noel', models:['jeux','noel'], fx:'portal', wash:'#efe1b8', tint:'rgba(231,213,168,.22)',
       intro:'Soirées, repas et fêtes de fin d’année, dans un décor soigné.' }
   ];
   document.querySelectorAll('[data-brand]').forEach(function(e){ e.textContent = BRAND; });
@@ -407,7 +407,7 @@
       g.appendChild(c);
     });
     box.appendChild(g);
-    var q = document.createElement('p'); q.className = 'devis'; q.innerHTML = 'Vous rêvez d’un <strong>univers complet</strong> créé pour vous ? Il fait l’objet d’un devis en ligne.';
+    var q = document.createElement('p'); q.className = 'devis'; q.innerHTML = 'Vous rêvez d’un <strong>univers complet</strong> créé pour vous ? Il fait l’objet d’un devis en ligne, <strong>à partir de ' + u.devis + ' €</strong>.';
     var qb = document.createElement('a'); qb.className = 'btn'; qb.textContent = 'Demander un devis';
     qb.href = CONTACT_URL || '#contact'; if(CONTACT_URL){ qb.target = '_blank'; qb.rel = 'noopener'; } else qb.addEventListener('click', function(e){ e.preventDefault(); closeWorld(); setTimeout(function(){ var c = document.getElementById('contact'); if(c) c.scrollIntoView({ behavior:'smooth' }); }, 450); });
     box.appendChild(q); box.appendChild(qb);
