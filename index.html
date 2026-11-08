@@ -378,7 +378,7 @@
   var TIERS = [
     { n:'Essentiel', d:'Pour une invitation simple et soignée', f:['Vidéo d’ouverture et carte à vos noms et textes','Musique de notre sélection','Compte à rebours','Dress code, programme, infos pratiques'] },
     { n:'Signature', d:'Pour suivre les réponses et choisir votre musique', f:['Tout l’Essentiel','Musique de votre choix','Réponses des invités','Page de suivi des réponses'], hot:true },
-    { n:'Prestige', d:'La galerie souvenir, avec vos photos', f:['Tout Signature','Galerie photo animée avec vos photos','Vidéo d’ouverture sur mesure'] }
+    { n:'Prestige', d:'Une invitation qui parcourt vos souvenirs', f:['Tout Signature : musique de votre choix, réponses des invités et page de suivi','Choisissez votre modèle galerie','Vos photos ou vidéos intégrées dans le modèle, pour une invitation 100 % à vous'] }
   ];
   function pricing(u){
     var box = document.createElement('section'); box.className = 'pricing';
@@ -390,7 +390,7 @@
       var pr = document.createElement('div'); pr.className = 'tp'; pr.textContent = p ? p + ' €' : 'Bientôt'; c.appendChild(pr);
       var d = document.createElement('p'); d.className = 'td'; d.textContent = t.d; c.appendChild(d);
       var ul = document.createElement('ul'); t.f.forEach(function(x){ var li = document.createElement('li'); li.textContent = x; ul.appendChild(li); }); c.appendChild(ul);
-      if(p){ var b = document.createElement('a'); b.className = 'btn' + (t.hot ? ' solid' : ''); b.href = 'commande.html?f=' + t.n.toLowerCase() + '&u=' + u.id; b.textContent = 'Choisir'; c.appendChild(b); }
+      if(p){ var b = document.createElement('a'); b.className = 'btn' + (t.hot ? ' solid' : ''); b.href = (t.n === 'Prestige' ? 'devis.html' : 'commande.html') + '?f=' + t.n.toLowerCase() + '&u=' + u.id; b.textContent = t.n === 'Prestige' ? 'Demander le Prestige' : 'Choisir'; c.appendChild(b); }
       g.appendChild(c);
     });
     box.appendChild(g);
@@ -439,7 +439,7 @@
       } else {
         var std = u.models.filter(function(k){ return !MODELS[k].prestige; }), pre = u.models.filter(function(k){ return MODELS[k].prestige; });
         var g1 = group(std, 'Essentiel et Signature', 'Choisissez le modèle, puis personnalisez-le avec vos noms et vos textes.', false);
-        var g2 = group(pre, 'Prestige', 'La galerie souvenir : vos photos prennent vie dans la vidéo d’ouverture.', true);
+        var g2 = group(pre, 'Prestige', 'Une invitation qui parcourt vos souvenirs : choisissez le modèle, vos photos ou vidéos y prennent place.', true);
         wrap.appendChild(g1.el); wrap.appendChild(g2.el); wrap.appendChild(pricing(u)); world.appendChild(wrap);
         if(g1.tr) carousel(g1.tr, g1.dots, null); if(g2.tr) carousel(g2.tr, g2.dots, null);
       }
