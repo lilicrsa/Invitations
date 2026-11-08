@@ -99,6 +99,11 @@
   .screen h3{ font-size:1.7rem; margin-top:1.1rem; } .screen .occ{ color:var(--brume); font-size:.9rem; margin:.15rem 0 .9rem; }
   .screen .acts{ display:flex; gap:.5rem; flex-wrap:wrap; justify-content:center; } .screen .acts .btn{ padding:.55rem 1rem; font-size:.85rem; }
   .world .car .uni-track{ --cw:min(72vw,280px); }
+  .grp{ margin-top:2.6rem; text-align:center; }
+  .grp .gt{ font:400 1.6rem 'Italiana',serif; color:var(--champ); margin:0; }
+  .grp .gs{ color:var(--brume); max-width:26rem; margin:.4rem auto 0; font-size:.95rem; }
+  .grp.prest .gt::before{ content:'✦ '; } .grp.prest .gt::after{ content:' ✦'; }
+  .badge{ position:absolute; top:14px; left:50%; transform:translateX(-50%); font:600 .7rem 'Manrope',sans-serif; letter-spacing:.14em; text-transform:uppercase; padding:.35rem .8rem; border-radius:999px; background:var(--champ); color:var(--nuit); z-index:2; pointer-events:none; }
   .pricing{ margin:3rem auto 2rem; max-width:62rem; text-align:center; }
   .pricing h3{ font:400 1.7rem 'Italiana',serif; color:var(--champ); margin:0 0 1.4rem; }
   .tiers{ display:grid; grid-template-columns:repeat(auto-fit,minmax(15rem,1fr)); gap:1rem; text-align:left; }
@@ -177,7 +182,6 @@
   <nav class="nav"><div class="wrap">
     <button class="brand" id="home" type="button" data-brand aria-label="Retour à l'entrée"></button>
     <a class="l" href="#modeles">Modèles</a><a class="l" href="#fonctionnement">Fonctionnement</a><a class="l" href="#questions">Questions</a>
-    <a class="btn solid" href="commande.html">Créer mon invitation</a>
   </div></nav>
 
   <section id="modeles">
@@ -237,7 +241,7 @@
   var CONTACT_URL = '';   // lien de contact ou de la boutique (Etsy, e-mail…) : bouton « Demander un devis »
   // ----------------------
   var MODELS = {
-    galerie:{ n:'Galerie Bohème', occ:'Mariage, galerie de photos', demo:'galerie/?i=galerie-demo' },
+    galerie:{ prestige:true, n:'Galerie Bohème', occ:'Mariage, galerie de photos', demo:'galerie/?i=galerie-demo' },
     boheme:{ n:'Bohème doré', occ:'Mariage, fiançailles', demo:'boheme/?i=boheme-demo' },
     'gender-reveal':{ n:'Gender Reveal', occ:'Annonce de bébé', demo:'gender-reveal/?i=gender-reveal-demo' },
     jeux:{ n:'Royal Chic', occ:'Soirée entre amies', demo:'jeux/?i=jeux-demo' },
@@ -407,24 +411,38 @@
       var wrap = document.createElement('div'); wrap.className = 'wrap';
       var intro = document.createElement('div'); intro.className = 'intro';
       var h = document.createElement('h2'); h.textContent = u.n; var p = document.createElement('p'); p.textContent = u.intro; intro.appendChild(h); intro.appendChild(p); wrap.appendChild(intro);
-      var car = document.createElement('div'); car.className = 'car'; var tr = document.createElement('div'); tr.className = 'uni-track';
-      var dots = document.createElement('div'); dots.className = 'dots';
-      u.models.forEach(function(k){
-        var m = MODELS[k], f = document.createElement('article'); f.className = 'uni screen';
-        var fr = document.createElement('div'); fr.className = 'frame'; var v = mkVideo(k, 'Aperçu animé : ' + m.n); fr.appendChild(v); f.appendChild(fr); fr.classList.add('tap'); (function(vv, ff){ ff.addEventListener('click', function(){ if(vv.paused){ world.querySelectorAll('video').forEach(function(o){ if(o !== vv) o.pause(); }); vv.play().catch(function(){}); } else vv.pause(); }); vv.addEventListener('play', function(){ ff.classList.add('playing'); }); vv.addEventListener('pause', function(){ ff.classList.remove('playing'); }); })(v, fr);
-        var t = document.createElement('h3'); t.textContent = m.n; f.appendChild(t);
-        var o = document.createElement('p'); o.className = 'tag'; o.textContent = m.occ; f.appendChild(o);
-        var a = document.createElement('div'); a.className = 'acts';
-        var d = document.createElement('a'); d.className = 'btn'; d.href = m.demo; d.target = '_blank'; d.rel = 'noopener'; d.textContent = 'Voir la démo';
-        var c = document.createElement('a'); c.className = 'btn solid'; c.href = 'commande.html?t=' + encodeURIComponent(k); c.textContent = 'Personnaliser';
-        a.appendChild(d); a.appendChild(c); f.appendChild(a); tr.appendChild(f);
-      });
-      car.appendChild(tr); car.appendChild(dots); wrap.appendChild(car);
-      if(u.models.length < 2) dots.style.display = 'none';
-      var more = document.createElement('p'); more.className = 'soon'; more.textContent = u.soon ? '' : (u.models.length < 2 ? 'D’autres modèles arrivent bientôt dans cet univers.' : '');
-      if(u.soon){ car.style.display = 'none'; more.className = 'soon big'; more.textContent = 'Bientôt disponible'; }
-      wrap.appendChild(more); wrap.appendChild(pricing(u)); world.appendChild(wrap);
-      carousel(tr, dots, null);
+      function group(keys, title, sub, prestige){
+        var sec = document.createElement('section'); sec.className = 'grp' + (prestige ? ' prest' : '');
+        var gh = document.createElement('h3'); gh.className = 'gt'; gh.textContent = title; sec.appendChild(gh);
+        var gs = document.createElement('p'); gs.className = 'gs'; gs.textContent = sub; sec.appendChild(gs);
+        if(!keys.length){ var np = document.createElement('p'); np.className = 'soon'; np.style.margin = '1.2rem auto'; np.textContent = prestige ? 'Les modèles Prestige de cet univers arrivent bientôt.' : 'Les modèles arrivent bientôt.'; sec.appendChild(np); return { el:sec }; }
+        var car = document.createElement('div'); car.className = 'car'; var tr = document.createElement('div'); tr.className = 'uni-track'; var dots = document.createElement('div'); dots.className = 'dots';
+        keys.forEach(function(k){
+          var m = MODELS[k], f = document.createElement('article'); f.className = 'uni screen';
+          var fr = document.createElement('div'); fr.className = 'frame'; var v = mkVideo(k, 'Aperçu animé : ' + m.n); fr.appendChild(v); f.appendChild(fr); fr.classList.add('tap'); (function(vv, ff){ ff.addEventListener('click', function(){ if(vv.paused){ world.querySelectorAll('video').forEach(function(o){ if(o !== vv) o.pause(); }); vv.play().catch(function(){}); } else vv.pause(); }); vv.addEventListener('play', function(){ ff.classList.add('playing'); }); vv.addEventListener('pause', function(){ ff.classList.remove('playing'); }); })(v, fr);
+          if(prestige){ var bd = document.createElement('span'); bd.className = 'badge'; bd.textContent = 'Prestige'; fr.appendChild(bd); }
+          var t = document.createElement('h3'); t.textContent = m.n; f.appendChild(t);
+          var o = document.createElement('p'); o.className = 'tag'; o.textContent = m.occ; f.appendChild(o);
+          var a = document.createElement('div'); a.className = 'acts';
+          var d = document.createElement('a'); d.className = 'btn'; d.href = m.demo; d.target = '_blank'; d.rel = 'noopener'; d.textContent = 'Voir la démo';
+          var c = document.createElement('a'); c.className = 'btn solid';
+          if(prestige){ c.href = 'devis.html?u=' + u.id + '&f=prestige'; c.textContent = 'Demander ce modèle'; } else { c.href = 'commande.html?t=' + encodeURIComponent(k); c.textContent = 'Personnaliser'; }
+          a.appendChild(d); a.appendChild(c); f.appendChild(a); tr.appendChild(f);
+        });
+        car.appendChild(tr); car.appendChild(dots); sec.appendChild(car);
+        if(keys.length < 2) dots.style.display = 'none';
+        return { el:sec, tr:tr, dots:dots, n:keys.length };
+      }
+      if(u.soon){
+        var more = document.createElement('p'); more.className = 'soon big'; more.textContent = 'Bientôt disponible'; wrap.appendChild(more);
+        wrap.appendChild(pricing(u)); world.appendChild(wrap);
+      } else {
+        var std = u.models.filter(function(k){ return !MODELS[k].prestige; }), pre = u.models.filter(function(k){ return MODELS[k].prestige; });
+        var g1 = group(std, 'Essentiel et Signature', 'Choisissez le modèle, puis personnalisez-le avec vos noms et vos textes.', false);
+        var g2 = group(pre, 'Prestige', 'La galerie souvenir : vos photos prennent vie dans la vidéo d’ouverture.', true);
+        wrap.appendChild(g1.el); wrap.appendChild(g2.el); wrap.appendChild(pricing(u)); world.appendChild(wrap);
+        if(g1.tr) carousel(g1.tr, g1.dots, null); if(g2.tr) carousel(g2.tr, g2.dots, null);
+      }
       body.classList.add('inworld'); world.scrollTop = 0;
     });
   }
