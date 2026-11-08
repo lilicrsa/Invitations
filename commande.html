@@ -57,7 +57,7 @@
   .alert b{ color:var(--champ); } .alert .t{ font:400 1.35rem 'Italiana',serif; display:block; margin-bottom:.3rem; }
   .care{ border-left:3px solid var(--champ2); background:rgba(231,213,168,.06); border-radius:0 10px 10px 0; padding:.7rem .9rem; margin:1rem 0 0; font-size:.9rem; line-height:1.5; color:var(--brume); } .care b{ color:var(--champ); }
   .req{ color:var(--err); } .miss{ border-color:var(--err) !important; box-shadow:0 0 0 3px rgba(255,154,168,.18) !important; }
-  .fsw{ display:flex; gap:8px; margin:.2rem 0 .3rem; } .fsw button{ flex:1; font:inherit; font-weight:600; color:var(--champ); background:#0d1228; border:1px solid var(--trait); border-radius:999px; padding:.6rem .8rem; cursor:pointer; } .fsw button.on{ background:var(--champ); color:var(--nuit); border-color:var(--champ); }
+  .fsw{ display:flex; gap:8px; margin:.2rem 0 .3rem; } .fsw button{ flex:1; font:inherit; font-size:.88rem; white-space:nowrap; font-weight:600; color:var(--champ); background:#0d1228; border:1px solid var(--trait); border-radius:999px; padding:.65rem .4rem; cursor:pointer; } .fsw button.on{ background:var(--champ); color:var(--nuit); border-color:var(--champ); }
   #fm button.on{ border-color:var(--champ); background:rgba(231,213,168,.09); } #fm .pr{ color:var(--champ); font-weight:700; margin-top:.35rem; }
   .hint{ font-size:.82rem; color:var(--brume); margin:.3rem 0 0; }
   .err{ color:var(--err); font-size:.88rem; margin:.4rem 0 0; }
@@ -169,10 +169,9 @@
       <button class="btn ghost" id="fs-close" type="button">Fermer l'aperçu ✕</button>
       <div class="phone" id="phone"><iframe id="frame" title="Aperçu de votre invitation" allow="autoplay; fullscreen"></iframe></div>
       <div class="side">
-        <p class="note"><b>Touchez l'invitation pour l'ouvrir</b>, comme vos invités. Cet aperçu est généré ici, rien n'est envoyé par lien ni enregistré. Il disparaît dans <span class="timer" id="timer">10:00</span> et vos données sont alors effacées.</p>
-        <p class="note">Les réponses saisies dans l'aperçu ne sont pas enregistrées.</p>
-        <div class="fsw" id="fsw" role="group" aria-label="Prestation à prévisualiser"><button type="button" data-f="ess">Essentiel</button><button type="button" data-f="sig" class="on">Signature</button></div>
+        <div class="fsw" id="fsw" role="group" aria-label="Prestation à prévisualiser"><button type="button" data-f="ess">Aperçu essentiel</button><button type="button" data-f="sig" class="on">Aperçu signature</button></div>
         <p class="hint" id="fsw-note" style="margin:0 0 .8rem"></p>
+        <p class="note"><b>Touchez l'invitation pour l'ouvrir</b>, comme vos invités. Cet aperçu est généré ici : rien n'est envoyé par lien ni enregistré, et les réponses saisies dans l'aperçu ne sont pas conservées. Il disparaît dans <span class="timer" id="timer">10:00</span> et vos données sont alors effacées.</p>
         <p class="care" id="care3" style="display:none"><b>Vérifiez tout, jusqu'au moindre détail</b> : noms, date, heure, adresse, programme. Une erreur relevée maintenant vous évite des allers-retours plus tard.</p>
         <div class="row" style="margin-top:.4rem"><button class="btn ghost" id="refull" type="button">Revoir en plein écran</button><button class="btn gold" id="validate">Je valide, commander</button><button class="btn ghost" id="edit">Modifier mes infos</button></div>
         <h3 style="font:400 1.4rem 'Italiana',serif;margin:1.8rem 0 .2rem">Découvrez nos deux prestations</h3>
@@ -387,7 +386,7 @@
 
   const STD_DEMO = { boheme:'boheme/?i=boheme-demo', noel:'noel/?i=noel-demo', jeux:'jeux/?i=jeux-demo', 'gender-reveal':'gender-reveal/?i=gender-reveal-demo', galerie:'boheme/?i=boheme-demo' };
   const PRICES = { boheme:[29,59], galerie:[29,59], 'gender-reveal':[19,39], noel:[15,29], jeux:[15,29] };
-  const FNOTE = { ess:'Essentiel : musique de notre sélection, sans réponses des invités.', sig:'Signature : votre musique et les réponses des invités.' };
+  const FNOTE = { ess:'Aperçu essentiel : musique de notre sélection, sans réponses des invités.', sig:'Aperçu signature : votre musique et les réponses des invités.' };
   function setPv(f){ pv = f; document.querySelectorAll('#fsw button').forEach(b => b.classList.toggle('on', b.dataset.f === f)); $('fsw-note').textContent = FNOTE[f]; }
   document.querySelectorAll('#fsw button').forEach(b => b.addEventListener('click', () => { if(!liveInv) return; setPv(b.dataset.f); liveInv = buildInv(collect()); setFull(true); $('frame').src = theme + '/?preview=' + Math.random().toString(36).slice(2, 8).toUpperCase() + '&live=1'; }));
   function reopenPreview(){ if(!liveInv) return; go(3); $('stage').style.display = ''; $('expired').style.display = 'none'; $('frame').src = theme + '/?preview=' + Math.random().toString(36).slice(2, 8).toUpperCase() + '&live=1'; }
