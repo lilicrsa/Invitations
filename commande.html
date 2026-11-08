@@ -388,14 +388,14 @@
   const PRICES = { boheme:[29,59], galerie:[29,59], 'gender-reveal':[19,39], noel:[15,29], jeux:[15,29] };
   const FNOTE = { ess:'Aperçu essentiel : musique de notre sélection, sans réponses des invités.', sig:'Aperçu signature : votre musique et les réponses des invités.' };
   function setPv(f){ pv = f; document.querySelectorAll('#fsw button').forEach(b => b.classList.toggle('on', b.dataset.f === f)); $('fsw-note').textContent = FNOTE[f]; }
-  document.querySelectorAll('#fsw button').forEach(b => b.addEventListener('click', () => { if(!liveInv) return; setPv(b.dataset.f); liveInv = buildInv(collect()); setFull(true); $('frame').src = theme + '/?preview=' + Math.random().toString(36).slice(2, 8).toUpperCase() + '&live=1'; }));
+  document.querySelectorAll('#fsw button').forEach(b => b.addEventListener('click', () => { if(!liveInv) return; setPv(b.dataset.f); liveInv = buildInv(collect()); setFull(false); $('frame').src = theme + '/?preview=' + Math.random().toString(36).slice(2, 8).toUpperCase() + '&live=1'; }));
   function reopenPreview(){ if(!liveInv) return; go(3); $('stage').style.display = ''; $('expired').style.display = 'none'; $('frame').src = theme + '/?preview=' + Math.random().toString(36).slice(2, 8).toUpperCase() + '&live=1'; }
   $('back-prev').addEventListener('click', reopenPreview); $('back3').addEventListener('click', reopenPreview);
   document.querySelectorAll('#fm button').forEach(b => b.addEventListener('click', () => { formule = b.dataset.f; document.querySelectorAll('#fm button').forEach(x => x.classList.toggle('on', x === b)); $('fm-err').textContent = ''; }));
   function showPrices(){ const p = PRICES[theme]; document.querySelectorAll('#fm .pr').forEach(e => { e.textContent = p ? p[+e.dataset.p] + ' €' : ''; }); }
   function showPreview(){
     setPv('sig'); $('back-prev').style.display = '';
-    $('expired').style.display = 'none'; $('stage').style.display = ''; go(3); startTimer(); setFull(true);
+    $('expired').style.display = 'none'; $('stage').style.display = ''; go(3); startTimer(); setFull(false);
     $('demo-std').href = STD_DEMO[theme] || 'boheme/?i=boheme-demo';
     $('care3').style.display = mode === 'full' ? '' : 'none';
     $('frame').src = theme + '/?preview=' + Math.random().toString(36).slice(2, 8).toUpperCase() + '&live=1';
