@@ -396,6 +396,8 @@
       wrap.appendChild(more); world.appendChild(wrap);
       carousel(tr, dots, null);
       body.classList.add('inworld'); world.scrollTop = 0;
+      var first = world.querySelectorAll('video'); for(var q = 0; q < first.length; q++){ (function(vv){ vv.muted = true; var pp = vv.play(); if(pp && pp.catch) pp.catch(function(){}); })(first[q]); }
+      setTimeout(function(){ var vs = world.querySelectorAll('video'); for(var q = 0; q < vs.length; q++){ var r = vs[q].getBoundingClientRect(); if(vs[q].paused && r.left >= 0 && r.right <= innerWidth + 4) vs[q].play().catch(function(){}); } }, 500);
     });
   }
   function closeWorld(){
