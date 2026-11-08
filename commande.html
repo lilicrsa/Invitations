@@ -70,6 +70,7 @@
   .phone.full{ position:fixed; left:50%; top:0; transform:translateX(-50%); width:min(100%,520px); height:100dvh; aspect-ratio:auto; border:0; border-radius:0; outline:0; z-index:50; box-shadow:0 0 0 100vmax #000; }
   #fs-close{ display:none; position:fixed; top:max(10px,env(safe-area-inset-top,0px)); right:12px; z-index:60; background:rgba(10,14,29,.85); }
   body.fs{ overflow:hidden; } body.fs #fs-close{ display:block; }
+  video{ pointer-events:none; -webkit-touch-callout:none; -webkit-user-select:none; user-select:none; }
   .phone iframe{ width:100%; height:100%; border:0; display:block; }
   .side{ flex:1; min-width:260px; max-width:420px; }
   .note{ border:1px dashed var(--champ2); border-radius:14px; padding:.8rem .9rem; font-size:.92rem; line-height:1.5; margin:0 0 1rem; color:var(--champ); }
@@ -243,7 +244,7 @@
   const list = $('themes');
   Object.keys(THEMES).forEach(k => {
     const t = THEMES[k], b = document.createElement('button'); b.type = 'button'; b.className = 'theme';
-    const vid = document.createElement('video'); vid.muted = true; vid.loop = true; vid.playsInline = true; vid.setAttribute('playsinline', ''); vid.preload = 'metadata';
+    const vid = document.createElement('video'); vid.muted = true; vid.loop = true; vid.playsInline = true; vid.setAttribute('playsinline', ''); vid.preload = 'metadata'; vid.setAttribute('controlsList','nodownload noremoteplayback'); vid.setAttribute('disablePictureInPicture',''); vid.disableRemotePlayback = true;
     vid.poster = t.mini + '.jpg';
     ['mp4','webm'].forEach(x => { const so = document.createElement('source'); so.src = t.mini + '.' + x; so.type = 'video/' + x; vid.appendChild(so); }); vid.setAttribute('aria-label', 'Aperçu animé : ' + t.name); b.appendChild(vid);
     if(io){ io.observe(vid); } else { vid.autoplay = true; }

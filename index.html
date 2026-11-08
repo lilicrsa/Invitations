@@ -72,6 +72,7 @@
   .frame.tap{ position:relative; cursor:pointer; }
   .frame.tap::after{ content:''; position:absolute; left:50%; top:50%; width:64px; height:64px; margin:-32px 0 0 -32px; border-radius:50%; background:rgba(10,12,24,.45) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23f3e6c4' d='M9 6.5v11l9-5.5z'/%3E%3C/svg%3E") center/34px no-repeat; border:1px solid rgba(243,230,196,.6); transition:opacity .3s; pointer-events:none; }
   .frame.tap.playing::after{ opacity:0; }
+  video{ pointer-events:none; -webkit-touch-callout:none; -webkit-user-select:none; user-select:none; }
   .uni video,.uni .ph{ width:100%; aspect-ratio:3/4.3; object-fit:cover; border-radius:192px 192px 10px 10px; background:#000; display:block; }
   .uni .ph{ display:flex; align-items:center; justify-content:center; background:radial-gradient(circle at 30% 25%,rgba(255,196,80,.28),transparent 40%),radial-gradient(circle at 75% 60%,rgba(255,120,150,.22),transparent 40%),radial-gradient(circle at 40% 85%,rgba(120,200,255,.2),transparent 40%),#0c1022; color:var(--champ2); font:400 1.4rem 'Italiana',serif; letter-spacing:.1em; }
   .uni h3{ font-size:clamp(1.7rem,4.4vw,2.1rem); margin-top:1.3rem; }
@@ -262,7 +263,7 @@
   document.title = BRAND + ' — invitations animées';
 
   function mkVideo(k, label){
-    var v = document.createElement('video'); v.muted = true; v.loop = true; v.playsInline = true; v.setAttribute('playsinline',''); v.preload = 'metadata'; v.poster = 'mini/' + k + '.jpg';
+    var v = document.createElement('video'); v.muted = true; v.loop = true; v.playsInline = true; v.setAttribute('playsinline',''); v.preload = 'metadata'; v.setAttribute('controlsList','nodownload noremoteplayback'); v.setAttribute('disablePictureInPicture',''); v.disableRemotePlayback = true; v.poster = 'mini/' + k + '.jpg';
     v.setAttribute('aria-label', label);
     ['mp4','webm'].forEach(function(x){ var s = document.createElement('source'); s.src = 'mini/' + k + '.' + x; s.type = 'video/' + x; v.appendChild(s); });
     return v;
