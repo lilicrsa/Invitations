@@ -67,6 +67,9 @@
   .row{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-top:1.3rem; }
   .stage{ display:flex; gap:24px; align-items:flex-start; justify-content:center; flex-wrap:wrap; }
   .phone{ width:min(390px,100%); aspect-ratio:390/760; border-radius:34px; border:9px solid #05070f; outline:1px solid var(--champ2); background:#000; overflow:hidden; box-shadow:0 20px 50px rgba(0,0,0,.6); position:relative; }
+  .phone.full{ position:fixed; left:50%; top:0; transform:translateX(-50%); width:min(100%,520px); height:100dvh; aspect-ratio:auto; border:0; border-radius:0; outline:0; z-index:50; box-shadow:0 0 0 100vmax #000; }
+  #fs-close{ display:none; position:fixed; top:max(10px,env(safe-area-inset-top,0px)); right:12px; z-index:60; background:rgba(10,14,29,.85); }
+  body.fs{ overflow:hidden; } body.fs #fs-close{ display:block; }
   .phone iframe{ width:100%; height:100%; border:0; display:block; }
   .side{ flex:1; min-width:260px; max-width:420px; }
   .note{ border:1px dashed var(--champ2); border-radius:14px; padding:.8rem .9rem; font-size:.92rem; line-height:1.5; margin:0 0 1rem; color:var(--champ); }
@@ -143,11 +146,12 @@
   <section class="panel" id="p3">
     <h2>Votre aperçu</h2>
     <div class="stage" id="stage">
-      <div class="phone"><iframe id="frame" title="Aperçu de votre invitation" allow="autoplay; fullscreen"></iframe></div>
+      <button class="btn ghost" id="fs-close" type="button">Fermer l'aperçu ✕</button>
+      <div class="phone" id="phone"><iframe id="frame" title="Aperçu de votre invitation" allow="autoplay; fullscreen"></iframe></div>
       <div class="side">
         <p class="note"><b>Touchez l'invitation pour l'ouvrir</b>, comme vos invités. Cet aperçu est généré ici, rien n'est envoyé par lien ni enregistré. Il disparaît dans <span class="timer" id="timer">10:00</span> et vos données sont alors effacées.</p>
         <p class="note">Les réponses saisies dans l'aperçu ne sont pas enregistrées.</p>
-        <div class="row" style="margin-top:.4rem"><button class="btn gold" id="validate">Je valide, commander</button><button class="btn ghost" id="edit">Modifier mes infos</button></div>
+        <div class="row" style="margin-top:.4rem"><button class="btn ghost" id="refull" type="button">Revoir en plein écran</button><button class="btn gold" id="validate">Je valide, commander</button><button class="btn ghost" id="edit">Modifier mes infos</button></div>
         <h3 style="font:400 1.4rem 'Italiana',serif;margin:1.8rem 0 .2rem">Découvrez nos deux prestations</h3>
         <p class="hint" style="margin-top:0">Deux démos complètes, pour voir la différence.</p>
         <div class="demos">
@@ -226,10 +230,11 @@
     if(!r.ok) throw new Error(name + ' ' + r.status);
     return r.json();
   }
+  function setFull(on){ $('phone').classList.toggle('full', !!on); document.body.classList.toggle('fs', !!on); }
   function go(n){
     document.querySelectorAll('.panel').forEach(p => p.classList.toggle('on', p.id === 'p'+n));
     document.querySelectorAll('#steps span').forEach(s => s.classList.toggle('on', +s.dataset.s <= n));
-    if(n !== 3) $('frame').src = 'about:blank';
+    if(n !== 3){ $('frame').src = 'about:blank'; setFull(false); }
     window.scrollTo({ top:0, behavior:'smooth' });
   }
 
@@ -326,8 +331,10 @@
     $('frame').src = 'about:blank';
     if(blobUrl){ URL.revokeObjectURL(blobUrl); blobUrl = null; }
     $('form').reset(); prog.textContent = ''; setMode('express'); $('f-email').value = '';
-    $('stage').style.display = 'none'; $('expired').style.display = 'block'; go(3);
+    setFull(false); $('stage').style.display = 'none'; $('expired').style.display = 'block'; go(3);
   }
+  $('fs-close').addEventListener('click', () => setFull(false)); $('refull').addEventListener('click', () => setFull(true));
+  document.addEventListener('keydown', e => { if(e.key === 'Escape') setFull(false); });
   $('again').addEventListener('click', () => { $('expired').style.display = 'none'; $('stage').style.display = ''; go(1); });
   window.addEventListener('message', e => {
     if(e.origin !== location.origin || !e.data || e.data.type !== 'live-ready' || !liveInv) return;
@@ -346,7 +353,7 @@
 
   const STD_DEMO = { boheme:'boheme/?i=boheme-demo', noel:'noel/?i=noel-demo', jeux:'jeux/?i=jeux-demo', 'gender-reveal':'gender-reveal/?i=gender-reveal-demo', galerie:'boheme/?i=boheme-demo' };
   function showPreview(){
-    $('expired').style.display = 'none'; $('stage').style.display = ''; go(3); startTimer();
+    $('expired').style.display = 'none'; $('stage').style.display = ''; go(3); startTimer(); setFull(true);
     $('demo-std').href = STD_DEMO[theme] || 'boheme/?i=boheme-demo';
     $('frame').src = theme + '/?preview=' + Math.random().toString(36).slice(2, 8).toUpperCase() + '&live=1';
   }
