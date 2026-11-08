@@ -66,6 +66,9 @@
   .uni{ flex:0 0 var(--cw); scroll-snap-align:center; display:flex; flex-direction:column; align-items:center; text-align:center; transition:transform .45s cubic-bezier(.2,.7,.2,1), opacity .45s; transform:scale(.86); opacity:.5; }
   .uni.on{ transform:scale(1); opacity:1; }
   .uni .frame{ position:relative; width:100%; border:1px solid var(--champ2); border-radius:200px 200px 16px 16px; padding:8px; background:linear-gradient(180deg,var(--nuit2),#0c1022); box-shadow:0 0 0 1px rgba(0,0,0,.6), 0 24px 50px rgba(0,0,0,.55), 0 -30px 70px -30px var(--tint,rgba(231,213,168,.4)); overflow:hidden; }
+  .frame.tap{ position:relative; cursor:pointer; }
+  .frame.tap::after{ content:''; position:absolute; left:50%; top:50%; width:64px; height:64px; margin:-32px 0 0 -32px; border-radius:50%; background:rgba(10,12,24,.45) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23f3e6c4' d='M9 6.5v11l9-5.5z'/%3E%3C/svg%3E") center/34px no-repeat; border:1px solid rgba(243,230,196,.6); transition:opacity .3s; pointer-events:none; }
+  .frame.tap.playing::after{ opacity:0; }
   .uni video,.uni .ph{ width:100%; aspect-ratio:3/4.3; object-fit:cover; border-radius:192px 192px 10px 10px; background:#000; display:block; }
   .uni .ph{ display:flex; align-items:center; justify-content:center; background:radial-gradient(circle at 30% 25%,rgba(255,196,80,.28),transparent 40%),radial-gradient(circle at 75% 60%,rgba(255,120,150,.22),transparent 40%),radial-gradient(circle at 40% 85%,rgba(120,200,255,.2),transparent 40%),#0c1022; color:var(--champ2); font:400 1.4rem 'Italiana',serif; letter-spacing:.1em; }
   .uni h3{ font-size:clamp(1.7rem,4.4vw,2.1rem); margin-top:1.3rem; }
@@ -381,7 +384,7 @@
       var dots = document.createElement('div'); dots.className = 'dots';
       u.models.forEach(function(k){
         var m = MODELS[k], f = document.createElement('article'); f.className = 'uni screen';
-        var fr = document.createElement('div'); fr.className = 'frame'; var v = mkVideo(k, 'Aperçu animé : ' + m.n); fr.appendChild(v); f.appendChild(fr); watch(v);
+        var fr = document.createElement('div'); fr.className = 'frame'; var v = mkVideo(k, 'Aperçu animé : ' + m.n); fr.appendChild(v); f.appendChild(fr); fr.classList.add('tap'); (function(vv, ff){ ff.addEventListener('click', function(){ if(vv.paused){ world.querySelectorAll('video').forEach(function(o){ if(o !== vv) o.pause(); }); vv.play().catch(function(){}); } else vv.pause(); }); vv.addEventListener('play', function(){ ff.classList.add('playing'); }); vv.addEventListener('pause', function(){ ff.classList.remove('playing'); }); })(v, fr);
         var t = document.createElement('h3'); t.textContent = m.n; f.appendChild(t);
         var o = document.createElement('p'); o.className = 'tag'; o.textContent = m.occ; f.appendChild(o);
         var a = document.createElement('div'); a.className = 'acts';
@@ -396,8 +399,6 @@
       wrap.appendChild(more); world.appendChild(wrap);
       carousel(tr, dots, null);
       body.classList.add('inworld'); world.scrollTop = 0;
-      var first = world.querySelectorAll('video'); for(var q = 0; q < first.length; q++){ (function(vv){ vv.muted = true; var pp = vv.play(); if(pp && pp.catch) pp.catch(function(){}); })(first[q]); }
-      setTimeout(function(){ var vs = world.querySelectorAll('video'); for(var q = 0; q < vs.length; q++){ var r = vs[q].getBoundingClientRect(); if(vs[q].paused && r.left >= 0 && r.right <= innerWidth + 4) vs[q].play().catch(function(){}); } }, 500);
     });
   }
   function closeWorld(){
