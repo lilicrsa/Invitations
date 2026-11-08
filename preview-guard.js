@@ -13,7 +13,7 @@
   var css = document.createElement('style');
   css.textContent =
     'html,body{-webkit-user-select:none!important;user-select:none!important;-webkit-touch-callout:none!important}' +
-    'img,video,canvas{-webkit-user-drag:none!important;user-drag:none!important}' +
+    'img,video,canvas{-webkit-user-drag:none!important;user-drag:none!important;pointer-events:none!important;-webkit-touch-callout:none!important}' +
     '@media print{html{display:none!important}}' +
     '#'+ID+'-wm{position:fixed;inset:0;z-index:2147483000;pointer-events:none;overflow:hidden}' +
     '#'+ID+'-tile{position:absolute;inset:-50%;transform:rotate(-24deg)}' +
@@ -108,6 +108,15 @@
   ['contextmenu', 'dragstart', 'selectstart', 'copy', 'cut'].forEach(function(ev){
     document.addEventListener(ev, function(e){ e.preventDefault(); }, true);
   });
+
+  /* pas de menu « télécharger » sur les vidéos et les images (appui long) */
+  function lock(root){
+    try{ (root || document).querySelectorAll('video,audio').forEach(function(m){
+      m.setAttribute('controlsList', 'nodownload noplaybackrate noremoteplayback'); m.setAttribute('disablePictureInPicture', ''); m.setAttribute('disableRemotePlayback', ''); m.controls = false; });
+      (root || document).querySelectorAll('img').forEach(function(i){ i.setAttribute('draggable', 'false'); }); }catch(_){}
+  }
+  lock(); setInterval(lock, 1500);
+  new MutationObserver(function(){ lock(); }).observe(document.documentElement, { childList: true, subtree: true });
 
   document.body.appendChild(wm); document.body.appendChild(tagEl); document.body.appendChild(bo);
 })();
