@@ -40,6 +40,7 @@
     background:radial-gradient(ellipse 60% 45% at 50% 38%, rgba(231,213,168,.13), transparent 70%); position:relative; overflow:hidden; margin-inline:calc(-1 * max(16px,env(safe-area-inset-left,0px))); padding-inline:max(16px,env(safe-area-inset-left,0px)); }
   .brandbox{ display:flex; align-items:center; gap:.6rem; } .brandbox .logo{ height:62px; width:auto; margin:-6px 0 -6px -6px; pointer-events:none; } .nav .brand{ display:inline-flex; align-items:center; gap:.5rem; } .nav .brand .logo{ height:32px; width:auto; pointer-events:none; }
   .brand-sub{ font:400 .86rem/1.2 'Italiana',serif; letter-spacing:.05em; color:var(--champ2); opacity:.95; margin:.2rem 0 0 .1rem; max-width:15.5rem; }
+  .bw{ display:flex; flex-direction:column; align-items:flex-start; line-height:1.15; } .bsub{ font:400 .66rem/1.2 'Italiana',serif; letter-spacing:.06em; color:var(--champ2); opacity:.95; margin-top:.15rem; text-transform:none; }
   .gate .brand{ font:400 1.5rem 'Italiana',serif; letter-spacing:.16em; }
   .gate main{ flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:1.8rem; padding-block:2rem; }
   .gate h1{ font-size:clamp(2.6rem,8vw,5.4rem); line-height:1.05; max-width:14ch; }
@@ -232,7 +233,7 @@
 <!-- SITE -->
 <div class="site">
   <nav class="nav"><div class="wrap">
-    <button class="brand" id="home" type="button" aria-label="Retour à l'entrée"><img class="logo" src="logo/emblem.png?v=1" alt="" width="42" height="31"><span data-brand></span></button>
+    <button class="brand" id="home" type="button" aria-label="Retour à l'entrée"><img class="logo" src="logo/emblem.png?v=1" alt="" width="42" height="31"><span class="bw"><span data-brand></span><small class="bsub">Des invitations qui font naître l’émerveillement</small></span></button>
     <a class="l" href="#modeles">Modèles</a><a class="l" href="#fonctionnement">Fonctionnement</a><a class="l" href="#tarifs">Tarifs</a><a class="l" href="#questions">Questions</a><a class="l" href="contact.html">Contact</a>
     <a class="btn solid cta" href="commande.html">Créer mon invitation</a>
     <button class="burger" id="burger" type="button" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="menu"><span></span><span></span><span></span></button>
@@ -318,7 +319,7 @@
       <div><h2>Une idée précise ?</h2><p>Une carte et une vidéo créées pour vous, à votre image : écrivez-nous pour un devis.</p></div>
       <a class="btn" id="contact-btn" href="devis.html">Demander un devis</a>
     </div>
-    <footer><span data-brand></span><span>Invitations animées sur mesure</span><span class="flinks"><a href="contact.html">Contact</a> · <a href="cgv.html">CGV</a> · <a href="mentions-legales.html">Mentions légales</a> · <a href="confidentialite.html">Confidentialité</a></span></footer>
+    <footer><span class="bw"><span data-brand></span><small class="bsub">Des invitations qui font naître l’émerveillement</small></span><span class="flinks"><a href="contact.html">Contact</a> · <a href="cgv.html">CGV</a> · <a href="mentions-legales.html">Mentions légales</a> · <a href="confidentialite.html">Confidentialité</a></span></footer>
   </div></section>
 </div>
 
