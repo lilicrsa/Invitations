@@ -60,6 +60,15 @@
   .req{ color:var(--err); } .miss{ border-color:var(--err) !important; box-shadow:0 0 0 3px rgba(255,154,168,.18) !important; }
   .fsw{ display:flex; gap:8px; margin:.2rem 0 .3rem; } .fsw button{ flex:1; font:inherit; font-size:.88rem; white-space:nowrap; font-weight:600; color:var(--champ); background:#0d1228; border:1px solid var(--trait); border-radius:999px; padding:.65rem .4rem; cursor:pointer; } .fsw button.on{ background:var(--champ); color:var(--nuit); border-color:var(--champ); }
   #fm button.on{ border-color:var(--champ); background:rgba(231,213,168,.09); } #fm .pr{ color:var(--champ); font-weight:700; margin-top:.35rem; }
+  .mslots{ display:grid; grid-template-columns:repeat(auto-fill,minmax(7.5rem,1fr)); gap:.7rem; margin-top:.6rem; }
+  .mslot{ position:relative; aspect-ratio:3/4; border:1.5px dashed var(--champ2,#cdbb8f); border-radius:12px; background:rgba(255,255,255,.03); display:flex; align-items:center; justify-content:center; text-align:center; cursor:pointer; overflow:hidden; color:var(--brume); font-size:.78rem; padding:.4rem; }
+  .mslot.fill{ border-style:solid; }
+  .mslot b{ display:block; color:var(--champ,#E6D5AB); font-size:.9rem; margin-bottom:.2rem; }
+  .mslot .opt{ opacity:.8; font-size:.72rem; }
+  .mslot img,.mslot video{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; pointer-events:none; }
+  .mslot .tag{ position:absolute; left:6px; bottom:6px; background:rgba(10,14,29,.8); color:#E6D5AB; border-radius:999px; padding:.15rem .5rem; font-size:.68rem; }
+  .mslot .rm{ position:absolute; right:6px; top:6px; width:26px; height:26px; border-radius:50%; border:0; background:rgba(10,14,29,.85); color:#E6D5AB; font-size:14px; cursor:pointer; line-height:1; }
+  .mslot input{ display:none; }
   .hint{ font-size:.82rem; color:var(--brume); margin:.3rem 0 0; }
   .err{ color:var(--err); font-size:.88rem; margin:.4rem 0 0; }
   .switch{ display:flex; align-items:center; gap:.6rem; margin-top:1.1rem; font-size:1rem; text-transform:none; letter-spacing:0; font-weight:500; color:var(--champ); }
@@ -95,7 +104,8 @@
   .vcap{ text-align:center; color:var(--brume); font-size:.85rem; margin:.9rem 0 0; }
   .how{ max-width:34rem; margin:1rem auto 0; border:1px solid var(--trait); border-radius:14px; padding:.2rem 1rem; } .how summary{ cursor:pointer; padding:.7rem 0; color:var(--champ); font-weight:600; font-size:.95rem; } .how[open] summary{ border-bottom:1px solid var(--trait); margin-bottom:.4rem; } .how .vf{ margin-bottom:1rem; }
 </style>
-<script src="protect.js?v=3"></script>
+<script src="protect.js?v=4"></script>
+<script src="media-spec.js?v=2"></script>
 </head>
 <body>
 <div class="wrap">
@@ -138,6 +148,12 @@
         <label for="f-music">Votre musique <i>(facultatif, fichier audio de 15 Mo maximum)</i></label>
         <input type="file" id="f-music" accept="audio/*">
         <p class="hint">Elle reste sur votre appareil et n'est utilisée que pour cet aperçu.</p>
+        <div id="media-box" style="display:none">
+          <label>Vos souvenirs <i>(formule Prestige)</i></label>
+          <p class="hint" id="media-intro"></p>
+          <div class="mslots" id="media-slots"></div>
+          <p class="hint" id="media-note"></p>
+        </div>
         <div id="full-fields" style="display:none">
           <label for="f-host">Organisateur(s) <i>(facultatif)</i></label>
           <input type="text" id="f-host" maxlength="120" placeholder="Ex. Famille Martin">
@@ -292,7 +308,7 @@
     $('chosen-img').src = t.img + '?v=3'; $('chosen-name').textContent = t.name;
     $('l-title').textContent = t.titleLabel; $('h-title').textContent = t.titleHint;
     if(!keepValues){ if(!$('f-title').value || Object.values(THEMES).some(x => x.title === $('f-title').value)) $('f-title').value = t.title; }
-    go(2);
+    clearMedia(); renderMedia(); go(2);
   }
   $('change-theme').addEventListener('click', () => go(1));
   $('back1').addEventListener('click', () => go(1));
@@ -344,6 +360,50 @@
     if(f.size > 15 * 1024 * 1024){ err.textContent = 'Ce fichier dépasse 15 Mo.'; $('f-music').value = ''; return; }
     blobUrl = URL.createObjectURL(f);
   });
+
+  // ---- emplacements photos / vidéos (Prestige) : un emplacement par cadre du modèle, selon media-spec.js
+  const MEDIA = {};   // slotId -> tableau { file, url, kind }
+  function mediaSpec(){ const sp = window.MEDIA_SPEC && MEDIA_SPEC[theme]; return sp && sp.prestige ? sp : null; }
+  function clearMedia(){ Object.keys(MEDIA).forEach(k => { (MEDIA[k] || []).forEach(m => m && URL.revokeObjectURL(m.url)); delete MEDIA[k]; }); }
+  function mediaList(){ const a = []; ((MEDIA.frames) || []).forEach(m => { if(m) a.push({ kind:m.kind, url:m.url }); }); return a; }
+  function cardPhotoUrl(){ const m = (MEDIA.card_photo || [])[0]; return m ? m.url : ''; }
+  function slotRule(slot, file){ return (slot.kind === 'media' && /^video\//.test(file.type)) ? slot.clip : slot.rule; }
+  function probe(file, kind){ return new Promise(res => {
+    const u = URL.createObjectURL(file);
+    if(kind === 'video'){ const v = document.createElement('video'); v.preload = 'metadata'; v.onloadedmetadata = () => { res({ url:u, sec:v.duration, w:v.videoWidth, h:v.videoHeight }); }; v.onerror = () => res({ url:u, bad:true }); v.src = u; }
+    else { const i = new Image(); i.onload = () => res({ url:u, w:i.naturalWidth, h:i.naturalHeight }); i.onerror = () => res({ url:u, bad:true }); i.src = u; } }); }
+  async function addMedia(slot, idx, file){
+    const err = $('form-err'); err.textContent = '';
+    const bad = checkMedia(file, slot); if(bad){ err.textContent = file.name + ' : ' + bad; return; }
+    const kind = /^video\//.test(file.type) ? 'video' : 'photo', r = slotRule(slot, file), info = await probe(file, kind);
+    if(info.bad){ URL.revokeObjectURL(info.url); err.textContent = file.name + ' : fichier illisible.'; return; }
+    if(kind === 'video' && info.sec > r.maxSec + 0.5){ URL.revokeObjectURL(info.url); err.textContent = 'Mini-vidéo trop longue (' + Math.round(info.sec) + ' s) : ' + r.maxSec + ' secondes maximum.'; return; }
+    if(kind === 'photo' && Math.max(info.w, info.h) < r.minSide){ URL.revokeObjectURL(info.url); err.textContent = file.name + ' : photo trop petite (au moins ' + r.minSide + ' pixels sur le grand côté).'; return; }
+    const arr = MEDIA[slot.id] = MEDIA[slot.id] || []; if(arr[idx]) URL.revokeObjectURL(arr[idx].url);
+    arr[idx] = { file, url:info.url, kind }; renderMedia();
+  }
+  function renderMedia(){
+    const sp = mediaSpec(), box = $('media-box'); if(!sp){ box.style.display = 'none'; return; }
+    box.style.display = ''; const host = $('media-slots'); host.innerHTML = '';
+    const lines = [];
+    sp.slots.forEach(slot => {
+      lines.push(slot.label + ' : ' + (slot.min === slot.max ? slot.max : slot.min + ' à ' + slot.max) + ' (' + (slot.kind === 'media' ? slot.rule.ext + ', ou mini-vidéo ' + slot.clip.ext + ' de ' + slot.clip.maxSec + ' s' : slot.rule.ext) + ')');
+      for(let i = 0; i < slot.max; i++){
+        const d = document.createElement('div'), m = (MEDIA[slot.id] || [])[i]; d.className = 'mslot' + (m ? ' fill' : ''); d.tabIndex = 0;
+        const need = i < slot.min;
+        if(m){ const el = document.createElement(m.kind === 'video' ? 'video' : 'img'); el.src = m.url; if(m.kind === 'video'){ el.muted = true; el.loop = true; el.autoplay = true; el.playsInline = true; } d.appendChild(el);
+          const tg = document.createElement('span'); tg.className = 'tag'; tg.textContent = (slot.kind === 'media' ? 'Cadre ' + (i + 1) : slot.label) + ' · ' + (m.kind === 'video' ? 'vidéo' : 'photo'); d.appendChild(tg);
+          const rm = document.createElement('button'); rm.type = 'button'; rm.className = 'rm'; rm.textContent = '✕'; rm.setAttribute('aria-label', 'Retirer'); rm.addEventListener('click', e => { e.stopPropagation(); URL.revokeObjectURL(m.url); MEDIA[slot.id][i] = null; renderMedia(); }); d.appendChild(rm);
+        } else { d.innerHTML = '<span><b>' + (slot.kind === 'media' ? 'Cadre ' + (i + 1) : slot.label) + '</b>+ Ajouter<br><span class="opt">' + (need ? 'à remplir' : 'facultatif') + '</span></span>'; }
+        const inp = document.createElement('input'); inp.type = 'file'; inp.accept = slot.rule.types.concat(slot.clip ? slot.clip.types : []).join(','); d.appendChild(inp);
+        inp.addEventListener('change', () => { if(inp.files[0]) addMedia(slot, i, inp.files[0]); });
+        d.addEventListener('click', e => { if(e.target === inp) return; inp.click(); }); d.addEventListener('keydown', e => { if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); inp.click(); } });
+        host.appendChild(d);
+      }
+    });
+    $('media-intro').textContent = 'Chaque case correspond à un emplacement du modèle, dans l’ordre où ils apparaissent. ' + lines.join(' · ') + '.';
+    $('media-note').textContent = 'Comme votre musique, vos fichiers restent sur votre appareil pour l’aperçu. Ils ne sont envoyés qu’à la commande de la formule Prestige.';
+  }
   const FICT = { venue_name:'Domaine des Lilas', address:'12 rue des Lilas, 75000 Paris', event_time:'16h00', contact_name:'Camille', contact_phone:'06 00 00 00 00', dress_code:'Tenue élégante',
     programme:[{ time:'16h00', title:'Accueil des invités', description:'' }, { time:'17h00', title:'Cérémonie', description:'' }, { time:'19h00', title:'Dîner', description:'' }, { time:'21h00', title:'Soirée dansante', description:'' }] };
   function buildInv(d){
@@ -352,7 +412,7 @@
       d.event_time = d.event_time || FICT.event_time; d.contact_name = FICT.contact_name; d.contact_phone = FICT.contact_phone; d.dress_code = FICT.dress_code; d.programme = FICT.programme; d.rsvp_enabled = true;
     }
     if(pv === 'ess'){ d.rsvp_enabled = false; }
-    return { id:'apercu', slug:'apercu', is_demo:true, theme:theme, card_text: (theme === 'galerie' && d.message) ? { message2:d.message } : {},
+    return { id:'apercu', slug:'apercu', is_demo:true, theme:theme, card_text: (theme === 'galerie') ? Object.assign(d.message ? { message2:d.message } : {}, cardPhotoUrl() ? { photo:cardPhotoUrl() } : {}) : {}, media: (theme === 'galerie') ? mediaList() : [],
       title:d.title, host_names:d.host_names || null, event_date:d.event_date, event_time:d.event_time || null, venue_name:d.venue_name || null, address:d.address || null, maps_url:d.maps_url || null,
       contact_name:d.contact_name || null, contact_phone:d.contact_phone || null, message:d.message || null, dress_code:d.dress_code || null, rsvp_enabled:d.rsvp_enabled !== false,
       invitation_programme:(d.programme || []).map((x, i) => ({ position:i + 1, time:x.time || null, title:x.title, description:x.description || null })),
@@ -367,7 +427,7 @@
     clearInterval(tick); tick = null; liveInv = null;
     $('frame').src = 'about:blank';
     if(blobUrl){ URL.revokeObjectURL(blobUrl); blobUrl = null; }
-    $('form').reset(); prog.textContent = ''; $('back-prev').style.display = 'none'; formule = null; document.querySelectorAll('#fm button').forEach(x => x.classList.remove('on')); setMode('express'); $('f-email').value = '';
+    clearMedia(); renderMedia(); $('form').reset(); prog.textContent = ''; $('back-prev').style.display = 'none'; formule = null; document.querySelectorAll('#fm button').forEach(x => x.classList.remove('on')); setMode('express'); $('f-email').value = '';
     setFull(false); $('stage').style.display = 'none'; $('expired').style.display = 'block'; go(3);
   }
   $('fs-close').addEventListener('click', () => setFull(false)); $('refull').addEventListener('click', () => setFull(true));
