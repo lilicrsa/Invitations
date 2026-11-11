@@ -353,7 +353,7 @@
   function mkVideo(k, label){
     var v = document.createElement('video'); v.muted = true; v.loop = false; v.playsInline = true; v.setAttribute('playsinline',''); v.preload = 'metadata'; v.setAttribute('controlsList','nodownload noremoteplayback'); v.setAttribute('disablePictureInPicture',''); v.disableRemotePlayback = true; v.poster = 'mini/' + k + '.jpg?v=3';
     v.setAttribute('aria-label', label); v.poster = 'mini/' + k + '.jpg?v=3'; v.addEventListener('click', function(){ if(v.paused) v.go(); });
-    ['mp4','webm'].forEach(function(x){ var s = document.createElement('source'); s.src = 'mini/' + k + '.' + x + '?v=3'; s.type = 'video/' + x; v.appendChild(s); });
+    ['mp4','webm'].forEach(function(x){ var s = document.createElement('source'); s.src = 'mini/' + k + '.' + x + '?v=4'; s.type = 'video/' + x; v.appendChild(s); });
     // l'aperçu s'arrête sur la carte (avant le fondu au noir de fin de clip) ; un nouveau clic le relance depuis le début
     v.addEventListener('timeupdate', function(){ if(!v.paused && v.duration && v.currentTime >= v.duration - 0.9){ v.pause(); v.dataset.done = '1'; } });
     v.go = function(){ if(v.dataset.done){ v.currentTime = 0; delete v.dataset.done; } return v.play().catch(function(){}); };
