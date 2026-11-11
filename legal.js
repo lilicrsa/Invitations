@@ -4,7 +4,7 @@ window.LEGAL = {
   statut: 'Entrepreneur individuel (micro-entreprise)',
   siret: '',          // numéro SIRET (14 chiffres)
   adresse: '',        // adresse professionnelle
-  email: '',          // adresse e-mail de contact (celle du nom de domaine)
+  email: 'contact@maisonopaline-invitations.fr',   // adresse e-mail de contact
   telephone: '',      // facultatif
   tva: 'TVA non applicable, article 293 B du CGI',   // à confirmer selon ton régime
   mediateur: '',      // nom et coordonnées du médiateur de la consommation
