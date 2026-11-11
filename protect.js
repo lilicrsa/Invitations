@@ -23,6 +23,14 @@
       w.style.cssText = 'position:fixed;inset:0;z-index:2147482000;pointer-events:none;background-image:url("data:image/svg+xml;utf8,' + encodeURIComponent(svg) + '")';
       document.addEventListener('DOMContentLoaded', function(){ document.body.appendChild(w); });
       setInterval(function(){ if(!w.isConnected && document.body) document.body.appendChild(w); }, 1500);
+      // sortie simple du mode démo : retour à la collection, ou créer la sienne avec ce modèle
+      var th = (location.pathname.match(/\/(boheme|noel|jeux|galerie|gender-reveal)\//) || [])[1];
+      var bar = document.createElement('div');
+      bar.style.cssText = 'position:fixed;top:max(10px,env(safe-area-inset-top,0px));left:10px;z-index:2147483000;display:flex;gap:.4rem;flex-wrap:wrap;max-width:calc(100vw - 80px);font:600 13px/1 system-ui,sans-serif';
+      var css = 'display:inline-block;padding:.6rem .9rem;border-radius:999px;text-decoration:none;box-shadow:0 2px 10px rgba(0,0,0,.3);pointer-events:auto;';
+      bar.innerHTML = '<a href="../index.html#modeles" style="' + css + 'background:rgba(10,14,29,.88);color:#E6D5AB;border:1px solid rgba(230,213,171,.5)">← Quitter la démo</a><a href="../commande.html?t=' + th + '" style="' + css + 'background:#E6D5AB;color:#0A0E1D">Créer la mienne</a>';
+      document.addEventListener('DOMContentLoaded', function(){ document.body.appendChild(bar); });
+      setInterval(function(){ if(!bar.isConnected && document.body) document.body.appendChild(bar); }, 1500);
     }
   }catch(_){}
   document.addEventListener('DOMContentLoaded', function(){
