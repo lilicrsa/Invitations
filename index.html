@@ -92,6 +92,12 @@
   .car .arr{ position:absolute; top:42%; width:46px; height:46px; border-radius:50%; border:1px solid var(--champ2); background:rgba(10,14,29,.8); color:var(--champ); font-size:1.2rem; cursor:pointer; display:none; z-index:2; }
   .car .arr.p{ left:max(14px,calc(50% - 470px)); } .car .arr.n{ right:max(14px,calc(50% - 470px)); }
   @media (hover:hover) and (min-width:700px){ .car .arr{ display:block; } }
+  /* grand écran : les 4 univers côte à côte, centrés et entièrement visibles (plus de carrousel décentré) */
+  @media (hover:hover) and (min-width:1000px){
+    .uni-track{ overflow:visible; scroll-snap-type:none; justify-content:center; gap:24px; padding-inline:0; --cw:calc((min(1120px, 100vw - 96px) - 72px) / 4); }
+    .uni, .uni.on{ transform:none; opacity:1; }
+    .car .arr, #uni-dots{ display:none; }
+  }
   .dots{ display:flex; justify-content:center; gap:.6rem; margin-top:.2rem; }
   .dots button{ width:8px; height:8px; padding:0; border-radius:50%; border:1px solid var(--champ2); background:none; cursor:pointer; transition:background .2s,transform .2s; }
   .dots button[aria-current=true]{ background:var(--champ); transform:scale(1.25); }
