@@ -536,7 +536,7 @@
           var a = document.createElement('div'); a.className = 'acts';
           var d = document.createElement('a'); d.className = 'btn'; d.href = m.demo; d.target = '_blank'; d.rel = 'noopener'; d.textContent = 'Voir la démo';
           var c = document.createElement('a'); c.className = 'btn solid';
-          if(prestige){ c.href = 'devis.html?u=' + u.id + '&f=prestige'; c.textContent = 'Demander ce modèle'; } else { c.href = 'commande.html?t=' + encodeURIComponent(k); c.textContent = 'Personnaliser'; }
+          if(prestige){ c.href = 'commande.html?t=' + encodeURIComponent(k) + '&f=pre'; c.textContent = 'Choisir ce modèle'; } else { c.href = 'commande.html?t=' + encodeURIComponent(k); c.textContent = 'Personnaliser'; }
           a.appendChild(d); a.appendChild(c); f.appendChild(a); tr.appendChild(f);
         });
         car.appendChild(tr); car.appendChild(dots); sec.appendChild(car);

@@ -398,7 +398,8 @@
   $('back-prev').addEventListener('click', reopenPreview); $('back3').addEventListener('click', reopenPreview);
   document.querySelectorAll('#fm button').forEach(b => b.addEventListener('click', () => { formule = b.dataset.f; document.querySelectorAll('#fm button').forEach(x => x.classList.toggle('on', x === b)); $('fm-err').textContent = ''; payLabel(); }));
   function payLabel(){ const p = PRICES[theme]; $('make-code').textContent = (formule && p) ? 'Payer ' + p[{ess:0,sig:1,pre:2}[formule]] + ' € et publier mon invitation' : 'Payer et publier mon invitation'; }
-  function showPrices(){ const p = PRICES[theme]; document.querySelectorAll('#fm .pr').forEach(e => { e.textContent = p && p[+e.dataset.p] ? p[+e.dataset.p] + ' €' : ''; }); $('fm-pre').style.display = (p && p[2]) ? '' : 'none'; if(formule === 'pre' && !(p && p[2])){ formule = null; document.querySelectorAll('#fm button').forEach(x => x.classList.remove('on')); } payLabel(); }
+  const WANT_F = new URLSearchParams(location.search).get('f');
+  function showPrices(){ if(WANT_F === 'pre' && !formule && PRICES[theme] && PRICES[theme][2]){ formule = 'pre'; document.querySelectorAll('#fm button').forEach(x => x.classList.toggle('on', x.dataset.f === 'pre')); } const p = PRICES[theme]; document.querySelectorAll('#fm .pr').forEach(e => { e.textContent = p && p[+e.dataset.p] ? p[+e.dataset.p] + ' €' : ''; }); $('fm-pre').style.display = (p && p[2]) ? '' : 'none'; if(formule === 'pre' && !(p && p[2])){ formule = null; document.querySelectorAll('#fm button').forEach(x => x.classList.remove('on')); } payLabel(); }
   function showPreview(){
     setPv('sig'); $('back-prev').style.display = '';
     $('expired').style.display = 'none'; $('stage').style.display = ''; go(3); startTimer(); setFull(false);
