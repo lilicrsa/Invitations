@@ -53,7 +53,7 @@ Deno.serve(async (req) => {
 
   const { data: l } = await db.rpc("get_order_links", { p_session: s.id });
   if (l?.status === "paid") {
-    const sent = await sendMail(l.email, { inv: `${SITE}${l.theme}/index.html?i=${l.slug}`, rep: l.formula === "sig" ? `${SITE}reponses.html?t=${l.token}` : undefined, ref: l.order_ref, claim: `${SITE}contact.html?c=${l.order_ref}` });
+    const sent = await sendMail(l.email, { inv: `${SITE}${l.theme}/index.html?i=${l.slug}`, rep: (l.formula === "sig" || l.formula === "pre") ? `${SITE}reponses.html?t=${l.token}` : undefined, ref: l.order_ref, claim: `${SITE}contact.html?c=${l.order_ref}` });
     if (sent) await db.from("orders").update({ email_sent_at: new Date().toISOString() }).eq("stripe_session_id", s.id);
   }
   return new Response("ok", { status: 200 });

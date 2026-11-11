@@ -294,10 +294,10 @@
         <ul><li>Tout l'Essentiel</li><li>Le choix de la musique</li><li>Les réponses de vos invités</li><li>Une page pour suivre ces réponses</li></ul>
         <p class="pp">À partir de <b id="p-sig"></b></p></div>
       <div class="plan"><h3>Prestige</h3><p class="pd">Une invitation qui parcourt vos souvenirs.</p>
-        <ul><li>Tout Signature</li><li>Un modèle galerie spécial</li><li>Vos photos ou vidéos souvenir intégrées</li></ul>
-        <p class="pp">Tarif <a href="devis.html?f=prestige" style="text-decoration:none"><b>sur devis</b> →</a></p></div>
+        <ul><li>Tout Signature</li><li>Un modèle galerie spécial</li><li>Vos photos ou vidéos souvenir intégrées, déposées après le paiement</li></ul>
+        <p class="pp">À partir de <b id="p-pre"></b></p></div>
     </div>
-    <table class="ptab" id="ptab"><thead><tr><th>Univers</th><th>Essentiel</th><th>Signature</th></tr></thead><tbody></tbody></table>
+    <table class="ptab" id="ptab"><thead><tr><th>Univers</th><th>Essentiel</th><th>Signature</th><th>Prestige</th></tr></thead><tbody></tbody></table>
     <p class="pnote">Prix en euros, TVA non applicable (article 293 B du CGI). Une création sur mesure ? <a href="devis.html">Demandez un devis</a>.</p>
     <p style="text-align:center;margin:1.4rem 0 0"><a class="btn solid" href="commande.html">Créer mon invitation</a></p>
   </div></section>
@@ -394,12 +394,12 @@
   (function(){
     var rows = '', mn = 1e9, ms = 1e9;
     UNIVERS.forEach(function(u){
-      if(u.soon || !u.prices){ rows += '<tr><td>' + u.n + '</td><td class="soon" colspan="2">Bientôt</td></tr>'; return; }
+      if(u.soon || !u.prices){ rows += '<tr><td>' + u.n + '</td><td class="soon" colspan="3">Bientôt</td></tr>'; return; }
       mn = Math.min(mn, u.prices[0]); ms = Math.min(ms, u.prices[1]);
-      rows += '<tr><td>' + u.n + '</td><td>' + u.prices[0] + ' €</td><td>' + u.prices[1] + ' €</td></tr>';
+      rows += '<tr><td>' + u.n + '</td><td>' + u.prices[0] + ' €</td><td>' + u.prices[1] + ' €</td><td>' + (u.prices[2] ? u.prices[2] + ' €' : '–') + '</td></tr>';
     });
     var tb = document.querySelector('#ptab tbody'); if(tb) tb.innerHTML = rows;
-    var a = document.getElementById('p-ess'), b = document.getElementById('p-sig'); if(a) a.textContent = mn + ' €'; if(b) b.textContent = ms + ' €';
+    var a = document.getElementById('p-ess'), b = document.getElementById('p-sig'); if(a) a.textContent = mn + ' €'; if(b) b.textContent = ms + ' €'; var c3 = document.getElementById('p-pre'); if(c3) c3.textContent = '89 €';
   })();
 
   // ---- menu mobile ----
@@ -499,7 +499,7 @@
       var pr = document.createElement('div'); pr.className = 'tp'; pr.textContent = p ? p + ' €' : 'Bientôt'; c.appendChild(pr);
       var d = document.createElement('p'); d.className = 'td'; d.textContent = t.d; c.appendChild(d);
       var ul = document.createElement('ul'); t.f.forEach(function(x){ var li = document.createElement('li'); li.textContent = x; ul.appendChild(li); }); c.appendChild(ul);
-      if(p){ var b = document.createElement('a'); b.className = 'btn' + (t.hot ? ' solid' : ''); b.href = (t.n === 'Prestige' ? 'devis.html' : 'commande.html') + '?f=' + t.n.toLowerCase() + '&u=' + u.id; b.textContent = t.n === 'Prestige' ? 'Demander le Prestige' : 'Choisir'; c.appendChild(b); }
+      if(p){ var b = document.createElement('a'); b.className = 'btn' + (t.hot ? ' solid' : ''); b.href = (t.n === 'Prestige' ? 'commande.html?t=galerie' : 'commande.html') + (t.n === 'Prestige' ? '&' : '?') + 'f=' + t.n.toLowerCase() + '&u=' + u.id; b.textContent = t.n === 'Prestige' ? 'Choisir le Prestige' : 'Choisir'; c.appendChild(b); }
       g.appendChild(c);
     });
     box.appendChild(g);

@@ -8,7 +8,7 @@ const cors = {
   "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
 const json = (b: unknown, s = 200) => new Response(JSON.stringify(b), { status: s, headers: { ...cors, "Content-Type": "application/json" } });
-const NAMES: Record<string, string> = { ess: "Essentiel", sig: "Signature" };
+const NAMES: Record<string, string> = { ess: "Essentiel", sig: "Signature", pre: "Prestige" };
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: cors });
@@ -25,7 +25,7 @@ Deno.serve(async (req) => {
   const db = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
   const { data: d } = await db.from("drafts").select("code,theme,data,status,expires_at").eq("code", code).maybeSingle();
   if (!d || new Date(d.expires_at) < new Date() || d.status === "published") return json({ error: "draft" }, 404);
-  const formula = d.data?.formule === "sig" || d.data?.formule === "ess" ? d.data.formule : (b.formula === "sig" ? "sig" : "ess");
+  const formula = ["ess","sig","pre"].includes(d.data?.formule) ? d.data.formule : (["sig","pre"].includes(b.formula) ? b.formula : "ess");
   const { data: p } = await db.from("prices").select("amount_cents").eq("theme", d.theme).eq("formula", formula).maybeSingle();
   if (!p) return json({ error: "price" }, 400);
 

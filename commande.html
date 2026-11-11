@@ -196,9 +196,10 @@
           <div class="modes" id="fm">
             <button type="button" data-f="ess"><b>Essentiel</b><small>Musique de notre sélection. Pas de choix de musique ni de réponses des invités.</small><span class="pr" data-p="0"></span></button>
             <button type="button" data-f="sig"><b>Signature</b><small>Votre musique, réponses des invités (présence, nombre de personnes) et page de suivi.</small><span class="pr" data-p="1"></span></button>
+            <button type="button" data-f="pre" id="fm-pre" style="display:none"><b>Prestige</b><small>Tout Signature, et vos photos ou vidéos souvenir intégrées dans le modèle. Vous les déposez après le paiement.</small><span class="pr" data-p="2"></span></button>
           </div>
           <div class="err" id="fm-err" role="alert"></div>
-          <p class="hint">Vous pouvez comparer les deux depuis l'aperçu. Prestige (galerie souvenir) : sur devis.</p>
+          <p class="hint">Vous pouvez comparer les deux depuis l'aperçu. Le Prestige (galerie souvenir) est proposé avec le modèle Galerie.</p>
           <p style="margin-top:0">Votre invitation vous plaît ? Indiquez votre e-mail : il sert à retrouver votre commande. C'est à cette étape seulement que vos informations sont enregistrées.</p>
           <p class="care" style="margin:0 0 .6rem"><b>Dernier contrôle avant de commander.</b> Vos informations serviront à publier l'invitation : si un détail est faux, revenez le corriger avant de continuer. Certaines modifications restent possibles ensuite, mais elles prennent du temps.</p>
           <label for="f-email">Votre e-mail</label>
@@ -388,15 +389,15 @@
   });
 
   const STD_DEMO = { boheme:'boheme/?i=boheme-demo', noel:'noel/?i=noel-demo', jeux:'jeux/?i=jeux-demo', 'gender-reveal':'gender-reveal/?i=gender-reveal-demo', galerie:'boheme/?i=boheme-demo' };
-  const PRICES = { boheme:[29,59], galerie:[29,59], 'gender-reveal':[19,39], noel:[15,29], jeux:[15,29] };
-  const FNOTE = { ess:'Aperçu essentiel : musique de notre sélection, sans réponses des invités.', sig:'Aperçu signature : votre musique et les réponses des invités.' };
+  const PRICES = { boheme:[29,59], galerie:[29,59,89], 'gender-reveal':[19,39], noel:[15,29], jeux:[15,29] };
+  const FNOTE = { ess:'Aperçu essentiel : musique de notre sélection, sans réponses des invités.', sig:'Aperçu signature : votre musique et les réponses des invités.', pre:'Aperçu signature : votre musique et les réponses des invités.' };
   function setPv(f){ pv = f; document.querySelectorAll('#fsw button').forEach(b => b.classList.toggle('on', b.dataset.f === f)); $('fsw-note').textContent = FNOTE[f]; }
   document.querySelectorAll('#fsw button').forEach(b => b.addEventListener('click', () => { if(!liveInv) return; setPv(b.dataset.f); liveInv = buildInv(collect()); setFull(false); $('frame').src = theme + '/?preview=' + Math.random().toString(36).slice(2, 8).toUpperCase() + '&live=1'; }));
   function reopenPreview(){ if(!liveInv) return; go(3); $('stage').style.display = ''; $('expired').style.display = 'none'; $('frame').src = theme + '/?preview=' + Math.random().toString(36).slice(2, 8).toUpperCase() + '&live=1'; }
   $('back-prev').addEventListener('click', reopenPreview); $('back3').addEventListener('click', reopenPreview);
   document.querySelectorAll('#fm button').forEach(b => b.addEventListener('click', () => { formule = b.dataset.f; document.querySelectorAll('#fm button').forEach(x => x.classList.toggle('on', x === b)); $('fm-err').textContent = ''; payLabel(); }));
-  function payLabel(){ const p = PRICES[theme]; $('make-code').textContent = (formule && p) ? 'Payer ' + p[formule === 'sig' ? 1 : 0] + ' € et publier mon invitation' : 'Payer et publier mon invitation'; }
-  function showPrices(){ const p = PRICES[theme]; document.querySelectorAll('#fm .pr').forEach(e => { e.textContent = p ? p[+e.dataset.p] + ' €' : ''; }); payLabel(); }
+  function payLabel(){ const p = PRICES[theme]; $('make-code').textContent = (formule && p) ? 'Payer ' + p[{ess:0,sig:1,pre:2}[formule]] + ' € et publier mon invitation' : 'Payer et publier mon invitation'; }
+  function showPrices(){ const p = PRICES[theme]; document.querySelectorAll('#fm .pr').forEach(e => { e.textContent = p && p[+e.dataset.p] ? p[+e.dataset.p] + ' €' : ''; }); $('fm-pre').style.display = (p && p[2]) ? '' : 'none'; if(formule === 'pre' && !(p && p[2])){ formule = null; document.querySelectorAll('#fm button').forEach(x => x.classList.remove('on')); } payLabel(); }
   function showPreview(){
     setPv('sig'); $('back-prev').style.display = '';
     $('expired').style.display = 'none'; $('stage').style.display = ''; go(3); startTimer(); setFull(false);
@@ -415,7 +416,7 @@
   });
   $('make-code').addEventListener('click', async () => {
     const err = $('email-err'); err.textContent = ''; $('cgv-err').textContent = ''; const email = $('f-email').value.trim(), d = collect();
-    if(!formule) return $('fm-err').textContent = 'Merci de choisir la prestation à commander : Essentiel ou Signature.';
+    if(!formule) return $('fm-err').textContent = 'Merci de choisir la prestation à commander : Essentiel, Signature ou Prestige.';
     d.formule = formule; if(formule === 'ess') d.rsvp_enabled = false;
     if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return err.textContent = 'Merci d’indiquer un e-mail valide.';
     if(!$('f-cgv').checked) return $('cgv-err').textContent = 'Merci d’accepter les conditions pour continuer.';
