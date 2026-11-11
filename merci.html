@@ -20,7 +20,7 @@ a.btn.g{ background:transparent; color:var(--champ); }
   <div class="note" id="mailnote"></div>
   <div class="box"><b>Lien de votre invitation</b><small>C'est ce lien que vous envoyez à vos invités.</small><div class="lk"><input id="l1" readonly><button data-c="l1">Copier</button></div><p style="margin:.7rem 0 0"><a class="btn g" id="v1" target="_blank" rel="noopener">Voir mon invitation</a></p></div>
   <div class="box" id="b2"><b>Lien de suivi des réponses</b><small>Gardez-le pour vous : il donne accès aux réponses de vos invités.</small><div class="lk"><input id="l2" readonly><button data-c="l2">Copier</button></div><p style="margin:.7rem 0 0"><a class="btn g" id="v2" target="_blank" rel="noopener">Voir les réponses</a></p></div>
-  <p style="color:var(--brume);font-size:.92rem">Conservez ces deux liens. Une question ou une correction à faire : <a href="contact.html">écrivez-nous</a>. Votre invitation reste en ligne jusqu'à trois mois après l'événement.</p>
+  <p style="color:var(--brume);font-size:.92rem">Conservez ces deux liens. Numéro de commande : <b id="oref"></b>. Une question, une correction ou une réclamation : <a id="claim" href="contact.html">écrivez-nous depuis cette page</a>, votre commande sera associée à votre message. Votre invitation reste en ligne jusqu'à trois mois après l'événement.</p>
 </div>
 <footer class="lg"><a href="./">Accueil</a><a href="cgv.html">CGV</a><a href="contact.html">Contact</a></footer>
 </div>
@@ -38,6 +38,7 @@ async function poll(n){
     $('l1').value=inv; $('v1').href=inv;
     if(j.formula==='sig'){ $('l2').value=rep; $('v2').href=rep; } else { $('b2').style.display='none'; }
     $('mailnote').textContent = j.email_sent ? 'Ces liens vous ont aussi été envoyés par e-mail à '+j.email+'. Pensez à regarder vos courriers indésirables.' : 'Copiez dès maintenant ces liens : gardez-les précieusement.';
+    if(j.order_ref){ $('oref').textContent=j.order_ref; $('claim').href='contact.html?c='+encodeURIComponent(j.order_ref); }
     $('res').style.display='block'; return;
   }
   if(j && (j.status==='failed')){ $('h').textContent='Un souci est survenu'; $('p').innerHTML='Votre paiement a été reçu mais la publication a échoué. <a href="contact.html">Écrivez-nous</a>, nous nous en occupons tout de suite.'; return; }

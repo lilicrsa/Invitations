@@ -20,6 +20,7 @@ button:disabled{ opacity:.6; cursor:wait; }
 <a href="./">‹ Accueil</a>
 <h1>Nous écrire</h1>
 <p style="color:var(--brume)">Une question, une correction à faire sur votre invitation, une demande liée à vos données : écrivez-nous, nous répondons par e-mail. Pour une création sur mesure, passez plutôt par la <a href="devis.html">demande de devis</a>.</p>
+<p id="ref" style="display:none;border:1px solid var(--champ2);border-radius:12px;padding:.7rem 1rem;color:var(--champ)"></p>
 <form id="f" novalidate>
   <label for="n">Votre nom</label><input id="n" maxlength="100" autocomplete="name">
   <label for="e">Votre e-mail</label><input id="e" type="email" maxlength="160" autocomplete="email">
@@ -35,9 +36,11 @@ button:disabled{ opacity:.6; cursor:wait; }
 <script>
 const URL_='https://sgatagagyfizuyrinmth.supabase.co', KEY='sb_publishable_YdlXEbQn9ZqILsjT6pyAug_ijgzm5fQ';
 const $=id=>document.getElementById(id);
+const ORDER=(new URLSearchParams(location.search).get('c')||'').toUpperCase().match(/^MO-[A-Z0-9]{6}$/)?.[0]||'';
+if(ORDER){ $('ref').style.display='block'; $('ref').textContent='Votre message concerne la commande '+ORDER+'.'; $('s').value=$('s').value||'Réclamation, commande '+ORDER; }
 $('f').addEventListener('submit', async ev=>{
   ev.preventDefault(); const err=$('err'); err.textContent='';
-  const p={ name:$('n').value.trim(), email:$('e').value.trim(), subject:$('s').value.trim(), message:$('m').value.trim(), website:$('w').value };
+  const p={ name:$('n').value.trim(), email:$('e').value.trim(), subject:$('s').value.trim(), message:$('m').value.trim(), website:$('w').value, order:ORDER };
   if(!p.name) return err.textContent='Merci d’indiquer votre nom.';
   if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(p.email)) return err.textContent='Merci d’indiquer un e-mail valide.';
   if(p.message.length<5) return err.textContent='Votre message est un peu court.';

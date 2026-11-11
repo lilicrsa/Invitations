@@ -98,7 +98,7 @@ const linkOf=i=>`${BASE}${i.theme}/index.html?i=${i.slug}`, respOf=i=>`${BASE}re
 const tagS=s=>`<span class="tag ${s==='paid'||s==='published'||s==='new'?'ok':''}">${esc(s)}</span>`;
 function rOrders(){ return DATA.orders.map(o=>{ const i=DATA.inv.find(x=>x.id===o.invitation_id);
   return `<div class="card"><div class="top"><b>${esc(o.email||'—')} ${tagS(o.status)}<span class="tag">${esc(o.formula)}</span></b><small>${fmt(o.created_at)} · ${(o.amount_cents/100).toFixed(2)} €</small></div>
-  <div class="m">Thème ${esc(o.theme)} · brouillon ${esc(o.draft_code)}${o.error?` · <span style="color:var(--err)">${esc(o.error)}</span>`:''}${o.email_sent_at?' · e-mail envoyé':' · e-mail non envoyé'}</div>
+  <div class="m"><b>${esc(o.order_ref||'')}</b> · Thème ${esc(o.theme)} · brouillon ${esc(o.draft_code)}${o.error?` · <span style="color:var(--err)">${esc(o.error)}</span>`:''}${o.email_sent_at?' · e-mail envoyé':' · e-mail non envoyé'}</div>
   ${i?`<div class="acts"><button class="g" data-a="copyinv" data-i="${i.id}">Copier lien invitation</button><button class="g" data-a="copyresp" data-i="${i.id}">Copier lien réponses</button></div>`:''}</div>`; }).join(''); }
 function rDrafts(){ return DATA.drafts.map(d=>{ const dd=d.data||{};
   return `<div class="card"><div class="top"><b>${esc(dd.title||dd.host_names||'(sans titre)')} ${tagS(d.status)}</b><small>${fmt(d.updated_at)}</small></div>
@@ -115,7 +115,7 @@ function rQuotes(){ return DATA.quotes.map(q=>`<div class="card"><div class="top
   <div class="msg">${esc(q.description||'')}${q.inspiration?'\nInspiration : '+esc(q.inspiration):''}${q.music?'\nMusique : '+esc(q.music):''}${q.extras?'\nOptions : '+esc(q.extras):''}</div>
   <div class="acts">${stSel('quote',q.id,q.status)}<a href="mailto:${esc(q.email)}" style="color:var(--champ2);align-self:center">Répondre</a></div></div>`).join(''); }
 function rMsgs(){ return DATA.msgs.map(m=>`<div class="card"><div class="top"><b>${esc(m.name)} · ${esc(m.subject||'(sans sujet)')} ${tagS(m.status)}</b><small>${fmt(m.created_at)}</small></div>
-  <div class="m">${esc(m.email)}</div><div class="msg">${esc(m.message)}</div>
+  <div class="m">${esc(m.email)}${m.order_ref?` · commande <b>${esc(m.order_ref)}</b>${(()=>{const o=DATA.orders.find(x=>x.order_ref===m.order_ref);return o?` (${esc(o.email||'')}, ${esc(o.formula)}, ${(o.amount_cents/100).toFixed(2)} €)`:'';})()}`:''}</div><div class="msg">${esc(m.message)}</div>
   <div class="acts">${stSel('message',m.id,m.status)}<a href="mailto:${esc(m.email)}?subject=Re:%20${encodeURIComponent(m.subject||'votre message')}" style="color:var(--champ2);align-self:center">Répondre</a></div></div>`).join(''); }
 
 async function copy(t){ try{ await navigator.clipboard.writeText(t); toast('Copié ✓'); }catch(_){ prompt('Copie ce lien :',t); } }

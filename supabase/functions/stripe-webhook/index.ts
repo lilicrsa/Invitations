@@ -14,14 +14,15 @@ async function verify(raw: string, header: string, secret: string): Promise<bool
   return sigs.some((s) => s.length === hex.length && [...s].reduce((a, c, i) => a | (c.charCodeAt(0) ^ hex.charCodeAt(i)), 0) === 0);
 }
 
-async function sendMail(to: string, links: { inv: string; rep?: string }): Promise<boolean> {
+async function sendMail(to: string, links: { inv: string; rep?: string; claim?: string; ref?: string }): Promise<boolean> {
   const key = Deno.env.get("RESEND_API_KEY"), from = Deno.env.get("MAIL_FROM");
   if (!key || !from) return false;
   const html = `<div style="font-family:Arial,sans-serif;max-width:520px;margin:auto;color:#222"><h2>Votre invitation est en ligne ✨</h2>
 <p>Merci pour votre commande chez Maison Opaline.</p>
 <p><b>Lien de votre invitation</b> (à envoyer à vos invités) :<br><a href="${links.inv}">${links.inv}</a></p>
 ${links.rep ? `<p><b>Lien de suivi des réponses</b> (à garder pour vous) :<br><a href="${links.rep}">${links.rep}</a></p>` : ""}
-<p>Conservez cet e-mail. Une question ? Répondez à ce message ou écrivez-nous depuis le site.</p></div>`;
+<p>Conservez cet e-mail. Commande <b>${links.ref ?? ""}</b>.</p>
+<p>Une question, une correction ou une réclamation ? <a href="${links.claim}">Écrivez-nous depuis ce lien</a> : votre commande sera associée à votre message. Merci de ne pas répondre directement à cet e-mail, cette adresse n'est pas consultée.</p></div>`;
   const r = await fetch("https://api.resend.com/emails", {
     method: "POST", headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
     body: JSON.stringify({ from, to, subject: "Votre invitation Maison Opaline est en ligne", html }),
@@ -52,7 +53,7 @@ Deno.serve(async (req) => {
 
   const { data: l } = await db.rpc("get_order_links", { p_session: s.id });
   if (l?.status === "paid") {
-    const sent = await sendMail(l.email, { inv: `${SITE}${l.theme}/index.html?i=${l.slug}`, rep: l.formula === "sig" ? `${SITE}reponses.html?t=${l.token}` : undefined });
+    const sent = await sendMail(l.email, { inv: `${SITE}${l.theme}/index.html?i=${l.slug}`, rep: l.formula === "sig" ? `${SITE}reponses.html?t=${l.token}` : undefined, ref: l.order_ref, claim: `${SITE}contact.html?c=${l.order_ref}` });
     if (sent) await db.from("orders").update({ email_sent_at: new Date().toISOString() }).eq("stripe_session_id", s.id);
   }
   return new Response("ok", { status: 200 });
