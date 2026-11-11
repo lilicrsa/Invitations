@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://lilicrsa.github.io/Invitations/sitemap.xml

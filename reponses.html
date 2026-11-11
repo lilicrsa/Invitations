@@ -5,26 +5,29 @@
 <link rel="icon" type="image/png" href="logo/favicon.png?v=1">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex, nofollow">
-<title>Réponses des invités</title>
+<title>Réponses des invités · Maison Opaline</title>
 <style>
   /* Default look = theme "default". Every colour / font / radius below comes from CSS variables
      that are replaced at runtime by the theme chosen in Supabase (table "themes"). */
   :root{
-    --bg:#FBF3F7; --text:#4E3347; --muted:#C0719A; --accent:#D9568A;
-    --card-bg:#FFFFFF; --card-border:#F3E3EC; --card-shadow:0 6px 24px rgba(217,86,138,.12);
-    --input-bg:#FFFFFF; --input-border:#E7C4D5; --stat-bg:#FFF0F6; --row-bg:#FFF7FB; --row-border:#F1DCE6;
-    --btn-bg:#D9568A; --btn-text:#FFFFFF; --btn-border:#D9568A;
-    --btn2-bg:#FFFFFF; --btn2-text:#D9568A; --btn2-border:#D9568A;
-    --yes:#1B7F4B; --no:#B3261E; --err:#B3261E; --radius:18px; --radius-btn:999px;
+    --bg:#0A0E1D; --text:#E7D5A8; --muted:#A2A9C4; --accent:#E7D5A8;
+    --card-bg:#121831; --card-border:rgba(231,213,168,.28); --card-shadow:0 18px 50px rgba(0,0,0,.45);
+    --input-bg:#0d1228; --input-border:rgba(231,213,168,.4); --stat-bg:#0d1228; --row-bg:#0d1228; --row-border:rgba(231,213,168,.18);
+    --btn-bg:#E7D5A8; --btn-text:#0A0E1D; --btn-border:#E7D5A8;
+    --btn2-bg:transparent; --btn2-text:#E7D5A8; --btn2-border:#E7D5A8;
+    --yes:#8FD3A3; --no:#FF9AA8; --err:#FF9AA8; --radius:18px; --radius-btn:999px;
     --font-heading:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
     --font-body:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
-    --scheme:light; --head-grad:none; --head-fill:currentColor;
+    --scheme:dark; --head-grad:none; --head-fill:currentColor;
     --bg-img:none; --bg-overlay:none; --card-outline:none; --card-blur:none; --font-script:var(--font-heading); --h1-size:1.7rem; --h1-weight:700;
   }
   *{box-sizing:border-box; margin:0; padding:0;}
   html{ color-scheme:var(--scheme);}
   body{ font-family:var(--font-body); font-variant-numeric:lining-nums; background:var(--bg-overlay), var(--bg-img), var(--bg); background-size:cover; background-position:center; background-repeat:no-repeat; background-attachment:fixed; color:var(--text); min-height:100vh; padding:1.2rem; transition:background .3s, color .3s;}
   .wrap{ max-width:900px; margin:0 auto;}
+  .brandtop{ display:none; align-items:center; justify-content:center; gap:.6rem; margin:0 0 1.2rem; color:var(--accent); text-decoration:none; font:400 1.25rem 'Italiana',serif; letter-spacing:.14em;}
+  .brandtop img{ height:44px; width:auto;}
+  body[data-theme="default"] .brandtop{ display:flex;}
   h1,.stat b{ background-image:var(--head-grad); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:var(--head-fill);}
   h1{ font-family:var(--font-script); font-weight:var(--h1-weight); font-size:var(--h1-size); line-height:1.2; padding:.05em .1em; color:var(--accent); margin-bottom:1rem; text-align:center;}
   .card{ background:var(--card-bg); border:1px solid var(--card-border); border-radius:var(--radius); padding:1.3rem; box-shadow:var(--card-shadow); margin-bottom:1rem; outline:var(--card-outline); outline-offset:-8px; -webkit-backdrop-filter:var(--card-blur); backdrop-filter:var(--card-blur);}
@@ -71,6 +74,7 @@
 </head>
 <body>
 <div class="wrap">
+  <a class="brandtop" href="./"><img src="logo/emblem.png?v=1" alt=""><span>Maison Opaline</span></a>
   <h1>Réponses des invités</h1>
 
   <!-- LOGIN -->
@@ -172,9 +176,9 @@
     if(direct) urlThemeKey = direct;
     else if(slug){
       try{
-        const res = await fetch(SUPABASE_URL + '/rest/v1/invitations?slug=eq.' + encodeURIComponent(slug) + '&select=theme', { headers: { apikey: SUPABASE_KEY } });
-        const rows = res.ok ? await res.json() : [];
-        if(rows[0] && rows[0].theme) urlThemeKey = rows[0].theme;
+        const res = await fetch(SUPABASE_URL + '/rest/v1/rpc/get_invitation_theme', { method:'POST', headers:{ apikey:SUPABASE_KEY, 'Content-Type':'application/json' }, body: JSON.stringify({ p_slug: slug }) });
+        const th = res.ok ? await res.json() : null;
+        if(th) urlThemeKey = th;
       }catch(_){}
     }
     applyTheme(urlThemeKey || 'default');
