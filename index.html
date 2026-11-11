@@ -60,7 +60,31 @@
   .nav .brand{ font:400 1.3rem 'Italiana',serif; letter-spacing:.14em; text-decoration:none; margin-right:auto; background:none; border:0; color:inherit; cursor:pointer; padding:0; }
   .nav a.l{ text-decoration:none; color:var(--brume); font-size:.92rem; } .nav a.l:hover{ color:var(--champ); }
   .nav .btn{ padding:.5rem 1.1rem; font-size:.88rem; }
-  @media (max-width:760px){ .nav a.l{ display:none; } }
+  .nav .cta{ white-space:nowrap; }
+  .burger{ display:none; width:42px; height:42px; padding:0; border:1px solid var(--trait); border-radius:10px; background:none; cursor:pointer; flex-direction:column; align-items:center; justify-content:center; gap:5px; }
+  .burger span{ display:block; width:18px; height:1.5px; background:var(--champ); }
+  @media (max-width:760px){ .nav a.l, .nav .cta{ display:none; } .burger{ display:inline-flex; } }
+  .menu{ position:fixed; inset:0; z-index:90; display:none; }
+  .menu.open{ display:block; }
+  .menu .bk{ position:absolute; inset:0; background:rgba(0,0,0,.6); }
+  .menu .pn{ position:absolute; left:0; top:0; bottom:0; width:min(82vw,320px); background:var(--nuit2); border-right:1px solid var(--trait); padding:1.2rem 1.5rem 1.6rem; display:flex; flex-direction:column; gap:.2rem; overflow-y:auto; }
+  .menu .x{ align-self:flex-end; width:42px; height:42px; border:0; background:none; color:var(--champ); font-size:1.8rem; line-height:1; cursor:pointer; }
+  .menu a.ml{ font:400 1.55rem 'Italiana',serif; color:var(--champ); text-decoration:none; padding:.6rem 0; }
+  .menu .btn{ margin-top:1.2rem; text-align:center; }
+  #tarifs .sec h2, #tarifs h2{ text-align:center; }
+  .plans{ display:grid; grid-template-columns:repeat(auto-fit,minmax(16rem,1fr)); gap:1rem; max-width:44rem; margin:1.6rem auto 0; }
+  .plan{ border:1px solid var(--trait); border-radius:16px; padding:1.4rem 1.3rem; background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.01)); display:flex; flex-direction:column; }
+  .plan.hot{ border-color:var(--champ2); box-shadow:0 0 40px -14px rgba(231,213,168,.5); }
+  .plan h3{ font-size:1.6rem; }
+  .plan .pd{ color:var(--brume); margin:.3rem 0 .8rem; font-size:.94rem; }
+  .plan ul{ margin:0 0 1rem; padding-left:1.1rem; line-height:1.6; font-size:.94rem; flex:1; }
+  .plan .pp{ margin:0; color:var(--brume); } .plan .pp b{ font:400 1.9rem 'Italiana',serif; color:var(--champ); }
+  .ptab{ width:100%; max-width:44rem; margin:1.6rem auto 0; border-collapse:collapse; font-size:.95rem; }
+  .ptab th, .ptab td{ padding:.7rem .6rem; border-bottom:1px solid var(--trait); text-align:center; }
+  .ptab th:first-child, .ptab td:first-child{ text-align:left; }
+  .ptab th{ font:600 .72rem 'Manrope',sans-serif; letter-spacing:.16em; text-transform:uppercase; color:var(--champ2); }
+  .ptab td.soon{ color:var(--brume); }
+  .pnote{ text-align:center; color:var(--brume); font-size:.88rem; margin:1rem auto 0; max-width:34rem; }
 
   section{ scroll-margin-top:4.2rem; }
   .sec{ padding-block:clamp(3rem,8vw,5.5rem); }
@@ -209,8 +233,18 @@
 <div class="site">
   <nav class="nav"><div class="wrap">
     <button class="brand" id="home" type="button" aria-label="Retour à l'entrée"><img class="logo" src="logo/emblem.png?v=1" alt="" width="42" height="31"><span data-brand></span></button>
-    <a class="l" href="#modeles">Modèles</a><a class="l" href="#fonctionnement">Fonctionnement</a><a class="l" href="#questions">Questions</a>
+    <a class="l" href="#modeles">Modèles</a><a class="l" href="#fonctionnement">Fonctionnement</a><a class="l" href="#tarifs">Tarifs</a><a class="l" href="#questions">Questions</a><a class="l" href="contact.html">Contact</a>
+    <a class="btn solid cta" href="commande.html">Créer mon invitation</a>
+    <button class="burger" id="burger" type="button" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="menu"><span></span><span></span><span></span></button>
   </div></nav>
+  <div class="menu" id="menu" aria-hidden="true">
+    <div class="bk" data-close></div>
+    <div class="pn" role="dialog" aria-label="Menu">
+      <button class="x" type="button" aria-label="Fermer le menu" data-close>×</button>
+      <a class="ml" href="#modeles">Modèles</a><a class="ml" href="#fonctionnement">Fonctionnement</a><a class="ml" href="#tarifs">Tarifs</a><a class="ml" href="#questions">Questions</a><a class="ml" href="contact.html">Contact</a>
+      <a class="btn solid" href="commande.html">Créer mon invitation</a>
+    </div>
+  </div>
 
   <section id="modeles">
     <div class="valance"></div>
@@ -247,6 +281,22 @@
       <div><b>Ce que vos invités voient.</b> Une vidéo d'ouverture, la carte à votre date, puis l'heure, le lieu, l'itinéraire et un compte à rebours.</div>
       <div><b>Ce que vous suivez.</b> Qui vient, avec combien de personnes et quelles remarques, sur une page qui reprend le décor de votre invitation.</div>
     </div>
+  </div></section>
+
+  <section id="tarifs"><div class="wrap sec">
+    <h2>Des tarifs simples</h2>
+    <p class="lead" style="margin-inline:auto;text-align:center">Vous payez une seule fois. Le prix dépend de la formule et de l'univers, et il s'affiche avant de commander.</p>
+    <div class="plans">
+      <div class="plan"><h3>Essentiel</h3><p class="pd">L'invitation animée, prête à partager.</p>
+        <ul><li>Vidéo d'ouverture et carte à votre date</li><li>Heure, lieu, itinéraire et compte à rebours</li><li>Musique de notre sélection</li></ul>
+        <p class="pp">À partir de <b id="p-ess"></b></p></div>
+      <div class="plan hot"><h3>Signature</h3><p class="pd">Pour recueillir les réponses de vos invités.</p>
+        <ul><li>Tout l'Essentiel</li><li>Le choix de la musique</li><li>Les réponses de vos invités</li><li>Une page pour suivre ces réponses</li></ul>
+        <p class="pp">À partir de <b id="p-sig"></b></p></div>
+    </div>
+    <table class="ptab" id="ptab"><thead><tr><th>Univers</th><th>Essentiel</th><th>Signature</th></tr></thead><tbody></tbody></table>
+    <p class="pnote">Prix en euros, TVA non applicable (article 293 B du CGI). Une création sur mesure ? <a href="devis.html">Demandez un devis</a>.</p>
+    <p style="text-align:center;margin:1.4rem 0 0"><a class="btn solid" href="commande.html">Créer mon invitation</a></p>
   </div></section>
 
   <section id="questions"><div class="wrap sec">
@@ -325,7 +375,7 @@
   UNIVERS.forEach(function(u){
     var c = document.createElement('article'); c.className = 'uni'; c.style.setProperty('--tint', u.tint);
     var fr = document.createElement('div'); fr.className = 'frame';
-    if(u.cover){ var v = mkVideo(u.cover, 'Aperçu animé : ' + u.n); fr.appendChild(v); watch(v); }
+    if(u.cover){ var v = mkVideo(u.cover, 'Aperçu animé : ' + u.n); fr.appendChild(v); fr.classList.add('tap'); (function(vv, ff){ ff.addEventListener('click', function(){ if(vv.paused){ track.querySelectorAll('video').forEach(function(o){ if(o !== vv) o.pause(); }); vv.play().catch(function(){}); } else vv.pause(); }); vv.addEventListener('play', function(){ ff.classList.add('playing'); }); vv.addEventListener('pause', function(){ ff.classList.remove('playing'); }); })(v, fr); }
     else { var im = document.createElement('img'); im.className = 'ph'; im.src = 'univers/' + u.id + '.jpg?v=3'; im.alt = u.n; fr.appendChild(im); }
     c.appendChild(fr);
     var h = document.createElement('h3'); h.textContent = u.n; c.appendChild(h);
@@ -336,6 +386,27 @@
     track.appendChild(c);
   });
   carousel(track, document.getElementById('uni-dots'), [uCar.querySelector('.arr.p'), uCar.querySelector('.arr.n')]);
+
+  // ---- tarifs : lus depuis les données des univers (une seule source) ----
+  (function(){
+    var rows = '', mn = 1e9, ms = 1e9;
+    UNIVERS.forEach(function(u){
+      if(u.soon || !u.prices){ rows += '<tr><td>' + u.n + '</td><td class="soon" colspan="2">Bientôt</td></tr>'; return; }
+      mn = Math.min(mn, u.prices[0]); ms = Math.min(ms, u.prices[1]);
+      rows += '<tr><td>' + u.n + '</td><td>' + u.prices[0] + ' €</td><td>' + u.prices[1] + ' €</td></tr>';
+    });
+    var tb = document.querySelector('#ptab tbody'); if(tb) tb.innerHTML = rows;
+    var a = document.getElementById('p-ess'), b = document.getElementById('p-sig'); if(a) a.textContent = mn + ' €'; if(b) b.textContent = ms + ' €';
+  })();
+
+  // ---- menu mobile ----
+  (function(){
+    var m = document.getElementById('menu'), bt = document.getElementById('burger'); if(!m || !bt) return;
+    function set(o){ m.classList.toggle('open', o); m.setAttribute('aria-hidden', o ? 'false' : 'true'); bt.setAttribute('aria-expanded', o ? 'true' : 'false'); document.body.style.overflow = o ? 'hidden' : ''; }
+    bt.addEventListener('click', function(){ set(true); });
+    m.querySelectorAll('[data-close], a').forEach(function(e){ e.addEventListener('click', function(){ set(false); }); });
+    document.addEventListener('keydown', function(e){ if(e.key === 'Escape') set(false); });
+  })();
 
   // ---- entrées : chaque univers a la sienne ----
   var body = document.body, reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
