@@ -351,9 +351,12 @@
   document.title = BRAND + ' — invitations animées';
 
   function mkVideo(k, label){
-    var v = document.createElement('video'); v.muted = true; v.loop = true; v.playsInline = true; v.setAttribute('playsinline',''); v.preload = 'metadata'; v.setAttribute('controlsList','nodownload noremoteplayback'); v.setAttribute('disablePictureInPicture',''); v.disableRemotePlayback = true; v.poster = 'mini/' + k + '.jpg?v=3';
-    v.setAttribute('aria-label', label); v.poster = 'mini/' + k + '.jpg?v=3'; v.addEventListener('click', function(){ if(v.paused) v.play().catch(function(){}); });
+    var v = document.createElement('video'); v.muted = true; v.loop = false; v.playsInline = true; v.setAttribute('playsinline',''); v.preload = 'metadata'; v.setAttribute('controlsList','nodownload noremoteplayback'); v.setAttribute('disablePictureInPicture',''); v.disableRemotePlayback = true; v.poster = 'mini/' + k + '.jpg?v=3';
+    v.setAttribute('aria-label', label); v.poster = 'mini/' + k + '.jpg?v=3'; v.addEventListener('click', function(){ if(v.paused) v.go(); });
     ['mp4','webm'].forEach(function(x){ var s = document.createElement('source'); s.src = 'mini/' + k + '.' + x + '?v=3'; s.type = 'video/' + x; v.appendChild(s); });
+    // l'aperçu s'arrête sur la carte (avant le fondu au noir de fin de clip) ; un nouveau clic le relance depuis le début
+    v.addEventListener('timeupdate', function(){ if(!v.paused && v.duration && v.currentTime >= v.duration - 0.9){ v.pause(); v.dataset.done = '1'; } });
+    v.go = function(){ if(v.dataset.done){ v.currentTime = 0; delete v.dataset.done; } return v.play().catch(function(){}); };
     return v;
   }
   var io = 'IntersectionObserver' in window ? new IntersectionObserver(function(es){ es.forEach(function(e){ try{ if(e.isIntersecting) e.target.play().catch(function(){}); else e.target.pause(); }catch(_){} }); }, { threshold:.5 }) : null;
@@ -379,7 +382,7 @@
   UNIVERS.forEach(function(u){
     var c = document.createElement('article'); c.className = 'uni'; c.style.setProperty('--tint', u.tint);
     var fr = document.createElement('div'); fr.className = 'frame';
-    if(u.cover){ var v = mkVideo(u.cover, 'Aperçu animé : ' + u.n); fr.appendChild(v); fr.classList.add('tap'); (function(vv, ff){ ff.addEventListener('click', function(){ if(vv.paused){ track.querySelectorAll('video').forEach(function(o){ if(o !== vv) o.pause(); }); vv.play().catch(function(){}); } else vv.pause(); }); vv.addEventListener('play', function(){ ff.classList.add('playing'); }); vv.addEventListener('pause', function(){ ff.classList.remove('playing'); }); })(v, fr); }
+    if(u.cover){ var v = mkVideo(u.cover, 'Aperçu animé : ' + u.n); fr.appendChild(v); fr.classList.add('tap'); (function(vv, ff){ ff.addEventListener('click', function(){ if(vv.paused){ track.querySelectorAll('video').forEach(function(o){ if(o !== vv) o.pause(); }); vv.go(); } else vv.pause(); }); vv.addEventListener('play', function(){ ff.classList.add('playing'); }); vv.addEventListener('pause', function(){ ff.classList.remove('playing'); }); })(v, fr); }
     else { var im = document.createElement('img'); im.className = 'ph'; im.src = 'univers/' + u.id + '.jpg?v=3'; im.alt = u.n; fr.appendChild(im); }
     c.appendChild(fr);
     var h = document.createElement('h3'); h.textContent = u.n; c.appendChild(h);
@@ -529,7 +532,7 @@
         var car = document.createElement('div'); car.className = 'car'; var tr = document.createElement('div'); tr.className = 'uni-track'; var dots = document.createElement('div'); dots.className = 'dots';
         keys.forEach(function(k){
           var m = MODELS[k], f = document.createElement('article'); f.className = 'uni screen';
-          var fr = document.createElement('div'); fr.className = 'frame'; var v = mkVideo(k, 'Aperçu animé : ' + m.n); fr.appendChild(v); f.appendChild(fr); fr.classList.add('tap'); (function(vv, ff){ ff.addEventListener('click', function(){ if(vv.paused){ world.querySelectorAll('video').forEach(function(o){ if(o !== vv) o.pause(); }); vv.play().catch(function(){}); } else vv.pause(); }); vv.addEventListener('play', function(){ ff.classList.add('playing'); }); vv.addEventListener('pause', function(){ ff.classList.remove('playing'); }); })(v, fr);
+          var fr = document.createElement('div'); fr.className = 'frame'; var v = mkVideo(k, 'Aperçu animé : ' + m.n); fr.appendChild(v); f.appendChild(fr); fr.classList.add('tap'); (function(vv, ff){ ff.addEventListener('click', function(){ if(vv.paused){ world.querySelectorAll('video').forEach(function(o){ if(o !== vv) o.pause(); }); vv.go(); } else vv.pause(); }); vv.addEventListener('play', function(){ ff.classList.add('playing'); }); vv.addEventListener('pause', function(){ ff.classList.remove('playing'); }); })(v, fr);
           if(prestige){ var bd = document.createElement('span'); bd.className = 'badge'; bd.textContent = 'Prestige'; fr.appendChild(bd); }
           var t = document.createElement('h3'); t.textContent = m.n; f.appendChild(t);
           var o = document.createElement('p'); o.className = 'tag'; o.textContent = m.occ; f.appendChild(o);
