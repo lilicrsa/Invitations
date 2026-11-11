@@ -372,6 +372,25 @@
     const u = URL.createObjectURL(file);
     if(kind === 'video'){ const v = document.createElement('video'); v.preload = 'metadata'; v.onloadedmetadata = () => { res({ url:u, sec:v.duration, w:v.videoWidth, h:v.videoHeight }); }; v.onerror = () => res({ url:u, bad:true }); v.src = u; }
     else { const i = new Image(); i.onload = () => res({ url:u, w:i.naturalWidth, h:i.naturalHeight }); i.onerror = () => res({ url:u, bad:true }); i.src = u; } }); }
+  function mediaMissing(){
+    const sp = mediaSpec(); if(!sp) return '';
+    for(const slot of sp.slots){ const n = (MEDIA[slot.id] || []).filter(Boolean).length; if(n < slot.min) return 'Pour le Prestige, il manque des fichiers : ' + slot.label + ' (' + n + ' sur ' + slot.min + ' au minimum).'; }
+    return '';
+  }
+  async function uploadOne(code, slot, index, m){
+    const r = await fetch(SUPABASE_URL + '/functions/v1/media-upload', { method:'POST', headers:{ 'Content-Type':'application/json', apikey:SUPABASE_KEY }, body: JSON.stringify({ code, slot, index, type:m.file.type, size:m.file.size }) });
+    const j = await r.json().catch(() => ({})); if(!r.ok || !j.url) throw new Error('Envoi refusé pour ' + m.file.name + '.');
+    const fd = new FormData(); fd.append('cacheControl', '31536000'); fd.append('', m.file);
+    const u = await fetch(j.url, { method:'PUT', body: fd }); if(!u.ok) throw new Error('Échec de l’envoi de ' + m.file.name + '.');
+    return { slot, kind:j.kind, path:j.path };
+  }
+  async function uploadAllMedia(code, onProgress){
+    const out = [], jobs = [];
+    const fr = (MEDIA.frames || []).filter(Boolean); fr.forEach((m, i) => jobs.push(['frames', i, m]));
+    const cp = (MEDIA.card_photo || []).filter(Boolean)[0]; if(cp) jobs.push(['card_photo', 0, cp]);
+    for(let k = 0; k < jobs.length; k++){ onProgress(k + 1, jobs.length); out.push(await uploadOne(code, jobs[k][0], jobs[k][1], jobs[k][2])); }
+    return out;
+  }
   async function addMedia(slot, idx, file){
     const err = $('form-err'); err.textContent = '';
     const bad = checkMedia(file, slot); if(bad){ err.textContent = file.name + ' : ' + bad; return; }
@@ -482,17 +501,19 @@
     d.formule = formule; if(formule === 'ess') d.rsvp_enabled = false;
     if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return err.textContent = 'Merci d’indiquer un e-mail valide.';
     if(!$('f-cgv').checked) return $('cgv-err').textContent = 'Merci d’accepter les conditions pour continuer.';
+    if(formule === 'pre'){ const miss = mediaMissing(); if(miss) return $('fm-err').textContent = miss + ' Revenez à l’étape « Vos infos » pour les ajouter.'; }
     const btn = $('make-code'); btn.disabled = true; const label = btn.textContent; btn.textContent = 'Ouverture du paiement…';
     try{
       let ok = false;
       if(code) ok = await rpc('update_draft', { p_code:code, p_theme:theme, p_data:d, p_email:email });
       if(!ok){ code = await rpc('create_draft', { p_theme:theme, p_data:d, p_email:email }); }
+      if(formule === 'pre'){ d.media = await uploadAllMedia(code, (i, n) => { btn.textContent = 'Envoi de vos souvenirs (' + i + '/' + n + ')…'; }); btn.textContent = 'Ouverture du paiement…'; if(!(await rpc('update_draft', { p_code:code, p_theme:theme, p_data:d, p_email:email }))) throw new Error('save'); }
       try{ localStorage.setItem('draftCode', code); }catch(_){}
       const r = await fetch(SUPABASE_URL + '/functions/v1/create-checkout', { method:'POST', headers:{ 'Content-Type':'application/json', apikey:SUPABASE_KEY }, body: JSON.stringify({ code, formula:formule, email, accepted_terms:true, return_url: location.href.replace(/commande\.html.*$/, '') }) });
       const j = await r.json().catch(() => ({}));
       if(r.ok && j.url){ clearInterval(tick); tick = null; location.href = j.url; return; }
       err.textContent = j.error === 'not_configured' ? 'Le paiement en ligne n’est pas encore ouvert. Votre invitation est enregistrée (code ' + code + ') : revenez bientôt ou écrivez-nous.' : 'Le paiement n’a pas pu démarrer. Réessayez dans un instant.';
-    }catch(_){ err.textContent = 'Oups, l’enregistrement a échoué. Réessayez dans un instant.'; }
+    }catch(e){ err.textContent = (e && e.message && e.message !== 'save' && /^(Envoi|Échec)/.test(e.message)) ? e.message + ' Réessayez dans un instant.' : 'Oups, l’enregistrement a échoué. Réessayez dans un instant.'; }
     btn.disabled = false; btn.textContent = label;
   });
   $('copy').addEventListener('click', async () => { try{ await navigator.clipboard.writeText(code); $('copy').textContent = 'Copié ✓'; }catch(_){ $('copy').textContent = 'Sélectionnez le code'; } });

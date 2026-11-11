@@ -26,6 +26,10 @@ Deno.serve(async (req) => {
   const { data: d } = await db.from("drafts").select("code,theme,data,status,expires_at").eq("code", code).maybeSingle();
   if (!d || new Date(d.expires_at) < new Date() || d.status === "published") return json({ error: "draft" }, 404);
   const formula = ["ess","sig","pre"].includes(d.data?.formule) ? d.data.formule : (["sig","pre"].includes(b.formula) ? b.formula : "ess");
+  if (formula === "pre") {
+    const m: any[] = Array.isArray(d.data?.media) ? d.data.media : [];
+    if (!m.some((x) => x.slot === "frames") || !m.some((x) => x.slot === "card_photo")) return json({ error: "media" }, 400);
+  }
   const { data: p } = await db.from("prices").select("amount_cents").eq("theme", d.theme).eq("formula", formula).maybeSingle();
   if (!p) return json({ error: "price" }, 400);
 
