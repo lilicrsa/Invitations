@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="fr"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<link rel="icon" type="image/png" href="logo/favicon.png?v=1">
+<title>Administration · Maison Opaline</title>
+<link href="https://fonts.googleapis.com/css2?family=Italiana&family=Manrope:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{ --nuit:#0A0E1D; --nuit2:#121831; --champ:#E7D5A8; --champ2:#CDB882; --brume:#A2A9C4; --trait:rgba(231,213,168,.25); --err:#ff9aa8; --ok:#9fe3b4; }
+*{ box-sizing:border-box; }
+body{ margin:0; font-family:'Manrope',system-ui,sans-serif; background:var(--nuit); color:var(--champ); min-height:100dvh; line-height:1.5; }
+.wrap{ width:min(72rem,100% - 2rem); margin:0 auto; padding:1.2rem 0 4rem; }
+h1{ font-family:'Italiana',serif; font-weight:400; font-size:2rem; margin:0; }
+header{ display:flex; justify-content:space-between; align-items:center; gap:1rem; flex-wrap:wrap; }
+input,select,textarea{ font:inherit; font-size:.95rem; padding:.55rem .7rem; border-radius:10px; border:1px solid var(--trait); background:rgba(255,255,255,.04); color:var(--champ); }
+select option{ color:#000; }
+button{ font:600 .9rem 'Manrope',sans-serif; padding:.5rem 1rem; border-radius:999px; border:1px solid var(--champ); background:var(--champ); color:var(--nuit); cursor:pointer; }
+button.g{ background:transparent; color:var(--champ); } button.d{ border-color:var(--err); color:var(--err); background:transparent; }
+button:disabled{ opacity:.55; }
+nav{ display:flex; gap:.4rem; flex-wrap:wrap; margin:1.2rem 0; }
+nav button{ background:transparent; color:var(--champ); border-color:var(--trait); } nav button.on{ background:var(--champ); color:var(--nuit); }
+nav .n{ opacity:.7; font-weight:400; margin-left:.3rem; }
+.card{ border:1px solid var(--trait); border-radius:14px; padding:.9rem 1rem; margin-bottom:.7rem; background:var(--nuit2); }
+.top{ display:flex; justify-content:space-between; gap:.6rem; flex-wrap:wrap; align-items:baseline; }
+.top b{ font-size:1.05rem; } small,.m{ color:var(--brume); font-size:.85rem; }
+.tag{ display:inline-block; font-size:.74rem; padding:.05rem .55rem; border-radius:999px; border:1px solid var(--trait); margin-left:.3rem; }
+.tag.ok{ color:var(--ok); border-color:var(--ok); } .tag.bad{ color:var(--err); border-color:var(--err); }
+.acts{ display:flex; gap:.4rem; flex-wrap:wrap; margin-top:.6rem; }
+.msg{ white-space:pre-wrap; margin:.5rem 0; color:#e8e1cf; }
+#login{ max-width:22rem; margin:18vh auto; display:grid; gap:.7rem; } #login input{ width:100%; }
+.err{ color:var(--err); min-height:1.2em; } .toast{ position:fixed; bottom:1rem; left:50%; transform:translateX(-50%); background:var(--champ); color:var(--nuit); padding:.6rem 1.2rem; border-radius:999px; font-weight:600; display:none; z-index:9; }
+dialog{ background:var(--nuit2); color:var(--champ); border:1px solid var(--champ2); border-radius:16px; width:min(34rem,94vw); } dialog::backdrop{ background:rgba(0,0,0,.6); }
+dialog label{ display:block; font-size:.75rem; text-transform:uppercase; letter-spacing:.05em; margin:.7rem 0 .2rem; color:var(--champ2); } dialog input,dialog textarea{ width:100%; }
+.links{ display:grid; gap:.4rem; margin-top:.6rem; } .links input{ width:100%; }
+</style></head><body>
+<div id="login">
+  <h1>Administration</h1>
+  <input id="em" type="email" placeholder="E-mail" autocomplete="username">
+  <input id="pw" type="password" placeholder="Mot de passe" autocomplete="current-password">
+  <div class="err" id="lerr"></div>
+  <button id="lgo">Se connecter</button>
+</div>
+<div class="wrap" id="app" style="display:none">
+  <header><h1>Maison Opaline · Administration</h1><div><button class="g" id="refresh">Actualiser</button> <button class="g" id="out">Déconnexion</button></div></header>
+  <nav id="tabs"></nav>
+  <div id="list"></div>
+</div>
+<dialog id="dlg"><form method="dialog" id="dform"></form></dialog>
+<div class="toast" id="toast"></div>
+<script>
+const SB='https://sgatagagyfizuyrinmth.supabase.co', KEY='sb_publishable_YdlXEbQn9ZqILsjT6pyAug_ijgzm5fQ';
+const $=id=>document.getElementById(id);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let TOKEN=null, DATA={}, TAB='orders';
+const BASE=location.href.replace(/admin\.html.*$/,'');
+const fmt=d=>d?new Date(d).toLocaleString('fr-FR',{dateStyle:'short',timeStyle:'short'}):'';
+const fmtd=d=>d?new Date(d).toLocaleDateString('fr-FR'):'—';
+function toast(t){ const e=$('toast'); e.textContent=t; e.style.display='block'; setTimeout(()=>e.style.display='none',2200); }
+async function api(path,opt={}){ const r=await fetch(SB+path,{...opt,headers:{apikey:KEY,Authorization:'Bearer '+TOKEN,'Content-Type':'application/json',...(opt.headers||{})}}); if(!r.ok) throw new Error(await r.text()); const t=await r.text(); return t?JSON.parse(t):null; }
+const rpc=(n,b)=>api('/rest/v1/rpc/'+n,{method:'POST',body:JSON.stringify(b)});
+const get=(q)=>api('/rest/v1/'+q);
+
+async function login(){
+  $('lerr').textContent='';
+  try{
+    const r=await fetch(SB+'/auth/v1/token?grant_type=password',{method:'POST',headers:{apikey:KEY,'Content-Type':'application/json'},body:JSON.stringify({email:$('em').value.trim(),password:$('pw').value})});
+    if(!r.ok) throw 0; const j=await r.json(); TOKEN=j.access_token;
+    const ok=await rpc('is_admin',{}); if(!ok){ TOKEN=null; return $('lerr').textContent='Ce compte n’a pas accès à l’administration.'; }
+    $('login').style.display='none'; $('app').style.display=''; try{ sessionStorage.setItem('adm',TOKEN); }catch(_){} load();
+  }catch(_){ $('lerr').textContent='E-mail ou mot de passe incorrect.'; }
+}
+$('lgo').onclick=login; $('pw').addEventListener('keydown',e=>{ if(e.key==='Enter') login(); });
+$('out').onclick=()=>{ try{ sessionStorage.removeItem('adm'); }catch(_){} location.reload(); };
+$('refresh').onclick=()=>load();
+
+async function load(){
+  try{
+    const [orders,drafts,inv,quotes,msgs,rsvp]=await Promise.all([
+      get('orders?select=*&order=created_at.desc&limit=200'),
+      get('drafts?select=id,code,theme,email,status,etsy_order,created_at,updated_at,expires_at,data&order=updated_at.desc&limit=200'),
+      get('invitations?select=*&order=created_at.desc&limit=200'),
+      get('quote_requests?select=*&order=created_at.desc&limit=200'),
+      get('contact_messages?select=*&order=created_at.desc&limit=200'),
+      get('rsvp_responses?select=invitation_id')]);
+    const cnt={}; rsvp.forEach(r=>cnt[r.invitation_id]=(cnt[r.invitation_id]||0)+1);
+    DATA={orders,drafts,inv,quotes,msgs,cnt}; render();
+  }catch(e){ if(/JWT|expired/i.test(String(e))){ toast('Session expirée'); setTimeout(()=>location.reload(),900);} else toast('Erreur de chargement'); }
+}
+const TABS=[['orders','Commandes'],['drafts','Brouillons'],['inv','Invitations'],['quotes','Devis'],['msgs','Messages']];
+function render(){
+  const n={orders:DATA.orders.filter(o=>o.status==='paid').length,drafts:DATA.drafts.filter(d=>d.status!=='published').length,inv:DATA.inv.length,quotes:DATA.quotes.filter(q=>q.status==='new').length,msgs:DATA.msgs.filter(m=>m.status==='new').length};
+  $('tabs').innerHTML=TABS.map(t=>`<button data-t="${t[0]}" class="${t[0]===TAB?'on':''}">${t[1]}<span class="n">${n[t[0]]}</span></button>`).join('');
+  $('tabs').querySelectorAll('button').forEach(b=>b.onclick=()=>{TAB=b.dataset.t;render();});
+  $('list').innerHTML=({orders:rOrders,drafts:rDrafts,inv:rInv,quotes:rQuotes,msgs:rMsgs})[TAB]()||'<p class="m">Rien pour l’instant.</p>';
+  $('list').querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>act(b.dataset.a,b.dataset.i,b));
+}
+const linkOf=i=>`${BASE}${i.theme}/index.html?i=${i.slug}`, respOf=i=>`${BASE}reponses.html?t=${i.response_token}`;
+const tagS=s=>`<span class="tag ${s==='paid'||s==='published'||s==='new'?'ok':''}">${esc(s)}</span>`;
+function rOrders(){ return DATA.orders.map(o=>{ const i=DATA.inv.find(x=>x.id===o.invitation_id);
+  return `<div class="card"><div class="top"><b>${esc(o.email||'—')} ${tagS(o.status)}<span class="tag">${esc(o.formula)}</span></b><small>${fmt(o.created_at)} · ${(o.amount_cents/100).toFixed(2)} €</small></div>
+  <div class="m">Thème ${esc(o.theme)} · brouillon ${esc(o.draft_code)}${o.error?` · <span style="color:var(--err)">${esc(o.error)}</span>`:''}${o.email_sent_at?' · e-mail envoyé':' · e-mail non envoyé'}</div>
+  ${i?`<div class="acts"><button class="g" data-a="copyinv" data-i="${i.id}">Copier lien invitation</button><button class="g" data-a="copyresp" data-i="${i.id}">Copier lien réponses</button></div>`:''}</div>`; }).join(''); }
+function rDrafts(){ return DATA.drafts.map(d=>{ const dd=d.data||{};
+  return `<div class="card"><div class="top"><b>${esc(dd.title||dd.host_names||'(sans titre)')} ${tagS(d.status)}</b><small>${fmt(d.updated_at)}</small></div>
+  <div class="m">${esc(d.theme)} · ${esc(dd.formule||'—')} · ${esc(d.email||'pas d’e-mail')} · code ${esc(d.code)}${d.etsy_order?' · commande '+esc(d.etsy_order):''}</div>
+  <div class="acts">${d.status!=='published'&&d.email?`<button data-a="pub" data-i="${d.code}">Publier</button>`:''}${d.status!=='published'?`<button class="d" data-a="deldraft" data-i="${d.code}">Supprimer</button>`:''}<a href="commande.html?d=${esc(d.code)}" target="_blank" style="color:var(--champ2);align-self:center">Ouvrir l’aperçu</a></div></div>`; }).join(''); }
+function rInv(){ return DATA.inv.map(i=>{ const exp=i.expires_at&&new Date(i.expires_at)<new Date();
+  return `<div class="card"><div class="top"><b>${esc(i.title||i.slug)} ${i.is_published?'<span class="tag ok">publiée</span>':'<span class="tag bad">non publiée</span>'}${exp?'<span class="tag bad">expirée</span>':''}${i.is_demo?'<span class="tag">démo</span>':''}</b><small>${esc(i.theme)} · ${esc(i.formula||'—')}</small></div>
+  <div class="m">${fmtd(i.event_date)} ${esc(i.event_time||'')} · ${esc(i.venue_name||'')} · expire le ${fmtd(i.expires_at)} · ${DATA.cnt[i.id]||0} réponse(s)</div>
+  <div class="acts"><button class="g" data-a="copyinv" data-i="${i.id}">Lien invitation</button><button class="g" data-a="copyresp" data-i="${i.id}">Lien réponses</button>
+  <button class="g" data-a="toggle" data-i="${i.id}">${i.is_published?'Dépublier':'Publier'}</button><button class="g" data-a="extend" data-i="${i.id}">Prolonger</button><button class="g" data-a="edit" data-i="${i.id}">Modifier</button></div></div>`; }).join(''); }
+function stSel(kind,id,cur){ return `<select data-s="${kind}" data-i="${id}">${['new','in_progress','done','archived'].map(s=>`<option value="${s}" ${s===cur?'selected':''}>${({new:'Nouveau',in_progress:'En cours',done:'Traité',archived:'Archivé'})[s]}</option>`).join('')}</select>`; }
+function rQuotes(){ return DATA.quotes.map(q=>`<div class="card"><div class="top"><b>${esc(q.name)} · ${esc(q.universe||'')} ${tagS(q.status)}</b><small>${fmt(q.created_at)}</small></div>
+  <div class="m">${esc(q.email)} ${esc(q.phone||'')} · ${esc(q.formula||'')} · ${fmtd(q.event_date)} · ${q.guests||'?'} invités</div>
+  <div class="msg">${esc(q.description||'')}${q.inspiration?'\nInspiration : '+esc(q.inspiration):''}${q.music?'\nMusique : '+esc(q.music):''}${q.extras?'\nOptions : '+esc(q.extras):''}</div>
+  <div class="acts">${stSel('quote',q.id,q.status)}<a href="mailto:${esc(q.email)}" style="color:var(--champ2);align-self:center">Répondre</a></div></div>`).join(''); }
+function rMsgs(){ return DATA.msgs.map(m=>`<div class="card"><div class="top"><b>${esc(m.name)} · ${esc(m.subject||'(sans sujet)')} ${tagS(m.status)}</b><small>${fmt(m.created_at)}</small></div>
+  <div class="m">${esc(m.email)}</div><div class="msg">${esc(m.message)}</div>
+  <div class="acts">${stSel('message',m.id,m.status)}<a href="mailto:${esc(m.email)}?subject=Re:%20${encodeURIComponent(m.subject||'votre message')}" style="color:var(--champ2);align-self:center">Répondre</a></div></div>`).join(''); }
+
+async function copy(t){ try{ await navigator.clipboard.writeText(t); toast('Copié ✓'); }catch(_){ prompt('Copie ce lien :',t); } }
+document.addEventListener('change',async e=>{ const s=e.target.closest('select[data-s]'); if(!s) return;
+  try{ await rpc('admin_set_status',{p_kind:s.dataset.s,p_id:s.dataset.i,p_status:s.value}); toast('Enregistré'); load(); }catch(_){ toast('Échec'); } });
+async function act(a,id,btn){
+  const inv=DATA.inv.find(x=>x.id===id);
+  try{
+    if(a==='copyinv') return copy(linkOf(inv));
+    if(a==='copyresp') return copy(respOf(inv));
+    if(a==='toggle'){ await rpc('admin_set_published',{p_id:id,p_published:!inv.is_published}); toast('Fait'); return load(); }
+    if(a==='extend'){ return dialog(`<h1 style="font-size:1.4rem">Prolonger « ${esc(inv.title)} »</h1><label>Nouvelle date de fin</label><input type="date" id="x-d" value="${(inv.expires_at||'').slice(0,10)}"><div class="acts"><button value="ok">Enregistrer</button><button class="g" value="cancel">Annuler</button></div>`,async()=>{ const v=$('x-d').value; if(!v) return; await rpc('admin_extend',{p_id:id,p_date:v}); toast('Prolongée'); load(); }); }
+    if(a==='edit'){ const f=[['title','Titre'],['host_names','Noms'],['event_date','Date (AAAA-MM-JJ)'],['event_time','Heure'],['venue_name','Lieu'],['address','Adresse'],['maps_url','Lien itinéraire'],['contact_name','Contact'],['contact_phone','Téléphone'],['dress_code','Dress code']];
+      return dialog(`<h1 style="font-size:1.4rem">Modifier l’invitation</h1>${f.map(([k,l])=>`<label>${l}</label><input data-k="${k}" value="${esc(inv[k]||'')}">`).join('')}<label>Message</label><textarea data-k="message" rows="3">${esc(inv.message||'')}</textarea><div class="acts"><button value="ok">Enregistrer</button><button class="g" value="cancel">Annuler</button></div>`,async()=>{ const p={}; document.querySelectorAll('#dform [data-k]').forEach(e=>{ if(e.value!==String(inv[e.dataset.k]||'')) p[e.dataset.k]=e.value; }); if(!Object.keys(p).length) return; await rpc('admin_update_invitation',{p_id:id,p_patch:p}); toast('Enregistré'); load(); }); }
+    if(a==='pub'){ btn.disabled=true; const r=await rpc('admin_publish',{p_code:id}); await load();
+      const l=`${BASE}${DATA.drafts.find(d=>d.code===id)?.theme||''}/index.html?i=${r.slug}`, rp=`${BASE}reponses.html?t=${r.token}`;
+      return dialog(`<h1 style="font-size:1.4rem">Publiée ✨</h1><div class="links"><label>Lien d’invitation</label><input readonly value="${esc(l)}" onclick="this.select()"><label>Lien des réponses</label><input readonly value="${esc(rp)}" onclick="this.select()"></div><div class="acts"><button value="ok">Fermer</button></div>`); }
+    if(a==='deldraft'){ return dialog(`<h1 style="font-size:1.4rem">Supprimer ce brouillon ?</h1><p class="m">Action définitive.</p><div class="acts"><button class="d" value="ok">Supprimer</button><button class="g" value="cancel">Annuler</button></div>`,async()=>{ await rpc('admin_delete_draft',{p_code:id}); toast('Supprimé'); load(); }); }
+  }catch(e){ toast('Échec : '+String(e.message||e).slice(0,80)); if(btn) btn.disabled=false; }
+}
+function dialog(html,onok){ const d=$('dlg'); $('dform').innerHTML=html; d.onclose=()=>{ if(d.returnValue==='ok'&&onok) onok(); d.returnValue=''; }; d.showModal(); }
+try{ const t=sessionStorage.getItem('adm'); if(t){ TOKEN=t; rpc('is_admin',{}).then(ok=>{ if(ok){ $('login').style.display='none'; $('app').style.display=''; load(); } else TOKEN=null; }).catch(()=>{TOKEN=null;}); } }catch(_){}
+</script></body></html>

@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="fr"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<link rel="icon" type="image/png" href="logo/favicon.png?v=1">
+<title>Votre invitation · Maison Opaline</title>
+<link href="https://fonts.googleapis.com/css2?family=Italiana&family=Manrope:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="legal.css?v=1">
+<style>
+.box{ border:1px solid var(--champ2); border-radius:16px; padding:1.1rem 1.2rem; margin:1rem 0; background:rgba(255,255,255,.03); }
+.box b{ display:block; color:var(--champ); margin-bottom:.2rem; } .box small{ color:var(--brume); display:block; margin-bottom:.5rem; }
+.lk{ display:flex; gap:.5rem; flex-wrap:wrap; } .lk input{ flex:1 1 14rem; min-width:0; font:inherit; font-size:.9rem; padding:.7rem .8rem; border-radius:12px; border:1px solid rgba(231,213,168,.35); background:rgba(255,255,255,.04); color:var(--champ); }
+button,a.btn{ font:600 .95rem 'Manrope',sans-serif; padding:.7rem 1.3rem; border-radius:999px; border:1px solid var(--champ); background:var(--champ); color:var(--nuit); cursor:pointer; text-decoration:none; display:inline-block; }
+a.btn.g{ background:transparent; color:var(--champ); }
+.note{ border-left:3px solid var(--champ2); padding:.2rem 0 .2rem .9rem; color:#d9d3c4; margin:1rem 0; }
+</style></head><body><div class="wrap">
+<h1 id="h">Un instant…</h1>
+<p id="p" style="color:var(--brume)">Nous vérifions votre paiement.</p>
+<div id="res" style="display:none">
+  <div class="note" id="mailnote"></div>
+  <div class="box"><b>Lien de votre invitation</b><small>C'est ce lien que vous envoyez à vos invités.</small><div class="lk"><input id="l1" readonly><button data-c="l1">Copier</button></div><p style="margin:.7rem 0 0"><a class="btn g" id="v1" target="_blank" rel="noopener">Voir mon invitation</a></p></div>
+  <div class="box" id="b2"><b>Lien de suivi des réponses</b><small>Gardez-le pour vous : il donne accès aux réponses de vos invités.</small><div class="lk"><input id="l2" readonly><button data-c="l2">Copier</button></div><p style="margin:.7rem 0 0"><a class="btn g" id="v2" target="_blank" rel="noopener">Voir les réponses</a></p></div>
+  <p style="color:var(--brume);font-size:.92rem">Conservez ces deux liens. Une question ou une correction à faire : <a href="contact.html">écrivez-nous</a>. Votre invitation reste en ligne jusqu'à trois mois après l'événement.</p>
+</div>
+<footer class="lg"><a href="./">Accueil</a><a href="cgv.html">CGV</a><a href="contact.html">Contact</a></footer>
+</div>
+<script>
+const SB='https://sgatagagyfizuyrinmth.supabase.co', KEY='sb_publishable_YdlXEbQn9ZqILsjT6pyAug_ijgzm5fQ';
+const $=id=>document.getElementById(id), sid=new URLSearchParams(location.search).get('s');
+const BASE=location.href.replace(/merci\.html.*$/,'');
+async function poll(n){
+  if(!sid){ $('h').textContent='Lien incomplet'; $('p').innerHTML='Ouvrez cette page depuis le lien du paiement, ou <a href="contact.html">écrivez-nous</a>.'; return; }
+  let j=null;
+  try{ const r=await fetch(SB+'/rest/v1/rpc/get_order_links',{method:'POST',headers:{apikey:KEY,'Content-Type':'application/json'},body:JSON.stringify({p_session:sid})}); j=r.ok?await r.json():null; }catch(_){}
+  if(j && j.status==='paid'){
+    $('h').textContent='Votre invitation est en ligne ✨'; $('p').textContent='Merci pour votre commande.';
+    const inv=BASE+j.theme+'/index.html?i='+encodeURIComponent(j.slug), rep=BASE+'reponses.html?t='+encodeURIComponent(j.token);
+    $('l1').value=inv; $('v1').href=inv;
+    if(j.formula==='sig'){ $('l2').value=rep; $('v2').href=rep; } else { $('b2').style.display='none'; }
+    $('mailnote').textContent = j.email_sent ? 'Ces liens vous ont aussi été envoyés par e-mail à '+j.email+'. Pensez à regarder vos courriers indésirables.' : 'Copiez dès maintenant ces liens : gardez-les précieusement.';
+    $('res').style.display='block'; return;
+  }
+  if(j && (j.status==='failed')){ $('h').textContent='Un souci est survenu'; $('p').innerHTML='Votre paiement a été reçu mais la publication a échoué. <a href="contact.html">Écrivez-nous</a>, nous nous en occupons tout de suite.'; return; }
+  if(n<30){ setTimeout(()=>poll(n+1),2000); } else { $('h').textContent='Paiement en cours de confirmation'; $('p').innerHTML='Cela prend plus de temps que prévu. Rechargez cette page dans une minute, ou <a href="contact.html">écrivez-nous</a>.'; }
+}
+document.addEventListener('click',async e=>{ const b=e.target.closest('[data-c]'); if(!b) return; const i=$(b.dataset.c); i.select(); try{ await navigator.clipboard.writeText(i.value); b.textContent='Copié ✓'; }catch(_){ document.execCommand('copy'); b.textContent='Copié ✓'; } });
+poll(0);
+</script></body></html>

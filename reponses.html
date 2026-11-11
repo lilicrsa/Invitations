@@ -204,7 +204,20 @@
     token = data.access_token; sessionStorage.setItem('sb_token', token);
   }
 
+  const shareToken = params.get('t');   // lien de suivi sans compte : reponses.html?t=<jeton>
+  async function loadShared(){
+    const res = await fetch(SUPABASE_URL + '/rest/v1/rpc/get_responses_by_token', { method:'POST', headers:{ apikey:SUPABASE_KEY, 'Content-Type':'application/json' }, body: JSON.stringify({ p_token: shareToken }) });
+    const j = res.ok ? await res.json() : null;
+    if(!j) throw new Error('Lien introuvable ou expiré.');
+    urlThemeKey = j.theme || urlThemeKey;
+    all = (j.responses || []).map(r => ({ ...r, invitation_id:'shared', invitations:{ title:j.title, slug:j.slug, theme:j.theme } }));
+    invMeta = new Map([['shared', { title:j.title, theme:j.theme }]]);
+    const sel = $('inv-select'); sel.textContent = ''; const o = document.createElement('option'); o.value = 'shared'; o.textContent = j.title; sel.appendChild(o); sel.value = 'shared'; sel.style.display = 'none';
+    $('logout').style.display = 'none';
+    render();
+  }
   async function loadData(){
+    if(shareToken) return loadShared();
     const res = await fetch(SUPABASE_URL + '/rest/v1/rsvp_responses?select=*,invitations(title,slug,theme)&order=created_at.desc', { headers: hdr() });
     if(res.status === 401 || res.status === 403){ logout(); throw new Error('Session expirée, reconnectez-vous.'); }
     if(!res.ok) throw new Error('Chargement impossible.');
@@ -263,7 +276,8 @@
   $('csv').addEventListener('click', exportCsv);
   $('logout').addEventListener('click', logout);
 
-  initTheme().then(() => { if(token){ loadData().then(() => show(true)).catch(() => show(false)); } });
+  if(shareToken){ initTheme().then(() => loadShared().then(() => show(true)).catch(e => { $('login-err').textContent = e.message; $('login-err').classList.remove('hidden'); show(false); $('login-form').style.display = 'none'; })); }
+  else initTheme().then(() => { if(token){ loadData().then(() => show(true)).catch(() => show(false)); } });
 </script>
 </body>
 </html>

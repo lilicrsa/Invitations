@@ -199,12 +199,14 @@
           </div>
           <div class="err" id="fm-err" role="alert"></div>
           <p class="hint">Vous pouvez comparer les deux depuis l'aperçu. Prestige (galerie souvenir) : sur devis.</p>
-          <p style="margin-top:0">Votre invitation vous plaît ? Indiquez votre e-mail pour recevoir votre code de commande. C'est à cette étape seulement que vos informations sont enregistrées.</p>
+          <p style="margin-top:0">Votre invitation vous plaît ? Indiquez votre e-mail : il sert à retrouver votre commande. C'est à cette étape seulement que vos informations sont enregistrées.</p>
           <p class="care" style="margin:0 0 .6rem"><b>Dernier contrôle avant de commander.</b> Vos informations serviront à publier l'invitation : si un détail est faux, revenez le corriger avant de continuer. Certaines modifications restent possibles ensuite, mais elles prennent du temps.</p>
           <label for="f-email">Votre e-mail</label>
           <input type="email" id="f-email" maxlength="160" placeholder="vous@exemple.fr" autocomplete="email">
           <div class="err" id="email-err" role="alert"></div>
-          <div class="row"><button class="btn" id="make-code">Obtenir mon code de commande</button><button class="btn ghost" id="edit3">Modifier mes infos</button><button class="btn ghost" id="back3">Revoir l'aperçu</button></div>
+          <label style="display:flex;gap:.6rem;align-items:flex-start;margin:1rem 0 .2rem;font-size:.88rem;line-height:1.45;text-transform:none;letter-spacing:0;font-weight:400;cursor:pointer"><input type="checkbox" id="f-cgv" style="width:auto;margin-top:.25rem;accent-color:#E7D5A8"><span>J'ai lu et j'accepte les <a href="cgv.html" target="_blank" rel="noopener">conditions générales de vente</a>. Je demande la publication immédiate de mon invitation et je reconnais renoncer à mon droit de rétractation.</span></label>
+          <div class="err" id="cgv-err" role="alert"></div>
+          <div class="row"><button class="btn" id="make-code">Payer et publier mon invitation</button><button class="btn ghost" id="edit3">Modifier mes infos</button><button class="btn ghost" id="back3">Revoir l'aperçu</button></div>
         </div>
         <div id="code-area" style="display:none">
         <p style="margin-top:0">Votre invitation est prête. Voici votre <b>code de commande</b> à nous communiquer lors de l'achat :</p>
@@ -392,8 +394,9 @@
   document.querySelectorAll('#fsw button').forEach(b => b.addEventListener('click', () => { if(!liveInv) return; setPv(b.dataset.f); liveInv = buildInv(collect()); setFull(false); $('frame').src = theme + '/?preview=' + Math.random().toString(36).slice(2, 8).toUpperCase() + '&live=1'; }));
   function reopenPreview(){ if(!liveInv) return; go(3); $('stage').style.display = ''; $('expired').style.display = 'none'; $('frame').src = theme + '/?preview=' + Math.random().toString(36).slice(2, 8).toUpperCase() + '&live=1'; }
   $('back-prev').addEventListener('click', reopenPreview); $('back3').addEventListener('click', reopenPreview);
-  document.querySelectorAll('#fm button').forEach(b => b.addEventListener('click', () => { formule = b.dataset.f; document.querySelectorAll('#fm button').forEach(x => x.classList.toggle('on', x === b)); $('fm-err').textContent = ''; }));
-  function showPrices(){ const p = PRICES[theme]; document.querySelectorAll('#fm .pr').forEach(e => { e.textContent = p ? p[+e.dataset.p] + ' €' : ''; }); }
+  document.querySelectorAll('#fm button').forEach(b => b.addEventListener('click', () => { formule = b.dataset.f; document.querySelectorAll('#fm button').forEach(x => x.classList.toggle('on', x === b)); $('fm-err').textContent = ''; payLabel(); }));
+  function payLabel(){ const p = PRICES[theme]; $('make-code').textContent = (formule && p) ? 'Payer ' + p[formule === 'sig' ? 1 : 0] + ' € et publier mon invitation' : 'Payer et publier mon invitation'; }
+  function showPrices(){ const p = PRICES[theme]; document.querySelectorAll('#fm .pr').forEach(e => { e.textContent = p ? p[+e.dataset.p] + ' €' : ''; }); payLabel(); }
   function showPreview(){
     setPv('sig'); $('back-prev').style.display = '';
     $('expired').style.display = 'none'; $('stage').style.display = ''; go(3); startTimer(); setFull(false);
@@ -411,20 +414,23 @@
     showPrices(); go(4);
   });
   $('make-code').addEventListener('click', async () => {
-    const err = $('email-err'); err.textContent = ''; const email = $('f-email').value.trim(), d = collect();
+    const err = $('email-err'); err.textContent = ''; $('cgv-err').textContent = ''; const email = $('f-email').value.trim(), d = collect();
     if(!formule) return $('fm-err').textContent = 'Merci de choisir la prestation à commander : Essentiel ou Signature.';
     d.formule = formule; if(formule === 'ess') d.rsvp_enabled = false;
     if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return err.textContent = 'Merci d’indiquer un e-mail valide.';
-    const btn = $('make-code'); btn.disabled = true;
+    if(!$('f-cgv').checked) return $('cgv-err').textContent = 'Merci d’accepter les conditions pour continuer.';
+    const btn = $('make-code'); btn.disabled = true; const label = btn.textContent; btn.textContent = 'Ouverture du paiement…';
     try{
       let ok = false;
       if(code) ok = await rpc('update_draft', { p_code:code, p_theme:theme, p_data:d, p_email:email });
       if(!ok){ code = await rpc('create_draft', { p_theme:theme, p_data:d, p_email:email }); }
       try{ localStorage.setItem('draftCode', code); }catch(_){}
-      clearInterval(tick); tick = null;
-      $('code-box').textContent = code; $('email-step').style.display = 'none'; $('code-area').style.display = '';
+      const r = await fetch(SUPABASE_URL + '/functions/v1/create-checkout', { method:'POST', headers:{ 'Content-Type':'application/json', apikey:SUPABASE_KEY }, body: JSON.stringify({ code, formula:formule, email, accepted_terms:true, return_url: location.href.replace(/commande\.html.*$/, '') }) });
+      const j = await r.json().catch(() => ({}));
+      if(r.ok && j.url){ clearInterval(tick); tick = null; location.href = j.url; return; }
+      err.textContent = j.error === 'not_configured' ? 'Le paiement en ligne n’est pas encore ouvert. Votre invitation est enregistrée (code ' + code + ') : revenez bientôt ou écrivez-nous.' : 'Le paiement n’a pas pu démarrer. Réessayez dans un instant.';
     }catch(_){ err.textContent = 'Oups, l’enregistrement a échoué. Réessayez dans un instant.'; }
-    btn.disabled = false;
+    btn.disabled = false; btn.textContent = label;
   });
   $('copy').addEventListener('click', async () => { try{ await navigator.clipboard.writeText(code); $('copy').textContent = 'Copié ✓'; }catch(_){ $('copy').textContent = 'Sélectionnez le code'; } });
   const eb = $('etsy-btn');

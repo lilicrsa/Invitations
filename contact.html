@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="fr"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/png" href="logo/favicon.png?v=1">
+<meta name="description" content="Une question sur votre invitation ou votre commande ? Écrivez à Maison Opaline.">
+<title>Contact · Maison Opaline</title>
+<link href="https://fonts.googleapis.com/css2?family=Italiana&family=Manrope:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="legal.css?v=1">
+<style>
+label{ display:block; font-size:.78rem; letter-spacing:.06em; text-transform:uppercase; font-weight:600; margin:1.1rem 0 .3rem; color:var(--champ2); }
+input,textarea{ width:100%; font:inherit; font-size:1rem; padding:.75rem .85rem; border-radius:12px; border:1px solid rgba(231,213,168,.35); background:rgba(255,255,255,.04); color:var(--champ); }
+textarea{ min-height:8rem; resize:vertical; }
+input:focus,textarea:focus{ outline:none; border-color:var(--champ); box-shadow:0 0 0 3px rgba(231,213,168,.18); }
+button{ margin-top:1.4rem; font:600 1rem 'Manrope',sans-serif; padding:.95rem 2rem; border-radius:999px; border:1px solid var(--champ); background:var(--champ); color:var(--nuit); cursor:pointer; }
+button:disabled{ opacity:.6; cursor:wait; }
+.err{ color:#ff9aa8; margin-top:.8rem; min-height:1.2em; }
+.ok{ display:none; border:1px solid var(--champ); border-radius:16px; padding:1.6rem; text-align:center; margin-top:1.4rem; }
+.hp{ position:absolute; left:-9999px; height:0; overflow:hidden; }
+</style></head><body><div class="wrap">
+<a href="./">‹ Accueil</a>
+<h1>Nous écrire</h1>
+<p style="color:var(--brume)">Une question, une correction à faire sur votre invitation, une demande liée à vos données : écrivez-nous, nous répondons par e-mail. Pour une création sur mesure, passez plutôt par la <a href="devis.html">demande de devis</a>.</p>
+<form id="f" novalidate>
+  <label for="n">Votre nom</label><input id="n" maxlength="100" autocomplete="name">
+  <label for="e">Votre e-mail</label><input id="e" type="email" maxlength="160" autocomplete="email">
+  <label for="s">Sujet <i style="text-transform:none;letter-spacing:0">(facultatif)</i></label><input id="s" maxlength="150" placeholder="Ex. Correction de l'heure, ma commande…">
+  <label for="m">Votre message</label><textarea id="m" maxlength="2000"></textarea>
+  <div class="hp" aria-hidden="true"><label>Ne pas remplir<input id="w" tabindex="-1" autocomplete="off"></label></div>
+  <div class="err" id="err" role="alert"></div>
+  <button type="submit" id="go">Envoyer</button>
+</form>
+<div class="ok" id="ok"><h1 style="margin-top:0;font-size:2rem">Message envoyé ✨</h1><p>Merci, nous vous répondons par e-mail dès que possible.</p></div>
+<footer class="lg"><a href="./">Accueil</a><a href="mentions-legales.html">Mentions légales</a><a href="cgv.html">CGV</a><a href="confidentialite.html">Confidentialité et cookies</a></footer>
+</div>
+<script>
+const URL_='https://sgatagagyfizuyrinmth.supabase.co', KEY='sb_publishable_YdlXEbQn9ZqILsjT6pyAug_ijgzm5fQ';
+const $=id=>document.getElementById(id);
+$('f').addEventListener('submit', async ev=>{
+  ev.preventDefault(); const err=$('err'); err.textContent='';
+  const p={ name:$('n').value.trim(), email:$('e').value.trim(), subject:$('s').value.trim(), message:$('m').value.trim(), website:$('w').value };
+  if(!p.name) return err.textContent='Merci d’indiquer votre nom.';
+  if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(p.email)) return err.textContent='Merci d’indiquer un e-mail valide.';
+  if(p.message.length<5) return err.textContent='Votre message est un peu court.';
+  const b=$('go'); b.disabled=true;
+  try{
+    const r=await fetch(URL_+'/rest/v1/rpc/submit_contact',{method:'POST',headers:{apikey:KEY,'Content-Type':'application/json'},body:JSON.stringify({p})});
+    const j=await r.json();
+    if(j && j.status==='ok'){ $('f').style.display='none'; $('ok').style.display='block'; }
+    else err.textContent = (j && j.reason==='rate') ? 'Trop d’envois pour le moment, réessayez dans une heure.' : 'Vérifiez les champs et réessayez.';
+  }catch(_){ err.textContent='Oups, l’envoi a échoué. Réessayez dans un instant.'; }
+  b.disabled=false;
+});
+</script></body></html>
