@@ -103,6 +103,7 @@ h2{font-family:'Great Vibes',cursive;font-weight:400;font-size:44px;color:var(--
 .st .badge svg{width:27px;height:27px}
 .st .tm{font-family:'Jost',sans-serif;font-size:11px;letter-spacing:.28em;color:var(--gold);margin-top:3px}
 .st .tt{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:25px;color:#fbf3e1;line-height:1.15;margin-top:2px}
+.st .clip{display:block;margin-top:14px;width:min(100%,230px);aspect-ratio:3/4;object-fit:cover;border-radius:200px 200px 6px 6px;border:1px solid var(--gold2);box-shadow:0 14px 34px rgba(0,0,0,.5);background:#1a1411}
 .st .ds{font-size:17.5px;font-style:italic;color:rgba(243,234,216,.75);line-height:1.4;margin-top:3px}
 /* rsvp */
 .rsvp{text-align:left}
@@ -455,6 +456,19 @@ function row(ic, label, valueNode){
   const t = el('div'); t.appendChild(el('div','k',label));
   const v = el('div','v'); v.appendChild(valueNode); t.appendChild(v); r.appendChild(t); return r;
 }
+// ---------- mini-vidéos du programme (lecture quand visibles) ----------
+let vio = null;
+function mkClip(c){
+  const v = document.createElement('video'); v.className='clip'; v.muted = true; v.loop = true; v.playsInline = true; v.preload='metadata';
+  v.setAttribute('muted',''); v.setAttribute('playsinline','');
+  if(c.webm){ const a=document.createElement('source'); a.src=c.webm; a.type='video/webm'; v.appendChild(a); }
+  const b=document.createElement('source'); b.src=c.mp4; b.type='video/mp4'; v.appendChild(b);
+  if('IntersectionObserver' in window){
+    vio = vio || new IntersectionObserver(es=>es.forEach(e=>{ const x=e.target; if(e.isIntersecting){ x.play().catch(()=>{}); } else x.pause(); }), {threshold:.35});
+    vio.observe(v);
+  } else v.autoplay = true;
+  return v;
+}
 function render(inv){
   const page = $('page'); page.textContent = '';
   const [n1, n2] = splitNames(inv), tx = inv.card_text || {};
@@ -514,11 +528,16 @@ function render(inv){
   if(prog.length){
     const s = section(); const h=rv(el('div')); h.appendChild(el('h2',null,'Le programme')); h.appendChild(el('div','sub','Le fil de notre journée')); s.appendChild(h);
     const tl = el('div','tl');
+    let clips = (Array.isArray(inv.media)?inv.media:[]).filter(m=>m&&m.url&&m.kind==='video').map(m=>({mp4:m.url}));
+    if(!clips.length && /-demo$/.test(inv.slug||'')) clips = [1,2,3,4,5].map(n=>({mp4:'v/step'+n+'.mp4', webm:'v/step'+n+'.webm'}));
+    let ci = 0;
     prog.forEach(p=>{
       const st = rv(el('div','st'), 0);
       const b = el('div','badge'); b.innerHTML = icon(stepIcon(p.title)); st.appendChild(b);
       const t = el('div'); if(p.time) t.appendChild(el('div','tm',p.time)); t.appendChild(el('div','tt',p.title));
-      if(p.description) t.appendChild(el('div','ds',p.description)); st.appendChild(t); tl.appendChild(st);
+      if(p.description) t.appendChild(el('div','ds',p.description));
+      const c = clips[ci++ % Math.max(clips.length,1)]; if(c) t.appendChild(mkClip(c));
+      st.appendChild(t); tl.appendChild(st);
     });
     s.appendChild(tl); page.appendChild(s);
   }
