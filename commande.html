@@ -105,7 +105,7 @@
   .how{ max-width:34rem; margin:1rem auto 0; border:1px solid var(--trait); border-radius:14px; padding:.2rem 1rem; } .how summary{ cursor:pointer; padding:.7rem 0; color:var(--champ); font-weight:600; font-size:.95rem; } .how[open] summary{ border-bottom:1px solid var(--trait); margin-bottom:.4rem; } .how .vf{ margin-bottom:1rem; }
 </style>
 <script src="protect.js?v=4"></script>
-<script src="media-spec.js?v=2"></script>
+<script src="media-spec.js?v=3"></script>
 </head>
 <body>
 <div class="wrap">
@@ -308,7 +308,7 @@
     $('chosen-img').src = t.img + '?v=3'; $('chosen-name').textContent = t.name;
     $('l-title').textContent = t.titleLabel; $('h-title').textContent = t.titleHint;
     if(!keepValues){ if(!$('f-title').value || Object.values(THEMES).some(x => x.title === $('f-title').value)) $('f-title').value = t.title; }
-    clearMedia(); renderMedia(); go(2);
+    clearMedia(); renderMedia(); if(window.loadMediaSpec) loadMediaSpec(k).then(() => { if(theme === k) renderMedia(); }); go(2);
   }
   $('change-theme').addEventListener('click', () => go(1));
   $('back1').addEventListener('click', () => go(1));

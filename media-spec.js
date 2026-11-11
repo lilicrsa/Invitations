@@ -13,8 +13,20 @@
     noel:          { prestige:false, slots:[ { id:'card_photo', kind:'photo', min:0, max:1, label:'Photo de la carte', rule:PHOTO } ] },
     // Prestige : la galerie dorée. Le nombre de cadres de la vidéo d'entrée fixe le nombre de photos.
     galerie:       { prestige:true, slots:[
-      { id:'frames',     kind:'media', min:5, max:7, label:'Cadres de la galerie : photos ou mini-vidéos', rule:PHOTO, clip:CLIP, note:'Chaque cadre accueille une photo ou une mini-vidéo de 3 à 4 secondes, qui tourne en boucle pour animer la galerie.' },
+      { id:'frames',     kind:'media', min:4, max:6, label:'Cadres de la galerie : photos ou mini-vidéos', rule:PHOTO, clip:CLIP, note:'Chaque cadre accueille une photo ou une mini-vidéo de 3 à 4 secondes, qui tourne en boucle pour animer la galerie.' },
       { id:'card_photo', kind:'photo', min:1, max:1, label:'Photo de la carte', rule:PHOTO } ] }
+  };
+  // Lit les emplacements déclarés par le modèle lui-même (<modèle>/slots.json) : le nombre de cadres vient du modèle,
+  // le client ne se voit proposer que ce nombre. Si le fichier est introuvable, on garde les valeurs ci-dessus.
+  window.loadMediaSpec = function(theme){
+    var base = window.MEDIA_SPEC[theme];
+    if(!base || !base.prestige) return Promise.resolve(base || null);
+    return fetch(theme + '/slots.json', { cache:'no-cache' }).then(function(r){ return r.ok ? r.json() : null; }).then(function(j){
+      if(!j || !j.frames) return base;
+      var fr = base.slots.filter(function(x){ return x.id === 'frames'; })[0], rest = base.slots.filter(function(x){ return x.id !== 'frames' && (x.id !== 'card_photo' || j.cardPhoto !== false); });
+      var f = Object.assign({}, fr, { max:j.frames, min:Math.min(j.minFrames || j.frames, j.frames) });
+      var out = { prestige:true, slots:[f].concat(rest) }; window.MEDIA_SPEC[theme] = out; return out;
+    }).catch(function(){ return base; });
   };
   // Vérifie un fichier pour un emplacement ; renvoie un message d'erreur en français, ou '' si le fichier convient.
   window.checkMedia = function(file, slot){
