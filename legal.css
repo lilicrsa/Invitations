@@ -1,4 +1,4 @@
-:root{ --nuit:#0A0E1D; --champ:#E7D5A8; --champ2:#CDB882; --brume:#A2A9C4; --trait:rgba(231,213,168,.28); }
+:root{ --nuit:#1B2550; --champ:#E7D5A8; --champ2:#CDB882; --brume:#BFC6E2; --trait:rgba(231,213,168,.28); }
 *{ box-sizing:border-box; }
 body{ margin:0; font-family:'Manrope',system-ui,sans-serif; color:#d9d3c4; background:radial-gradient(900px 500px at 50% -8%, rgba(231,213,168,.12), transparent 70%), var(--nuit); min-height:100dvh; line-height:1.7; }
 .wrap{ width:min(46rem,100% - 2.4rem); margin:0 auto; padding:1.4rem 0 4rem; }
