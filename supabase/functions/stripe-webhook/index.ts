@@ -1,7 +1,7 @@
 // Reçoit les événements Stripe (signature vérifiée), publie l'invitation payée et envoie l'e-mail des liens.
 import { createClient } from "npm:@supabase/supabase-js@2";
 
-const SITE = (Deno.env.get("SITE_URL") ?? "https://lilicrsa.github.io/Invitations/").replace(/\/?$/, "/");
+const SITE = (Deno.env.get("SITE_URL") ?? "https://maisonopaline-invitations.fr/").replace(/\/?$/, "/");
 const te = new TextEncoder();
 
 async function verify(raw: string, header: string, secret: string): Promise<boolean> {

@@ -152,7 +152,7 @@
     if(t){
       Object.entries(t.vars || {}).forEach(([k, v]) => { if(ALLOWED_VARS.includes(k) && safeValue(k, v)){ root.style.setProperty(k, v); appliedVars.push(k); } });
       const bgu = (t.vars || {})['--bg-image-url'];
-      if(typeof bgu === 'string' && /^https:\/\/(lilicrsa\.github\.io|sgatagagyfizuyrinmth\.supabase\.co)\/[\w\-.\/%]+\.(jpe?g|png|webp)$/i.test(bgu)){
+      if(typeof bgu === 'string' && /^https:\/\/(lilicrsa\.github\.io|maisonopaline-invitations\.fr|sgatagagyfizuyrinmth\.supabase\.co)\/[\w\-.\/%]+\.(jpe?g|png|webp)$/i.test(bgu)){
         root.style.setProperty('--bg-img', 'url("' + bgu + '")'); appliedVars.push('--bg-img');
       }
       if(t.fonts_url && /^https:\/\/fonts\.googleapis\.com\//.test(t.fonts_url)){

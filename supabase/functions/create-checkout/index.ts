@@ -1,7 +1,7 @@
 // Crée une session de paiement Stripe pour un brouillon. Prix lus en base (jamais envoyés par le navigateur).
 import { createClient } from "npm:@supabase/supabase-js@2";
 
-const SITE = (Deno.env.get("SITE_URL") ?? "https://lilicrsa.github.io/Invitations/").replace(/\/?$/, "/");
+const SITE = (Deno.env.get("SITE_URL") ?? "https://maisonopaline-invitations.fr/").replace(/\/?$/, "/");
 const cors = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
