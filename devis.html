@@ -10,9 +10,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Italiana&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{ --nuit:#1B2550; --nuit2:#263166; --champ:#E7D5A8; --champ2:#CDB882; --brume:#BFC6E2; --trait:rgba(231,213,168,.28); --err:#ff9aa8; }
+:root{ --nuit:#FBF6EC; --nuit2:#F1E8D6; --champ:#1F2A55; --champ2:#9A7A33; --brume:#58617F; --trait:rgba(154,122,51,.35); --err:#ff9aa8; }
 *{ box-sizing:border-box; }
-body{ margin:0; font-family:'Manrope',system-ui,sans-serif; color:var(--champ); background:radial-gradient(900px 500px at 50% -8%, rgba(231,213,168,.12), transparent 70%), var(--nuit); min-height:100dvh; line-height:1.6; }
+body{ margin:0; font-family:'Manrope',system-ui,sans-serif; color:var(--champ); background:radial-gradient(900px 500px at 50% -8%, rgba(154,122,51,.12), transparent 70%), var(--nuit); min-height:100dvh; line-height:1.6; }
 .wrap{ width:min(46rem,100% - 2.4rem); margin:0 auto; padding:1.4rem 0 4rem; }
 a.back{ color:var(--champ2); font-size:.9rem; text-decoration:none; }
 h1,h2{ font-family:'Italiana',serif; font-weight:400; margin:0; }
@@ -25,15 +25,15 @@ h2{ font-size:1.7rem; margin:2.6rem 0 1rem; }
 .steps b{ display:block; } .steps span{ color:var(--brume); font-size:.93rem; }
 .forms{ display:grid; gap:.8rem; }
 .f{ display:block; border:1px solid var(--trait); border-radius:14px; padding:1rem 1.1rem; cursor:pointer; background:rgba(255,255,255,.02); }
-.f:has(input:checked){ border-color:var(--champ); background:rgba(231,213,168,.07); }
-.f input{ accent-color:#E7D5A8; margin-right:.5rem; } .f b{ font-family:'Italiana',serif; font-size:1.25rem; font-weight:400; }
+.f:has(input:checked){ border-color:var(--champ); background:rgba(154,122,51,.07); }
+.f input{ accent-color:#1F2A55; margin-right:.5rem; } .f b{ font-family:'Italiana',serif; font-size:1.25rem; font-weight:400; }
 .f small{ display:block; color:var(--brume); margin:.3rem 0 0 1.6rem; font-size:.9rem; }
 label.l{ display:block; font-size:.78rem; letter-spacing:.06em; text-transform:uppercase; font-weight:600; margin:1.1rem 0 .3rem; color:var(--champ2); }
-input[type=text],input[type=email],input[type=tel],input[type=date],input[type=number],select,textarea{ width:100%; font:inherit; font-size:1rem; padding:.75rem .85rem; border-radius:12px; border:1px solid rgba(231,213,168,.38); background:#18204A; color:var(--champ); color-scheme:dark; }
+input[type=text],input[type=email],input[type=tel],input[type=date],input[type=number],select,textarea{ width:100%; font:inherit; font-size:1rem; padding:.75rem .85rem; border-radius:12px; border:1px solid rgba(154,122,51,.38); background:var(--nuit2); color:var(--champ); color-scheme:dark; }
 textarea{ min-height:7.5rem; resize:vertical; }
-input:focus,textarea:focus,select:focus{ outline:none; border-color:var(--champ); box-shadow:0 0 0 3px rgba(231,213,168,.18); }
+input:focus,textarea:focus,select:focus{ outline:none; border-color:var(--champ); box-shadow:0 0 0 3px rgba(154,122,51,.18); }
 .row{ display:grid; grid-template-columns:1fr 1fr; gap:.8rem; } @media(max-width:560px){ .row{ grid-template-columns:1fr; } }
-.rules{ border:1px dashed var(--champ2); border-radius:14px; padding:1rem 1.2rem; color:#d9d3c4; font-size:.94rem; }
+.rules{ border:1px dashed var(--champ2); border-radius:14px; padding:1rem 1.2rem; color:var(--champ); font-size:.94rem; }
 .rules ul{ margin:.4rem 0 0; padding-left:1.1rem; }
 button.go{ margin-top:1.6rem; font:600 1rem 'Manrope',sans-serif; padding:.95rem 2rem; border-radius:999px; border:1px solid var(--champ); background:var(--champ); color:var(--nuit); cursor:pointer; }
 button.go:disabled{ opacity:.6; cursor:wait; }
