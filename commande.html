@@ -105,7 +105,7 @@
   .how{ max-width:34rem; margin:1rem auto 0; border:1px solid var(--trait); border-radius:14px; padding:.2rem 1rem; } .how summary{ cursor:pointer; padding:.7rem 0; color:var(--champ); font-weight:600; font-size:.95rem; } .how[open] summary{ border-bottom:1px solid var(--trait); margin-bottom:.4rem; } .how .vf{ margin-bottom:1rem; }
 </style>
 <script src="protect.js?v=4"></script>
-<script src="media-spec.js?v=3"></script>
+<script src="media-spec.js?v=4"></script>
 </head>
 <body>
 <div class="wrap">
@@ -413,7 +413,7 @@
         if(m){ const el = document.createElement(m.kind === 'video' ? 'video' : 'img'); el.src = m.url; if(m.kind === 'video'){ el.muted = true; el.loop = true; el.autoplay = true; el.playsInline = true; } d.appendChild(el);
           const tg = document.createElement('span'); tg.className = 'tag'; tg.textContent = (slot.kind === 'media' ? 'Cadre ' + (i + 1) : slot.label) + ' · ' + (m.kind === 'video' ? 'vidéo' : 'photo'); d.appendChild(tg);
           const rm = document.createElement('button'); rm.type = 'button'; rm.className = 'rm'; rm.textContent = '✕'; rm.setAttribute('aria-label', 'Retirer'); rm.addEventListener('click', e => { e.stopPropagation(); URL.revokeObjectURL(m.url); MEDIA[slot.id][i] = null; renderMedia(); }); d.appendChild(rm);
-        } else { d.innerHTML = '<span><b>' + (slot.kind === 'media' ? 'Cadre ' + (i + 1) : slot.label) + '</b>+ Ajouter<br><span class="opt">' + (need ? 'à remplir' : 'facultatif') + '</span></span>'; }
+        } else { d.innerHTML = '<span><b>' + (slot.kind === 'media' ? 'Cadre ' + (i + 1) : slot.label) + '</b>+ Ajouter<br><span class="opt">' + (need ? 'obligatoire' : 'facultatif') + '</span></span>'; }
         const inp = document.createElement('input'); inp.type = 'file'; inp.accept = slot.rule.types.concat(slot.clip ? slot.clip.types : []).join(','); d.appendChild(inp);
         inp.addEventListener('change', () => { if(inp.files[0]) addMedia(slot, i, inp.files[0]); });
         d.addEventListener('click', e => { if(e.target === inp) return; inp.click(); }); d.addEventListener('keydown', e => { if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); inp.click(); } });

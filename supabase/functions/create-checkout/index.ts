@@ -28,7 +28,9 @@ Deno.serve(async (req) => {
   const formula = ["ess","sig","pre"].includes(d.data?.formule) ? d.data.formule : (["sig","pre"].includes(b.formula) ? b.formula : "ess");
   if (formula === "pre") {
     const m: any[] = Array.isArray(d.data?.media) ? d.data.media : [];
-    if (!m.some((x) => x.slot === "frames") || !m.some((x) => x.slot === "card_photo")) return json({ error: "media" }, 400);
+    let need = 6; // nombre de cadres du modèle, lu dans <modèle>/slots.json ; 6 si le fichier est injoignable
+    try { const r0 = await fetch(`${SITE}${d.theme}/slots.json`); if (r0.ok) { const j0 = await r0.json(); if (Number.isInteger(j0.frames) && j0.frames > 0) need = j0.frames; } } catch (_) { /* valeur par défaut */ }
+    if (m.filter((x) => x.slot === "frames").length < need || !m.some((x) => x.slot === "card_photo")) return json({ error: "media" }, 400);
   }
   const { data: p } = await db.from("prices").select("amount_cents").eq("theme", d.theme).eq("formula", formula).maybeSingle();
   if (!p) return json({ error: "price" }, 400);
