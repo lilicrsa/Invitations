@@ -118,7 +118,7 @@ const MCATS=[['all','Tous'],['commande','Commandes'],['devis','Devis'],['paiemen
 const reqName=c=>{ const d=DATA.drafts.find(x=>x.code===c); if(!d) return ''; const dd=d.data||{}; return dd.title||dd.host_names||d.email||c; };
 function mailCard(m){ const out=m.direction==='out'; const who=out?('À '+esc(m.to_addr||'')):esc((m.from_name?m.from_name+' · ':'')+(m.from_addr||''));
   return `<div class="card" style="${out?'margin-left:1.6rem;opacity:.92':''}"><div class="top"><b>${out?'↗ ':''}${esc(m.subject||'(sans objet)')} ${out?'':tagS(m.status)}<span class="tag">${esc(m.category||'autre')}</span></b><small>${fmt(m.received_at)}</small></div>
-  <div class="m">${who}${m.alias?' · via '+esc(m.alias):''}${m.draft_code?` · demande <b>${esc(reqName(m.draft_code)||m.draft_code)}</b>`:''}${m.order_ref?' · commande '+esc(m.order_ref):''}</div>
+  <div class="m">${who}${m.alias?' · via '+esc(m.alias):''}${m.quote_id?` · <b>demande de devis</b>`:''}${m.draft_code?` · demande <b>${esc(reqName(m.draft_code)||m.draft_code)}</b>`:''}${m.order_ref?' · commande '+esc(m.order_ref):''}</div>
   <div class="msg" style="max-height:9rem;overflow:auto">${esc(m.body_text||'')}</div>
   <div class="acts">${out?'':`<button data-a="mreply" data-i="${m.id}">Répondre</button>`}${!out&&m.status!=='done'?`<button class="g" data-a="mdone" data-i="${m.id}">Marquer traité</button>`:''}${!out&&m.status==='new'?`<button class="g" data-a="mread" data-i="${m.id}">Lu</button>`:''}<button class="g" data-a="mlink" data-i="${m.id}">Rattacher à une demande</button></div></div>`; }
 function rMail(){ const bar=`<div class="acts" style="margin-bottom:.8rem;flex-wrap:wrap">${MCATS.map(c=>`<button class="${MCAT===c[0]?'':'g'}" data-a="mcat" data-i="${c[0]}">${c[1]}</button>`).join('')}<button class="${MGRP?'':'g'}" data-a="mgrp">Par demande</button><button class="g" data-a="msync">↻ Actualiser la boîte</button></div><p class="m" style="margin:0 0 .8rem">${DATA.mstate&&DATA.mstate.last_run?'Dernière lecture de la boîte : '+fmt(DATA.mstate.last_run):''}${DATA.mstate&&DATA.mstate.last_error&&!/^étape/.test(DATA.mstate.last_error)?` · <span style="color:var(--err)">${esc(DATA.mstate.last_error)}</span>`:''}</p>`;
@@ -130,6 +130,10 @@ function rMail(){ const bar=`<div class="acts" style="margin-bottom:.8rem;flex-w
 async function autoSync(){ if(TAB!=='mail'||!TOKEN||Date.now()-LASTSYNC<60000) return; LASTSYNC=Date.now();
   try{ const r=await fetch(SB+'/functions/v1/mail-sync',{method:'POST',headers:{apikey:KEY,Authorization:'Bearer '+TOKEN,'Content-Type':'application/json'},body:'{}'}); const j=await r.json().catch(()=>({})); if(j&&j.added>0){ toast(j.added+' nouveau(x) message(s)'); load(); } }catch(_){} }
 setInterval(autoSync,30000);
+const mailsOf=(k,id)=>DATA.mails.filter(m=>m[k]===id).sort((x,y)=>new Date(x.received_at)-new Date(y.received_at));
+function mailThread(k,id){ const L=mailsOf(k,id); if(!L.length) return '<div class="m" style="margin-top:.5rem">Aucun e-mail lié pour l’instant.</div>';
+  const nw=L.filter(m=>m.direction==='in'&&m.status==='new').length;
+  return `<details style="margin-top:.6rem"${nw?' open':''}><summary style="cursor:pointer;color:var(--champ2)">${L.length} e-mail(s) lié(s)${nw?` · <b>${nw} nouveau(x)</b>`:''}</summary>${L.map(mailCard).join('')}</details>`; }
 const FN={ess:'Essentiel',sig:'Signature',pre:'Prestige'};
 function rReq(){ const L=DATA.drafts.filter(d=>['requested','validated','refused'].includes(d.status)).sort((a,b)=>(a.status==='requested'?0:1)-(b.status==='requested'?0:1)||new Date(b.requested_at||b.updated_at)-new Date(a.requested_at||a.updated_at));
   return L.map(d=>{ const dd=d.data||{}; const cls=d.status==='requested'?'':'ok';
@@ -147,10 +151,12 @@ function stSel(kind,id,cur){ return `<select data-s="${kind}" data-i="${id}">${[
 function rQuotes(){ return DATA.quotes.map(q=>`<div class="card"><div class="top"><b>${esc(q.name)} · ${esc(q.universe||'')} ${tagS(q.status)}</b><small>${fmt(q.created_at)}</small></div>
   <div class="m">${esc(q.email)} ${esc(q.phone||'')} · ${esc(q.formula||'')} · ${fmtd(q.event_date)} · ${q.guests||'?'} invités</div>
   <div class="msg">${esc(q.description||'')}${q.inspiration?'\nInspiration : '+esc(q.inspiration):''}${q.music?'\nMusique : '+esc(q.music):''}${q.extras?'\nOptions : '+esc(q.extras):''}</div>
-  <div class="acts">${stSel('quote',q.id,q.status)}<a href="mailto:${esc(q.email)}" style="color:var(--champ2);align-self:center">Répondre</a></div></div>`).join(''); }
+  ${mailThread('quote_id',q.id)}
+  <div class="acts">${stSel('quote',q.id,q.status)}<button data-a="qmail" data-i="q:${q.id}">Écrire au client</button></div></div>`).join(''); }
 function rMsgs(){ return DATA.msgs.map(m=>`<div class="card"><div class="top"><b>${esc(m.name)} · ${esc(m.subject||'(sans sujet)')} ${tagS(m.status)}</b><small>${fmt(m.created_at)}</small></div>
   <div class="m">${esc(m.email)}${m.order_ref?` · commande <b>${esc(m.order_ref)}</b>${(()=>{const o=DATA.orders.find(x=>x.order_ref===m.order_ref);return o?` (${esc(o.email||'')}, ${esc(o.formula)}, ${(o.amount_cents/100).toFixed(2)} €)`:'';})()}`:''}</div><div class="msg">${esc(m.message)}</div>
-  <div class="acts">${stSel('message',m.id,m.status)}<a href="mailto:${esc(m.email)}?subject=Re:%20${encodeURIComponent(m.subject||'votre message')}" style="color:var(--champ2);align-self:center">Répondre</a></div></div>`).join(''); }
+  ${mailThread('contact_id',m.id)}
+  <div class="acts">${stSel('message',m.id,m.status)}<button data-a="qmail" data-i="c:${m.id}">Répondre</button></div></div>`).join(''); }
 
 async function copy(t){ try{ await navigator.clipboard.writeText(t); toast('Copié ✓'); }catch(_){ prompt('Copie ce lien :',t); } }
 document.addEventListener('change',async e=>{ const s=e.target.closest('select[data-s]'); if(!s) return;
@@ -166,12 +172,16 @@ async function act(a,id,btn){
     if(a==='msync'){ btn.disabled=true; btn.textContent='Lecture en cours…'; const r=await fetch(SB+'/functions/v1/mail-sync',{method:'POST',headers:{apikey:KEY,Authorization:'Bearer '+TOKEN,'Content-Type':'application/json'},body:'{"force":true}'}).catch(e=>{ btn.disabled=false; btn.textContent='↻ Actualiser la boîte'; dialog(`<h1 style="font-size:1.4rem">Actualisation impossible</h1><p class="m">${esc(String(e.message||e))}</p><div class="acts"><button value="ok">Fermer</button></div>`); return null; }); if(!r) return; const j=await r.json().catch(()=>({})); if(j&&j.ok===false) return dialog(`<h1 style="font-size:1.4rem">Boîte pas encore connectée</h1><p class="m">${esc(j.error||'Erreur inconnue')}</p><div class="acts"><button value="ok">Fermer</button></div>`); toast((j.added||0)+' nouveau(x) message(s) — boîte lue à '+new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})); return load(); }
     if(a==='mread'||a==='mdone'){ await api('/rest/v1/mail_messages?id=eq.'+id,{method:'PATCH',body:JSON.stringify({status:a==='mdone'?'done':'read'})}); return load(); }
     if(a==='mlink'){ const m=DATA.mails.find(x=>x.id===id); return dialog(`<h1 style="font-size:1.4rem">Rattacher à une demande</h1><label>Demande</label><select id="ml-c"><option value="">— aucune —</option>${DATA.drafts.filter(d=>d.email).map(d=>`<option value="${esc(d.code)}" ${d.code===m.draft_code?'selected':''}>${esc(reqName(d.code))} · ${esc(d.email)}</option>`).join('')}</select><div class="acts"><button value="ok">Enregistrer</button><button class="g" value="cancel">Annuler</button></div>`,async()=>{ await api('/rest/v1/mail_messages?id=eq.'+id,{method:'PATCH',body:JSON.stringify({draft_code:$('ml-c').value||null})}); toast('Rattaché'); load(); }); }
-    if(a==='mreply'){ const m=DATA.mails.find(x=>x.id===id); const subj=/^re\s*:/i.test(m.subject||'')?m.subject:'Re: '+(m.subject||'');
+    if(a==='qmail'){ const k=id.slice(0,1), rid=id.slice(2); const src=k==='q'?DATA.quotes.find(x=>x.id===rid):DATA.msgs.find(x=>x.id===rid); if(!src) return;
+      const last=mailsOf(k==='q'?'quote_id':'contact_id',rid).filter(x=>x.direction==='in').pop();
+      return act('mreply',last?last.id:('new:'+k+':'+rid),btn); }
+    if(a==='mreply'){ let m=DATA.mails.find(x=>x.id===id);
+      if(!m&&id.startsWith('new:')){ const [,k,rid]=id.split(':'); const src=k==='q'?DATA.quotes.find(x=>x.id===rid):DATA.msgs.find(x=>x.id===rid); m={id:null,from_addr:src.email,subject:k==='q'?'Votre demande de devis — Maison Opaline':(src.subject||'Votre message'),alias:(k==='q'?'devis':'contact')+'@maisonopaline-invitations.fr',message_id:null,draft_code:null}; } const subj=/^re\s*:/i.test(m.subject||'')?m.subject:'Re: '+(m.subject||'');
       const AL=['contact','commande','devis','paiement','support','presse']; const cur=(m.alias||'').split('@')[0]; 
       return dialog(`<h1 style="font-size:1.4rem">Répondre à ${esc(m.from_addr)}</h1><label>Envoyer depuis</label><select id="mr-a">${AL.map(x=>`<option ${x===cur?'selected':''} value="${x}">${x}@maisonopaline-invitations.fr</option>`).join('')}</select><label>Objet</label><input id="mr-s" value="${esc(subj)}"><label>Message</label><textarea id="mr-t" rows="9" placeholder="Bonjour,\n\n…\n\nBien cordialement,\nMaison Opaline"></textarea><div class="acts"><button value="ok">Envoyer</button><button class="g" value="cancel">Annuler</button></div>`,async()=>{
         const body={to:m.from_addr,subject:$('mr-s').value,text:$('mr-t').value,alias:$('mr-a').value,in_reply_to:m.message_id,draft_code:m.draft_code};
         const r=await fetch(SB+'/functions/v1/mail-send',{method:'POST',headers:{apikey:KEY,Authorization:'Bearer '+TOKEN,'Content-Type':'application/json'},body:JSON.stringify(body)}); const j=await r.json().catch(()=>({}));
-        if(!r.ok||!j.ok) return toast('Échec de l’envoi : '+(j.detail||j.error||r.status)); await api('/rest/v1/mail_messages?id=eq.'+id,{method:'PATCH',body:JSON.stringify({status:'done'})}); toast('Réponse envoyée ✓'); load(); }); }
+        if(!r.ok||!j.ok) return toast('Échec de l’envoi : '+(j.detail||j.error||r.status)); if(m.id) await api('/rest/v1/mail_messages?id=eq.'+id,{method:'PATCH',body:JSON.stringify({status:'done'})}); toast('Réponse envoyée ✓'); load(); }); }
     if(a==='copypay') return copy(`${BASE}commande.html?d=${id}`);
     if(a==='copyinv') return copy(linkOf(inv));
     if(a==='copyresp') return copy(respOf(inv));
