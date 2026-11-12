@@ -51,7 +51,7 @@ dialog label{ display:block; font-size:.75rem; text-transform:uppercase; letter-
 const SB='https://sgatagagyfizuyrinmth.supabase.co', KEY='sb_publishable_YdlXEbQn9ZqILsjT6pyAug_ijgzm5fQ';
 const $=id=>document.getElementById(id);
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-let TOKEN=null, DATA={}, TAB='req', MCAT='all', MGRP=false;
+let TOKEN=null, DATA={}, TAB='req', MCAT='all', MGRP=false, LASTSYNC=0;
 const BASE=location.href.replace(/admin\.html.*$/,'');
 const fmt=d=>d?new Date(d).toLocaleString('fr-FR',{dateStyle:'short',timeStyle:'short'}):'';
 const fmtd=d=>d?new Date(d).toLocaleDateString('fr-FR'):'—';
@@ -94,6 +94,7 @@ function render(){
   $('tabs').querySelectorAll('button').forEach(b=>b.onclick=()=>{TAB=b.dataset.t;render();});
   $('list').innerHTML=({req:rReq,orders:rOrders,drafts:rDrafts,inv:rInv,quotes:rQuotes,msgs:rMsgs,mail:rMail})[TAB]()||'<p class="m">Rien pour l’instant.</p>';
   $('list').querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>act(b.dataset.a,b.dataset.i,b));
+  autoSync();
 }
 const linkOf=i=>`${BASE}${i.theme}/index.html?i=${i.slug}`, respOf=i=>`${BASE}reponses.html?t=${i.response_token}`;
 const tagS=s=>`<span class="tag ${s==='paid'||s==='published'||s==='new'?'ok':''}">${esc(s)}</span>`;
@@ -125,6 +126,9 @@ function rMail(){ const bar=`<div class="acts" style="margin-bottom:.8rem;flex-w
   if(!MGRP) return bar+L.map(mailCard).join('');
   const g={}; L.forEach(m=>{ (g[m.draft_code||'—']=g[m.draft_code||'—']||[]).push(m); });
   return bar+Object.keys(g).map(k=>`<h3 style="margin:1.2rem 0 .5rem;font-size:1.05rem">${k==='—'?'Non rattachés à une demande':'Demande : '+esc(reqName(k)||k)}</h3>`+g[k].map(mailCard).join('')).join(''); }
+async function autoSync(){ if(TAB!=='mail'||!TOKEN||Date.now()-LASTSYNC<60000) return; LASTSYNC=Date.now();
+  try{ const r=await fetch(SB+'/functions/v1/mail-sync',{method:'POST',headers:{apikey:KEY,Authorization:'Bearer '+TOKEN,'Content-Type':'application/json'},body:'{}'}); const j=await r.json().catch(()=>({})); if(j&&j.added>0){ toast(j.added+' nouveau(x) message(s)'); load(); } }catch(_){} }
+setInterval(autoSync,30000);
 const FN={ess:'Essentiel',sig:'Signature',pre:'Prestige'};
 function rReq(){ const L=DATA.drafts.filter(d=>['requested','validated','refused'].includes(d.status)).sort((a,b)=>(a.status==='requested'?0:1)-(b.status==='requested'?0:1)||new Date(b.requested_at||b.updated_at)-new Date(a.requested_at||a.updated_at));
   return L.map(d=>{ const dd=d.data||{}; const cls=d.status==='requested'?'':'ok';
