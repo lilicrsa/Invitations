@@ -80,13 +80,6 @@
   <!-- LOGIN -->
   <div class="card" id="login">
     <p class="muted">Page réservée aux organisateurs.</p>
-    <div class="err hidden" id="share-err" style="margin-bottom:1rem"></div>
-    <form id="code-form" style="margin-bottom:1.4rem">
-      <label for="code" style="margin-top:0">Code de suivi (reçu avec votre invitation)</label>
-      <input type="text" id="code" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Collez votre code ici">
-      <div style="margin-top:1rem"><button type="submit">Voir les réponses</button></div>
-    </form>
-    <p class="muted" style="margin:0 0 .4rem">Ou connectez-vous avec votre compte :</p>
     <form id="login-form">
       <label for="email">E-mail</label>
       <input type="email" id="email" required autocomplete="username">
@@ -278,17 +271,12 @@
     try{ await login($('email').value.trim(), $('pwd').value); await loadData(); show(true); $('pwd').value = ''; }
     catch(err){ $('login-err').textContent = err.message; $('login-err').classList.remove('hidden'); }
   });
-  $('code-form').addEventListener('submit', e => {
-    e.preventDefault();
-    let v = $('code').value.trim(); const m = v.match(/[?&]t=([\w-]+)/); if(m) v = m[1];
-    if(v) location.href = 'reponses.html?t=' + encodeURIComponent(v);
-  });
   $('inv-select').addEventListener('change', render);
   $('refresh').addEventListener('click', () => loadData().catch(err => alert(err.message)));
   $('csv').addEventListener('click', exportCsv);
   $('logout').addEventListener('click', logout);
 
-  if(shareToken){ initTheme().then(() => loadShared().then(() => show(true)).catch(e => { $('share-err').textContent = e.message + ' Vérifiez votre lien ou saisissez votre code de suivi ci-dessous.'; $('share-err').classList.remove('hidden'); show(false); })); }
+  if(shareToken){ initTheme().then(() => loadShared().then(() => show(true)).catch(e => { show(false); })); }
   else initTheme().then(() => { if(token){ loadData().then(() => show(true)).catch(() => show(false)); } });
 </script>
 </body>
