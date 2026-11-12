@@ -513,7 +513,7 @@
       try{ localStorage.setItem('draftCode', code); }catch(_){}
       const r = await fetch(SUPABASE_URL + '/functions/v1/submit-request', { method:'POST', headers:{ 'Content-Type':'application/json', apikey:SUPABASE_KEY }, body: JSON.stringify({ code, formula:formule, email, accepted_terms:true }) });
       const j = await r.json().catch(() => ({}));
-      if(r.ok && j.ok){ clearInterval(tick); tick = null; showRequestState('requested', { formula:formule, theme }); btn.disabled = false; btn.textContent = label; return; }
+      if(r.ok && j.ok){ clearInterval(tick); tick = null; showRequestState('requested', { formula:formule, theme, email }); btn.disabled = false; btn.textContent = label; return; }
       err.textContent = j.error === 'busy' ? 'Beaucoup de demandes en ce moment. Réessayez dans quelques minutes.' : 'Votre demande n’a pas pu être envoyée. Réessayez dans un instant.';
     }catch(e){ err.textContent = (e && e.message && e.message !== 'save' && /^(Envoi|Échec)/.test(e.message)) ? e.message + ' Réessayez dans un instant.' : 'Oups, l’enregistrement a échoué. Réessayez dans un instant.'; }
     btn.disabled = false; btn.textContent = label;
@@ -542,9 +542,11 @@
         + stateStep(1, '<b>Nous vérifions</b> votre demande et votre aperçu.')
         + stateStep(2, 'Sous <b>quelques jours</b>, vous recevez un <b>e-mail</b> pour valider votre demande.')
         + stateStep(3, 'Vous réglez grâce au lien de l’e-mail : <b>votre invitation est alors publiée</b>.')
-        + '<p style="margin-top:1rem">Votre code de suivi : <b id="req-code"></b><br><small style="color:var(--brume)">Conservez-le : il permet de retrouver votre demande depuis ce navigateur ou avec le lien <code>commande.html?d=…</code>.</small></p>'
+        + '<p style="margin-top:1rem">Un <b>e-mail de confirmation</b> vient de vous être envoyé' + (info.email ? ' à <b id="req-mail"></b>' : '') + ' : il contient le lien pour retrouver votre demande. Pensez à regarder vos courriers indésirables.</p>'
+        + '<div class="row"><button type="button" class="btn ghost" id="req-copy">Copier le lien de ma demande</button></div>'
         + '<div class="row" style="margin-top:1rem"><a class="btn solid" href="index.html#modeles">Créer une autre invitation</a><a class="btn ghost" href="index.html">Retour à l’accueil</a></div>';
-      $('req-code').textContent = code;
+      if(info.email && $('req-mail')) $('req-mail').textContent = info.email;
+      $('req-copy').addEventListener('click', async () => { const u = location.href.replace(/commande\.html.*$/, '') + 'commande.html?d=' + code; try{ await navigator.clipboard.writeText(u); $('req-copy').textContent = 'Lien copié ✓'; }catch(_){ $('req-copy').textContent = u; } });
     } else if(status === 'validated'){
       box.innerHTML = '<p class="ok" style="font-size:1.25rem;margin-top:0">Votre demande est validée 🎉</p><p>Il ne reste qu’à régler pour publier votre invitation' + (info.formula ? ' (formule <b>' + FNAME[info.formula] + '</b>' + (price ? ', <b>' + price + ' €</b>' : '') + ')' : '') + '.</p>'
         + '<label style="display:flex;gap:.6rem;align-items:flex-start;margin:1rem 0 .2rem;font-size:.88rem;line-height:1.45;text-transform:none;letter-spacing:0;font-weight:400;cursor:pointer"><input type="checkbox" id="pay-waiver" style="width:auto;margin-top:.25rem;accent-color:#E7D5A8"><span>Je demande la publication immédiate de mon invitation après paiement et je reconnais renoncer à mon droit de rétractation.</span></label>'
@@ -572,7 +574,7 @@
     try{
       const r = await rpc('get_draft', { p_code:c }); if(!r || !THEMES[r.theme]) return;
       code = c; theme = r.theme; fill(r.data, r.email); setMode('full'); pick(r.theme, true); $('email-step').style.display = 'none'; $('code-area').style.display = ''; $('code-box').textContent = code;
-      if(r.status === 'requested' || r.status === 'validated' || r.status === 'refused'){ showRequestState(r.status, { formula:r.formula, theme:r.theme }); return; }
+      if(r.status === 'requested' || r.status === 'validated' || r.status === 'refused'){ showRequestState(r.status, { formula:r.formula, theme:r.theme, email:r.email }); return; }
       if(r.status !== 'draft'){ $('code-box2').textContent = code; $('order-a').style.display = 'none'; $('order-b').style.display = ''; $('code-box').textContent = code; go(4); }
     }catch(_){}
   })();
