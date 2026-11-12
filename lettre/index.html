@@ -37,6 +37,7 @@ body.open #bg{opacity:1}
 #bg .paper .b2{right:-6px;bottom:-6px;transform:rotate(180deg)}
 /* ---------- intro : vidéo d'ouverture ---------- */
 #intro{position:fixed;inset:0;z-index:100;background:#efe3cd;display:block;transition:opacity 1.1s ease,visibility 1.1s}
+#skip{position:absolute;z-index:5;bottom:calc(2.4% + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);font:600 .82rem/1 system-ui,sans-serif;letter-spacing:.06em;color:#4a3820;background:rgba(255,248,232,.88);border:1px solid #b8975a;border-radius:999px;padding:.6rem 1.05rem;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,.2)}
 #intro.out{opacity:0;visibility:hidden;pointer-events:none}
 #intro video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 #intro .hint{position:absolute;left:0;right:0;bottom:9vh;width:max-content;margin:0 auto;padding:12px 26px;border-radius:40px;background:rgba(255,248,232,.82);border:1px solid #b8975a;text-align:center;color:#5a3f14;font-size:20px;font-weight:600;z-index:2;box-shadow:0 6px 24px rgba(90,63,20,.25);transition:opacity .4s}
@@ -146,6 +147,7 @@ h2{font-family:'Great Vibes',cursive;font-weight:400;font-size:58px;color:var(--
 <div id="intro">
   <video id="iv" muted playsinline preload="auto" poster="o/poster.jpg"><source src="o/ouverture.webm" type="video/webm"><source src="o/ouverture.mp4" type="video/mp4"></video>
   <div class="hint" id="hint">Touchez pour ouvrir</div>
+  <button id="skip" type="button" aria-label="Passer l'introduction">Passer &rsaquo;</button>
   <button class="tapall" id="seal" aria-label="Ouvrir l'invitation"></button>
 </div>
 <div id="glow"></div>
@@ -371,6 +373,7 @@ function revealPage(){
   $('intro').style.transition='none'; $('intro').classList.add('out'); watch();
   const g=$('glow'); g.classList.add('fade'); requestAnimationFrame(()=>requestAnimationFrame(()=>g.classList.remove('on')));
 }
+let finishIntro = null;
 function openLetter(){
   if(started) return; started = true;
   bgm.play().catch(()=>{});
@@ -378,6 +381,7 @@ function openLetter(){
   const iv = $('iv'), g = $('glow'); $('hint').style.opacity = 0;
   let done = false;
   function finish(){ if(done) return; done = true; g.classList.add('on'); setTimeout(revealPage, 1400); }
+  finishIntro = finish;
   iv.addEventListener('timeupdate', ()=>{ if(iv.duration && iv.currentTime >= iv.duration - 1.5) finish(); });
   iv.addEventListener('ended', finish);
   iv.addEventListener('error', finish);
@@ -385,6 +389,7 @@ function openLetter(){
   setTimeout(finish, 9000);   // sécurité
 }
 $('seal').addEventListener('click', openLetter);
+$('skip').addEventListener('click', ()=>{ openLetter(); try{ $('iv').pause(); }catch(_){} if(finishIntro) finishIntro(); });
 // ---------- apparition au scroll ----------
 let io = null;
 function watch(){
