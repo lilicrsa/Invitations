@@ -532,6 +532,14 @@
   // ---- état d'une demande : en attente / validée (paiement) / refusée
   const FNAME = { ess:'Essentiel', sig:'Signature', pre:'Prestige' };
   function stateStep(n, html){ return '<div style="display:flex;gap:.7rem;margin:.7rem 0;align-items:flex-start"><div style="flex:0 0 1.7rem;height:1.7rem;border-radius:50%;background:var(--champ,#E7D5A8);color:#1a1424;font-weight:800;text-align:center;line-height:1.7rem">' + n + '</div><div>' + html + '</div></div>'; }
+  function addPhonePreview(box, th){
+    const h = document.createElement('p'); h.style.cssText = 'margin:1.4rem 0 .5rem;font-weight:700'; h.textContent = 'Votre invitation (aperçu)';
+    const w = document.createElement('div'); w.className = 'phone'; w.style.margin = '0 auto';
+    const f = document.createElement('iframe'); f.title = 'Aperçu de votre invitation'; f.setAttribute('allow', 'autoplay');
+    f.src = th + '/?preview=' + encodeURIComponent(code); w.appendChild(f);
+    const n = document.createElement('p'); n.style.cssText = 'font-size:.82rem;color:var(--brume);text-align:center;margin:.5rem 0 0'; n.textContent = 'Aperçu protégé : le filigrane disparaît sur l’invitation publiée.';
+    box.appendChild(h); box.appendChild(w); box.appendChild(n);
+  }
   function showRequestState(status, info){
     info = info || {}; const box = $('req-state');
     $('order-a').style.display = 'none'; $('order-b').style.display = 'none'; box.style.display = '';
@@ -546,6 +554,7 @@
         + '<div class="row"><button type="button" class="btn ghost" id="req-copy">Copier le lien de ma demande</button></div>'
         + '<div class="row" style="margin-top:1rem"><a class="btn solid" href="index.html#modeles">Créer une autre invitation</a><a class="btn ghost" href="index.html">Retour à l’accueil</a></div>';
       if(info.email && $('req-mail')) $('req-mail').textContent = info.email;
+      addPhonePreview(box, info.theme || theme);
       $('req-copy').addEventListener('click', async () => { const u = location.href.replace(/commande\.html.*$/, '') + 'commande.html?d=' + code; try{ await navigator.clipboard.writeText(u); $('req-copy').textContent = 'Lien copié ✓'; }catch(_){ $('req-copy').textContent = u; } });
     } else if(status === 'validated'){
       box.innerHTML = '<p class="ok" style="font-size:1.25rem;margin-top:0">Votre demande est validée 🎉</p><p>Il ne reste qu’à régler pour publier votre invitation' + (info.formula ? ' (formule <b>' + FNAME[info.formula] + '</b>' + (price ? ', <b>' + price + ' €</b>' : '') + ')' : '') + '.</p>'
@@ -563,6 +572,7 @@
         }catch(_){ e2.textContent = 'Le paiement n’a pas pu démarrer. Réessayez dans un instant.'; }
         b2.disabled = false; b2.textContent = l2;
       });
+      addPhonePreview(box, info.theme || theme);
     } else if(status === 'refused'){
       box.innerHTML = '<p style="font-size:1.2rem;margin-top:0"><b>À propos de votre demande</b></p><p>Nous n’avons pas pu valider cette demande en l’état. Aucun paiement n’a été pris. Vous allez recevoir un e-mail avec les détails, ou <a href="contact.html">écrivez-nous</a>.</p><div class="row" style="margin-top:1rem"><a class="btn ghost" href="index.html">Retour à l’accueil</a></div>';
     }
