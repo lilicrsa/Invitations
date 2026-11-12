@@ -56,9 +56,10 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: cors });
   const pass = Deno.env.get("IMAP_PASSWORD");
   if (!pass) return json({ ok: false, error: "IMAP_PASSWORD manquant" }, 200);
+  let force = false; try { force = (await req.json())?.force === true; } catch (_) { /* corps vide */ }
   const db = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
   const { data: st } = await db.from("mail_sync_state").select("*").eq("id", 1).single();
-  if (st?.last_run && Date.now() - new Date(st.last_run).getTime() < 45_000) return json({ ok: true, skipped: true });
+  if (!force && st?.last_run && Date.now() - new Date(st.last_run).getTime() < 45_000) return json({ ok: true, skipped: true });
   const step = async (s: string) => { await db.from("mail_sync_state").update({ last_run: new Date().toISOString(), last_error: "étape : " + s }).eq("id", 1); };
   await step("connexion");
 

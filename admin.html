@@ -75,16 +75,17 @@ $('refresh').onclick=()=>load();
 
 async function load(){
   try{
-    const [orders,drafts,inv,quotes,msgs,rsvp,mails]=await Promise.all([
+    const [orders,drafts,inv,quotes,msgs,rsvp,mails,mstate]=await Promise.all([
       get('orders?select=*&order=created_at.desc&limit=200'),
       get('drafts?select=id,code,theme,email,status,etsy_order,created_at,updated_at,expires_at,data,formula,requested_at,validated_at,review_note&order=updated_at.desc&limit=200'),
       get('invitations?select=*&order=created_at.desc&limit=200'),
       get('quote_requests?select=*&order=created_at.desc&limit=200'),
       get('contact_messages?select=*&order=created_at.desc&limit=200'),
       get('rsvp_responses?select=invitation_id'),
-      get('mail_messages?select=*&order=received_at.desc&limit=300')]);
+      get('mail_messages?select=*&order=received_at.desc&limit=300'),
+      get('mail_sync_state?select=last_run,last_error').catch(()=>[])]);
     const cnt={}; rsvp.forEach(r=>cnt[r.invitation_id]=(cnt[r.invitation_id]||0)+1);
-    DATA={orders,drafts,inv,quotes,msgs,cnt,mails}; render();
+    DATA={orders,drafts,inv,quotes,msgs,cnt,mails,mstate:(mstate&&mstate[0])||null}; render();
   }catch(e){ if(/JWT|expired/i.test(String(e))){ toast('Session expirée'); setTimeout(()=>location.reload(),900);} else toast('Erreur de chargement'); }
 }
 const TABS=[['req','Demandes'],['orders','Commandes'],['drafts','Brouillons'],['inv','Invitations'],['quotes','Devis'],['msgs','Messages'],['mail','Boîte mail']];
@@ -120,7 +121,7 @@ function mailCard(m){ const out=m.direction==='out'; const who=out?('À '+esc(m.
   <div class="m">${who}${m.alias?' · via '+esc(m.alias):''}${m.draft_code?` · demande <b>${esc(reqName(m.draft_code)||m.draft_code)}</b>`:''}${m.order_ref?' · commande '+esc(m.order_ref):''}</div>
   <div class="msg" style="max-height:9rem;overflow:auto">${esc(m.body_text||'')}</div>
   <div class="acts">${out?'':`<button data-a="mreply" data-i="${m.id}">Répondre</button>`}${!out&&m.status!=='done'?`<button class="g" data-a="mdone" data-i="${m.id}">Marquer traité</button>`:''}${!out&&m.status==='new'?`<button class="g" data-a="mread" data-i="${m.id}">Lu</button>`:''}<button class="g" data-a="mlink" data-i="${m.id}">Rattacher à une demande</button></div></div>`; }
-function rMail(){ const bar=`<div class="acts" style="margin-bottom:.8rem;flex-wrap:wrap">${MCATS.map(c=>`<button class="${MCAT===c[0]?'':'g'}" data-a="mcat" data-i="${c[0]}">${c[1]}</button>`).join('')}<button class="${MGRP?'':'g'}" data-a="mgrp">Par demande</button><button class="g" data-a="msync">↻ Actualiser la boîte</button></div>`;
+function rMail(){ const bar=`<div class="acts" style="margin-bottom:.8rem;flex-wrap:wrap">${MCATS.map(c=>`<button class="${MCAT===c[0]?'':'g'}" data-a="mcat" data-i="${c[0]}">${c[1]}</button>`).join('')}<button class="${MGRP?'':'g'}" data-a="mgrp">Par demande</button><button class="g" data-a="msync">↻ Actualiser la boîte</button></div><p class="m" style="margin:0 0 .8rem">${DATA.mstate&&DATA.mstate.last_run?'Dernière lecture de la boîte : '+fmt(DATA.mstate.last_run):''}${DATA.mstate&&DATA.mstate.last_error&&!/^étape/.test(DATA.mstate.last_error)?` · <span style="color:var(--err)">${esc(DATA.mstate.last_error)}</span>`:''}</p>`;
   let L=DATA.mails.filter(m=>MCAT==='all'||(MCAT==='none'?!m.draft_code&&!m.order_ref:m.category===MCAT));
   if(!L.length) return bar+'<p class="m">Aucun message pour l’instant. Si la boîte vient d’être connectée, clique sur « Actualiser ».</p>';
   if(!MGRP) return bar+L.map(mailCard).join('');
@@ -162,7 +163,7 @@ async function act(a,id,btn){
     if(a==='resend'){ try{ showMailResult(await notify(id,'validate')); }catch(e){ toast('Échec : '+String(e.message||e).slice(0,80)); } return; }
     if(a==='mcat'){ MCAT=id; return render(); }
     if(a==='mgrp'){ MGRP=!MGRP; return render(); }
-    if(a==='msync'){ toast('Lecture de la boîte…'); const r=await fetch(SB+'/functions/v1/mail-sync',{method:'POST',headers:{apikey:KEY,Authorization:'Bearer '+TOKEN,'Content-Type':'application/json'},body:'{}'}); const j=await r.json().catch(()=>({})); if(j&&j.ok===false) return dialog(`<h1 style="font-size:1.4rem">Boîte pas encore connectée</h1><p class="m">${esc(j.error||'Erreur inconnue')}</p><div class="acts"><button value="ok">Fermer</button></div>`); toast(j.skipped?'Déjà à jour':(j.added||0)+' nouveau(x) message(s)'); return load(); }
+    if(a==='msync'){ btn.disabled=true; btn.textContent='Lecture en cours…'; const r=await fetch(SB+'/functions/v1/mail-sync',{method:'POST',headers:{apikey:KEY,Authorization:'Bearer '+TOKEN,'Content-Type':'application/json'},body:'{"force":true}'}).catch(e=>{ btn.disabled=false; btn.textContent='↻ Actualiser la boîte'; dialog(`<h1 style="font-size:1.4rem">Actualisation impossible</h1><p class="m">${esc(String(e.message||e))}</p><div class="acts"><button value="ok">Fermer</button></div>`); return null; }); if(!r) return; const j=await r.json().catch(()=>({})); if(j&&j.ok===false) return dialog(`<h1 style="font-size:1.4rem">Boîte pas encore connectée</h1><p class="m">${esc(j.error||'Erreur inconnue')}</p><div class="acts"><button value="ok">Fermer</button></div>`); toast((j.added||0)+' nouveau(x) message(s) — boîte lue à '+new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})); return load(); }
     if(a==='mread'||a==='mdone'){ await api('/rest/v1/mail_messages?id=eq.'+id,{method:'PATCH',body:JSON.stringify({status:a==='mdone'?'done':'read'})}); return load(); }
     if(a==='mlink'){ const m=DATA.mails.find(x=>x.id===id); return dialog(`<h1 style="font-size:1.4rem">Rattacher à une demande</h1><label>Demande</label><select id="ml-c"><option value="">— aucune —</option>${DATA.drafts.filter(d=>d.email).map(d=>`<option value="${esc(d.code)}" ${d.code===m.draft_code?'selected':''}>${esc(reqName(d.code))} · ${esc(d.email)}</option>`).join('')}</select><div class="acts"><button value="ok">Enregistrer</button><button class="g" value="cancel">Annuler</button></div>`,async()=>{ await api('/rest/v1/mail_messages?id=eq.'+id,{method:'PATCH',body:JSON.stringify({draft_code:$('ml-c').value||null})}); toast('Rattaché'); load(); }); }
     if(a==='mreply'){ const m=DATA.mails.find(x=>x.id===id); const subj=/^re\s*:/i.test(m.subject||'')?m.subject:'Re: '+(m.subject||'');
