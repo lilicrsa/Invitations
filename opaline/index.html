@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#fff6e8">
+<title>Notre mariage</title><meta property="og:type" content="website"><meta property="og:title" content="Vous êtes invités à notre mariage"><meta property="og:description" content="Touchez pour ouvrir l'invitation 💌">
+<link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="stylesheet" href="style.css?v=1"><script src="../protect.js?v=4"></script><script>/*noindex-i*/if(new URLSearchParams(location.search).get("i")){var m=document.createElement("meta");m.name="robots";m.content="noindex,nofollow";document.head.appendChild(m);}</script><script defer src="app.js?v=1"></script>
+</head>
+<body class="sealed">
+<svg class="icon-library" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs>
+<symbol id="arrow" viewBox="0 0 24 24"><path d="M4 12h15m-6-6 6 6-6 6"/></symbol>
+<symbol id="leaf" viewBox="0 0 40 40"><path d="M9 34C11 22 23 12 33 6M12 26C2 17 11 7 33 6c1 21-9 30-21 20Z"/><path d="m18 21-1-7m7 1 6 1"/></symbol>
+<symbol id="rings" viewBox="0 0 40 40"><circle cx="15" cy="24" r="10"/><circle cx="26" cy="24" r="10"/><path d="m17 8 4-5 4 5-4 6-4-6Z"/></symbol>
+<symbol id="flower" viewBox="0 0 40 40"><path d="M20 33V20m0 8c-8 0-11-5-11-5 8-2 11 5 11 5Zm0 1c8 0 11-6 11-6-8-1-11 6-11 6Z"/><path d="M20 18c-12 2-14-7-8-8-1-9 8-10 8-3 5-7 12-2 8 4 8 4 1 12-8 7Z"/></symbol>
+<symbol id="dinner" viewBox="0 0 40 40"><path d="M10 5v10m-4-10v10c0 6 8 6 8 0V5m-4 15v15m18-30v30m0-30c-9 6-9 16 0 16"/></symbol>
+<symbol id="music" viewBox="0 0 40 40"><path d="M15 29V10l18-4v19M15 14l18-4"/><ellipse cx="10" cy="30" rx="5" ry="4"/><ellipse cx="28" cy="26" rx="5" ry="4"/></symbol>
+<symbol id="pin" viewBox="0 0 24 24"><path d="M19 10c0 5-7 11-7 11S5 15 5 10a7 7 0 1 1 14 0Z"/><circle cx="12" cy="10" r="2.4"/></symbol>
+<symbol id="edit" viewBox="0 0 24 24"><path d="m4 16-1 5 5-1L21 7l-4-4L4 16Zm10-10 4 4"/></symbol>
+<symbol id="calendar" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="16" rx="2"/><path d="M4 10h16M8 3v5m8-5v5"/></symbol>
+</defs></svg>
+
+<div id="opening" class="opening" role="dialog" aria-modal="true" aria-label="Ouvrir l’invitation">
+  <video id="envelopeVideo" class="envelope-video" playsinline muted preload="metadata" poster="assets/envelope-poster.jpg"><source src="assets/enveloppe-lumiere.webm" type="video/webm"><source src="assets/enveloppe-lumiere.mp4" type="video/mp4"></video>
+  <div class="opening-shade"></div>
+  <div class="opening-brand"><span class="brand-mark">MO</span><span>MAISON OPALINE</span></div>
+  <button id="skipOpening" class="opening-skip" type="button">Découvrir directement <span aria-hidden="true">↗</span></button>
+  <div class="opening-caption" id="openingCaption"><span class="eyebrow">UNE ATTENTION POUR VOUS</span><h1>Tout commence<br>par une <em>invitation.</em></h1><button id="openInvitation" class="open-button" type="button">Ouvrir l’invitation <svg><use href="#arrow"/></svg></button><p>Un instant à partager. Un souvenir à garder.</p></div>
+  <div class="opening-progress" aria-hidden="true"><span></span></div>
+</div>
+<div id="lightVeil" class="light-veil" aria-hidden="true"></div>
+
+<div id="invitation" inert>
+<header class="site-header"><a class="wordmark" href="#accueil" aria-label="Maison Opaline, accueil"><span class="small-monogram">MO</span><span>MAISON OPALINE<small>L’ART DE VOUS RÉUNIR</small></span></a><nav aria-label="Navigation principale"><a href="#date">Le grand jour</a><a href="#lieu">Le lieu</a><a href="#rsvp" class="nav-rsvp">Votre réponse <span>↗</span></a></nav></header>
+<main>
+<section id="accueil" class="hero section-paper" aria-labelledby="heroNames">
+  <div class="section-backdrop hero-bg" aria-hidden="true"></div>
+  <div class="hero-layout">
+    <div class="hero-photo-wrap"><div class="arch-orbit" aria-hidden="true"></div><div class="hero-photo arch"><img id="heroImg" src="assets/couple-hero.webp" alt="Les mariés" width="1152" height="1536" fetchpriority="high"></div><span class="photo-footnote">UN AMOUR. MILLE INSTANTS.</span></div>
+    <div class="hero-copy"><p class="eyebrow hero-kicker" id="heroKicker">NOUS NOUS DISONS OUI</p><h1 id="heroNames" class="couple-names"><span data-first>Lina</span><i>&amp;</i><span data-second>Adam</span></h1><div class="gold-rule" aria-hidden="true"></div><p class="hero-message" id="heroMsg">Le plus beau de notre histoire<br>se vivra <em>avec vous.</em></p><p class="hero-date" data-date-long>19 juin 2027</p><a class="text-link" href="#date">Et si l’on écrivait la suite ? <span aria-hidden="true">↓</span></a></div>
+  </div><span class="section-number" aria-hidden="true">01 / LE COMMENCEMENT</span>
+</section>
+
+<section id="date" class="date-section section-paper" aria-labelledby="dateTitle">
+ <div class="section-backdrop date-bg" aria-hidden="true"></div><div class="ambient-shadow" aria-hidden="true"></div>
+ <div class="date-content"><p class="eyebrow reveal">UN RENDEZ-VOUS AVEC LE BONHEUR</p><h2 id="dateTitle" class="section-title reveal">Un jour.<br><em>Pour toujours.</em></h2><div class="wedding-date reveal"><span data-weekday>Samedi</span><strong data-day>19</strong><span data-month-year>Juin 2027</span></div><div class="countdown reveal" aria-label="Temps restant avant le mariage"><div><strong id="days">—</strong><span>JOURS</span></div><b>:</b><div><strong id="hours">—</strong><span>HEURES</span></div><b>:</b><div><strong id="minutes">—</strong><span>MINUTES</span></div><b>:</b><div><strong id="seconds">—</strong><span>SECONDES</span></div></div><p id="countdownMessage" class="countdown-message">Chaque instant nous rapproche de vous.</p><button class="outline-button reveal" id="addCalendar" type="button"><svg><use href="#calendar"/></svg> Garder cette date</button></div>
+ <span class="section-number" aria-hidden="true">02 / L’IMPATIENCE</span>
+</section>
+
+<section id="interlude" class="love-interlude" aria-label="Un instant des mariés"><img id="imgInterlude" src="assets/couple-sunset.webp" alt="Les mariés se tiennent la main dans la lumière du soir" loading="lazy" width="1152" height="1536"><div class="interlude-shade"></div><div class="interlude-words reveal"><span class="eyebrow">ET AU MILIEU DE TOUT</span><p>Il y a <em>nous.</em><br>Il y aura <em>vous.</em></p><span class="tiny-star" aria-hidden="true">✧</span></div></section>
+
+<section id="lieu" class="venue-section" aria-labelledby="venueTitle"><div class="section-backdrop venue-bg" aria-hidden="true"></div><div class="venue-wash" aria-hidden="true"></div><div class="venue-copy"><p class="eyebrow reveal">LÀ OÙ NOS CŒURS VOUS ATTENDENT</p><h2 id="venueTitle" class="section-title reveal">Une parenthèse<br><em>hors du temps.</em></h2><div class="venue-card reveal"><svg class="venue-leaf"><use href="#leaf"/></svg><span class="eyebrow">LE LIEU DE LA CÉLÉBRATION</span><h3 id="venueName">Le domaine de votre histoire</h3><p id="venueAddress">Un lieu précieux, bientôt dévoilé.</p><span class="venue-time" id="venueTime"></span><div id="venueExtra"></div><a id="mapLink" class="dark-button" href="#" hidden target="_blank" rel="noopener noreferrer"><svg><use href="#pin"/></svg> Voir l’itinéraire <span>↗</span></a><span id="venuePending" class="venue-pending">L’adresse sera indiquée ici.</span></div></div><span class="section-number" aria-hidden="true">03 / LES RETROUVAILLES</span></section>
+
+<section id="rsvp" class="rsvp-section" data-x aria-labelledby="rsvpTitle"><div class="rsvp-portrait" id="rsvpPortrait"><img id="imgJoy" src="assets/couple-joy.webp" alt="Un éclat de rire partagé par les mariés" loading="lazy" width="1152" height="1536"><div class="portrait-shade"></div><div class="portrait-words reveal"><span class="eyebrow">LA PLUS BELLE DES PRÉSENCES</span><p>La vôtre.</p><span class="portrait-signature" data-couple>Lina & Adam</span></div></div><div class="rsvp-side section-paper"><div class="section-backdrop rsvp-bg" aria-hidden="true"></div><div class="rsvp-card reveal"><span class="eyebrow">RÉPONSE SOUHAITÉE</span><h2 id="rsvpTitle" class="section-title">Serez-vous<br><em>des nôtres ?</em></h2><p class="rsvp-intro" id="rsvpIntro">Nous avons gardé une place pour vous.<br>Il ne manque plus que votre réponse.</p>
+<form id="rsvpForm"><fieldset class="attendance"><legend>Pour ce grand jour…</legend><label><input type="radio" name="attendance" value="yes" checked><span><i aria-hidden="true">♡</i> Avec joie</span></label><label><input type="radio" name="attendance" value="no"><span><i aria-hidden="true">—</i> À regret</span></label></fieldset><div class="field"><label for="guestName">Votre nom et prénom <span>*</span></label><input id="guestName" name="name" autocomplete="name" required maxlength="120" placeholder="Comment vous appelez-vous ?"></div><div class="guest-counts" id="guestCounts"><div class="field"><label for="adults">Adultes</label><div class="stepper"><button type="button" data-step="-1" data-target="adults" aria-label="Retirer un adulte">−</button><input type="number" min="1" max="12" id="adults" name="adults" value="1" readonly aria-label="Nombre d’adultes"><button type="button" data-step="1" data-target="adults" aria-label="Ajouter un adulte">+</button></div></div><div class="field"><label for="children">Enfants</label><div class="stepper"><button type="button" data-step="-1" data-target="children" aria-label="Retirer un enfant">−</button><input type="number" min="0" max="12" id="children" name="children" value="0" readonly aria-label="Nombre d’enfants"><button type="button" data-step="1" data-target="children" aria-label="Ajouter un enfant">+</button></div></div></div><div class="field"><label for="guestMessage">Un petit mot <small>(si le cœur vous en dit)</small></label><textarea id="guestMessage" name="message" rows="2" maxlength="1200" placeholder="Une attention, une question, quelques mots…"></textarea></div><button type="submit" class="dark-button submit-button"><span>Confirmer ma réponse</span><svg><use href="#arrow"/></svg></button><p class="form-demo" id="rsvpModeNotice" hidden></p><p id="formError" class="form-error" role="alert"></p></form>
+<div id="rsvpSuccess" class="rsvp-success" hidden aria-live="polite"><span class="success-flower" aria-hidden="true">✧</span><h3>Merci pour<br><em>ces quelques mots.</em></h3><p id="successMessage"></p><button id="editResponse" type="button" class="text-link">Modifier ma réponse <span>↗</span></button></div>
+</div></div></section>
+
+<section id="programme" class="program-section section-paper" aria-labelledby="programTitle"><div class="section-backdrop program-bg" aria-hidden="true"></div><div class="program-heading"><p class="eyebrow reveal">SAVOURER CHAQUE INSTANT</p><h2 id="programTitle" class="section-title reveal">Le fil de<br><em>notre journée.</em></h2><p class="section-intro reveal">Des premières émotions aux derniers pas de danse.</p></div><div class="timeline" id="timeline"><div class="timeline-track" aria-hidden="true"><span id="timelineFill"></span></div><div id="timelineEvents"></div></div><a href="#rsvp" class="outline-button reveal">Nous serons de la fête <svg><use href="#arrow"/></svg></a><span class="section-number" aria-hidden="true">04 / LES SOUVENIRS À VENIR</span></section>
+
+<section class="closing" id="closing"><div class="closing-photo" id="closingPhoto"><img id="imgPortrait" src="assets/couple-portrait.webp" alt="Les mariés, épaule contre épaule" loading="lazy" width="1152" height="1536"></div><div class="closing-copy reveal"><svg><use href="#leaf"/></svg><p>Le bonheur est encore plus beau<br>quand on le <em>partage.</em></p><span data-couple>Lina & Adam</span><button id="replayOpening" class="text-link" type="button">Revivre l’ouverture <span>↻</span></button></div></section>
+</main>
+<footer class="site-footer"><span class="small-monogram">MO</span><p>MAISON OPALINE</p><span>Des invitations qui font naître l’émerveillement.</span><a href="#accueil">Tout commence ici ↑</a></footer>
+</div>
+
+<noscript><p class="noscript">Activez JavaScript pour ouvrir cette invitation et utiliser son formulaire.</p></noscript>
+<button id="musicBtn" class="music-btn" type="button" aria-label="Musique">♪</button><audio id="bgm" loop playsinline></audio>
+</body></html>
