@@ -17,15 +17,17 @@ Deno.serve(async (req) => {
   if (!key) return json({ error: "not_configured" }, 503);
 
   let b: any; try { b = await req.json(); } catch { return json({ error: "bad_request" }, 400); }
-  const code = String(b.code ?? ""), email = String(b.email ?? "").trim();
+  const code = String(b.code ?? "");
   if (!/^[A-Za-z0-9_-]{6,40}$/.test(code)) return json({ error: "bad_code" }, 400);
-  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email) || email.length > 160) return json({ error: "bad_email" }, 400);
-  if (b.accepted_terms !== true) return json({ error: "terms" }, 400);
 
   const db = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
-  const { data: d } = await db.from("drafts").select("code,theme,data,status,expires_at").eq("code", code).maybeSingle();
+  const { data: d } = await db.from("drafts").select("code,theme,data,status,expires_at,email,formula,validated_at").eq("code", code).maybeSingle();
   if (!d || new Date(d.expires_at) < new Date() || d.status === "published") return json({ error: "draft" }, 404);
-  const formula = ["ess","sig","pre"].includes(d.data?.formule) ? d.data.formule : (["sig","pre"].includes(b.formula) ? b.formula : "ess");
+  // Le paiement n'est possible qu'après validation de la demande (valable 30 jours).
+  if (d.status !== "validated" || !d.validated_at || Date.now() - new Date(d.validated_at).getTime() > 30 * 86400_000) return json({ error: "not_validated" }, 403);
+  const email = String(d.email ?? "");
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return json({ error: "bad_email" }, 400);
+  const formula = ["ess","sig","pre"].includes(d.formula) ? d.formula : "ess";
   if (formula === "pre") {
     const m: any[] = Array.isArray(d.data?.media) ? d.data.media : [];
     let need = 6; // nombre de cadres du modèle, lu dans <modèle>/slots.json ; 6 si le fichier est injoignable

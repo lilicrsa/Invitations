@@ -221,9 +221,10 @@
           <label for="f-email">Votre e-mail</label>
           <input type="email" id="f-email" maxlength="160" placeholder="vous@exemple.fr" autocomplete="email">
           <div class="err" id="email-err" role="alert"></div>
-          <label style="display:flex;gap:.6rem;align-items:flex-start;margin:1rem 0 .2rem;font-size:.88rem;line-height:1.45;text-transform:none;letter-spacing:0;font-weight:400;cursor:pointer"><input type="checkbox" id="f-cgv" style="width:auto;margin-top:.25rem;accent-color:#E7D5A8"><span>J'ai lu et j'accepte les <a href="cgv.html" target="_blank" rel="noopener">conditions générales de vente</a>. Je demande la publication immédiate de mon invitation et je reconnais renoncer à mon droit de rétractation.</span></label>
+          <label style="display:flex;gap:.6rem;align-items:flex-start;margin:1rem 0 .2rem;font-size:.88rem;line-height:1.45;text-transform:none;letter-spacing:0;font-weight:400;cursor:pointer"><input type="checkbox" id="f-cgv" style="width:auto;margin-top:.25rem;accent-color:#E7D5A8"><span>J'ai lu et j'accepte les <a href="cgv.html" target="_blank" rel="noopener">conditions générales de vente</a>. J'ai compris que ma demande sera examinée avant tout paiement.</span></label>
           <div class="err" id="cgv-err" role="alert"></div>
-          <div class="row"><button class="btn" id="make-code">Payer et publier mon invitation</button><button class="btn ghost" id="edit3">Modifier mes infos</button><button class="btn ghost" id="back3">Revoir l'aperçu</button></div>
+          <div class="care" id="req-recap" style="margin:.9rem 0 .2rem"><b>Aucun paiement maintenant.</b> Nous examinons votre demande, puis vous recevez <b>sous quelques jours</b> un e-mail pour la valider et passer au paiement.</div>
+          <div class="row"><button class="btn" id="make-code">Envoyer ma demande</button><button class="btn ghost" id="edit3">Modifier mes infos</button><button class="btn ghost" id="back3">Revoir l'aperçu</button></div>
         </div>
         <div id="code-area" style="display:none">
         <p style="margin-top:0">Votre invitation est prête. Voici votre <b>code de commande</b> à nous communiquer lors de l'achat :</p>
@@ -249,6 +250,7 @@
         <p>Nous vérifions votre commande puis publions votre invitation. Vous recevrez votre lien d'invitation par e-mail. Conservez ce code pour toute question : <b id="code-box2"></b></p>
         <div class="row" style="margin-top:1rem"><a class="btn solid" href="index.html#modeles">Créer une autre invitation</a><a class="btn ghost" href="index.html">Retour à l'accueil</a></div>
       </div>
+      <div id="req-state" style="display:none"></div>
     </div>
   </section>
   <footer>Aperçu effacé après 10 minutes · Aucune donnée n'est enregistrée sans votre accord</footer>
@@ -476,7 +478,7 @@
   function reopenPreview(){ if(!liveInv) return; go(3); $('stage').style.display = ''; $('expired').style.display = 'none'; $('frame').src = theme + '/?preview=' + Math.random().toString(36).slice(2, 8).toUpperCase() + '&live=1'; }
   $('back-prev').addEventListener('click', reopenPreview); $('back3').addEventListener('click', reopenPreview);
   document.querySelectorAll('#fm button').forEach(b => b.addEventListener('click', () => { formule = b.dataset.f; document.querySelectorAll('#fm button').forEach(x => x.classList.toggle('on', x === b)); $('fm-err').textContent = ''; payLabel(); }));
-  function payLabel(){ const p = PRICES[theme]; $('make-code').textContent = (formule && p) ? 'Payer ' + p[{ess:0,sig:1,pre:2}[formule]] + ' € et publier mon invitation' : 'Payer et publier mon invitation'; }
+  function payLabel(){ const p = PRICES[theme]; $('make-code').textContent = 'Envoyer ma demande'; $('req-recap').innerHTML = '<b>Aucun paiement maintenant.</b> Nous examinons votre demande, puis vous recevez <b>sous quelques jours</b> un e-mail pour la valider et passer au paiement' + ((formule && p && p[{ess:0,sig:1,pre:2}[formule]]) ? ' (' + p[{ess:0,sig:1,pre:2}[formule]] + ' €).' : '.'); }
   const WANT_F = new URLSearchParams(location.search).get('f');
   function showPrices(){ if(WANT_F === 'pre' && !formule && PRICES[theme] && PRICES[theme][2]){ formule = 'pre'; document.querySelectorAll('#fm button').forEach(x => x.classList.toggle('on', x.dataset.f === 'pre')); } const p = PRICES[theme]; document.querySelectorAll('#fm .pr').forEach(e => { e.textContent = p && p[+e.dataset.p] ? p[+e.dataset.p] + ' €' : ''; }); $('fm-pre').style.display = (p && p[2]) ? '' : 'none'; if(formule === 'pre' && !(p && p[2])){ formule = null; document.querySelectorAll('#fm button').forEach(x => x.classList.remove('on')); } payLabel(); }
   function showPreview(){
@@ -502,17 +504,17 @@
     if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return err.textContent = 'Merci d’indiquer un e-mail valide.';
     if(!$('f-cgv').checked) return $('cgv-err').textContent = 'Merci d’accepter les conditions pour continuer.';
     if(formule === 'pre'){ const miss = mediaMissing(); if(miss) return $('fm-err').textContent = miss + ' Revenez à l’étape « Vos infos » pour les ajouter.'; }
-    const btn = $('make-code'); btn.disabled = true; const label = btn.textContent; btn.textContent = 'Ouverture du paiement…';
+    const btn = $('make-code'); btn.disabled = true; const label = btn.textContent; btn.textContent = 'Envoi de votre demande…';
     try{
       let ok = false;
       if(code) ok = await rpc('update_draft', { p_code:code, p_theme:theme, p_data:d, p_email:email });
       if(!ok){ code = await rpc('create_draft', { p_theme:theme, p_data:d, p_email:email }); }
-      if(formule === 'pre'){ d.media = await uploadAllMedia(code, (i, n) => { btn.textContent = 'Envoi de vos souvenirs (' + i + '/' + n + ')…'; }); btn.textContent = 'Ouverture du paiement…'; if(!(await rpc('update_draft', { p_code:code, p_theme:theme, p_data:d, p_email:email }))) throw new Error('save'); }
+      if(formule === 'pre'){ d.media = await uploadAllMedia(code, (i, n) => { btn.textContent = 'Envoi de vos souvenirs (' + i + '/' + n + ')…'; }); btn.textContent = 'Envoi de votre demande…'; if(!(await rpc('update_draft', { p_code:code, p_theme:theme, p_data:d, p_email:email }))) throw new Error('save'); }
       try{ localStorage.setItem('draftCode', code); }catch(_){}
-      const r = await fetch(SUPABASE_URL + '/functions/v1/create-checkout', { method:'POST', headers:{ 'Content-Type':'application/json', apikey:SUPABASE_KEY }, body: JSON.stringify({ code, formula:formule, email, accepted_terms:true, return_url: location.href.replace(/commande\.html.*$/, '') }) });
+      const r = await fetch(SUPABASE_URL + '/functions/v1/submit-request', { method:'POST', headers:{ 'Content-Type':'application/json', apikey:SUPABASE_KEY }, body: JSON.stringify({ code, formula:formule, email, accepted_terms:true }) });
       const j = await r.json().catch(() => ({}));
-      if(r.ok && j.url){ clearInterval(tick); tick = null; location.href = j.url; return; }
-      err.textContent = j.error === 'not_configured' ? 'Le paiement en ligne n’est pas encore ouvert. Votre invitation est enregistrée (code ' + code + ') : revenez bientôt ou écrivez-nous.' : 'Le paiement n’a pas pu démarrer. Réessayez dans un instant.';
+      if(r.ok && j.ok){ clearInterval(tick); tick = null; showRequestState('requested', { formula:formule, theme }); btn.disabled = false; btn.textContent = label; return; }
+      err.textContent = j.error === 'busy' ? 'Beaucoup de demandes en ce moment. Réessayez dans quelques minutes.' : 'Votre demande n’a pas pu être envoyée. Réessayez dans un instant.';
     }catch(e){ err.textContent = (e && e.message && e.message !== 'save' && /^(Envoi|Échec)/.test(e.message)) ? e.message + ' Réessayez dans un instant.' : 'Oups, l’enregistrement a échoué. Réessayez dans un instant.'; }
     btn.disabled = false; btn.textContent = label;
   });
@@ -527,12 +529,50 @@
     }catch(_){ err.textContent = 'Oups, l’envoi a échoué. Réessayez dans un instant.'; }
   });
 
+  // ---- état d'une demande : en attente / validée (paiement) / refusée
+  const FNAME = { ess:'Essentiel', sig:'Signature', pre:'Prestige' };
+  function stateStep(n, html){ return '<div style="display:flex;gap:.7rem;margin:.7rem 0;align-items:flex-start"><div style="flex:0 0 1.7rem;height:1.7rem;border-radius:50%;background:var(--champ,#E7D5A8);color:#1a1424;font-weight:800;text-align:center;line-height:1.7rem">' + n + '</div><div>' + html + '</div></div>'; }
+  function showRequestState(status, info){
+    info = info || {}; const box = $('req-state');
+    $('order-a').style.display = 'none'; $('order-b').style.display = 'none'; box.style.display = '';
+    $('expired').style.display = 'none'; $('stage').style.display = 'none'; go(4);
+    const p = PRICES[info.theme || theme], price = (p && info.formula) ? p[{ess:0,sig:1,pre:2}[info.formula]] : null;
+    if(status === 'requested'){
+      box.innerHTML = '<p class="ok" style="font-size:1.25rem;margin-top:0">Votre demande est enregistrée ✨</p><p>Merci ! Elle est dans notre file d’attente.</p>'
+        + stateStep(1, '<b>Nous vérifions</b> votre demande et votre aperçu.')
+        + stateStep(2, 'Sous <b>quelques jours</b>, vous recevez un <b>e-mail</b> pour valider votre demande.')
+        + stateStep(3, 'Vous réglez grâce au lien de l’e-mail : <b>votre invitation est alors publiée</b>.')
+        + '<p style="margin-top:1rem">Votre code de suivi : <b id="req-code"></b><br><small style="color:var(--brume)">Conservez-le : il permet de retrouver votre demande depuis ce navigateur ou avec le lien <code>commande.html?d=…</code>.</small></p>'
+        + '<div class="row" style="margin-top:1rem"><a class="btn solid" href="index.html#modeles">Créer une autre invitation</a><a class="btn ghost" href="index.html">Retour à l’accueil</a></div>';
+      $('req-code').textContent = code;
+    } else if(status === 'validated'){
+      box.innerHTML = '<p class="ok" style="font-size:1.25rem;margin-top:0">Votre demande est validée 🎉</p><p>Il ne reste qu’à régler pour publier votre invitation' + (info.formula ? ' (formule <b>' + FNAME[info.formula] + '</b>' + (price ? ', <b>' + price + ' €</b>' : '') + ')' : '') + '.</p>'
+        + '<label style="display:flex;gap:.6rem;align-items:flex-start;margin:1rem 0 .2rem;font-size:.88rem;line-height:1.45;text-transform:none;letter-spacing:0;font-weight:400;cursor:pointer"><input type="checkbox" id="pay-waiver" style="width:auto;margin-top:.25rem;accent-color:#E7D5A8"><span>Je demande la publication immédiate de mon invitation après paiement et je reconnais renoncer à mon droit de rétractation.</span></label>'
+        + '<div class="err" id="pay-err" role="alert"></div><div class="row"><button class="btn" id="pay-btn">' + (price ? 'Payer ' + price + ' € et publier mon invitation' : 'Payer et publier mon invitation') + '</button></div>';
+      $('pay-btn').addEventListener('click', async () => {
+        const e2 = $('pay-err'); e2.textContent = '';
+        if(!$('pay-waiver').checked) return e2.textContent = 'Merci de cocher la case pour continuer.';
+        const b2 = $('pay-btn'); b2.disabled = true; const l2 = b2.textContent; b2.textContent = 'Ouverture du paiement…';
+        try{
+          const r = await fetch(SUPABASE_URL + '/functions/v1/create-checkout', { method:'POST', headers:{ 'Content-Type':'application/json', apikey:SUPABASE_KEY }, body: JSON.stringify({ code }) });
+          const j = await r.json().catch(() => ({}));
+          if(r.ok && j.url){ location.href = j.url; return; }
+          e2.textContent = j.error === 'not_configured' ? 'Le paiement en ligne n’est pas encore ouvert. Votre demande est validée : nous vous écrirons dès l’ouverture.' : (j.error === 'not_validated' ? 'Ce lien de paiement n’est plus valable. Écrivez-nous pour en obtenir un nouveau.' : 'Le paiement n’a pas pu démarrer. Réessayez dans un instant.');
+        }catch(_){ e2.textContent = 'Le paiement n’a pas pu démarrer. Réessayez dans un instant.'; }
+        b2.disabled = false; b2.textContent = l2;
+      });
+    } else if(status === 'refused'){
+      box.innerHTML = '<p style="font-size:1.2rem;margin-top:0"><b>À propos de votre demande</b></p><p>Nous n’avons pas pu valider cette demande en l’état. Aucun paiement n’a été pris. Vous allez recevoir un e-mail avec les détails, ou <a href="contact.html">écrivez-nous</a>.</p><div class="row" style="margin-top:1rem"><a class="btn ghost" href="index.html">Retour à l’accueil</a></div>';
+    }
+  }
+
   // ---- reprise d'un brouillon (?d=CODE ou navigateur)
   (async function resume(){
     const qs = new URLSearchParams(location.search), u = qs.get('d'), tq = qs.get('t'); if(tq && THEMES[tq] && !u){ pick(tq); return; } const c = u || code; if(!c) return;
     try{
       const r = await rpc('get_draft', { p_code:c }); if(!r || !THEMES[r.theme]) return;
       code = c; theme = r.theme; fill(r.data, r.email); setMode('full'); pick(r.theme, true); $('email-step').style.display = 'none'; $('code-area').style.display = ''; $('code-box').textContent = code;
+      if(r.status === 'requested' || r.status === 'validated' || r.status === 'refused'){ showRequestState(r.status, { formula:r.formula, theme:r.theme }); return; }
       if(r.status !== 'draft'){ $('code-box2').textContent = code; $('order-a').style.display = 'none'; $('order-b').style.display = ''; $('code-box').textContent = code; go(4); }
     }catch(_){}
   })();

@@ -51,7 +51,7 @@ dialog label{ display:block; font-size:.75rem; text-transform:uppercase; letter-
 const SB='https://sgatagagyfizuyrinmth.supabase.co', KEY='sb_publishable_YdlXEbQn9ZqILsjT6pyAug_ijgzm5fQ';
 const $=id=>document.getElementById(id);
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-let TOKEN=null, DATA={}, TAB='orders';
+let TOKEN=null, DATA={}, TAB='req';
 const BASE=location.href.replace(/admin\.html.*$/,'');
 const fmt=d=>d?new Date(d).toLocaleString('fr-FR',{dateStyle:'short',timeStyle:'short'}):'';
 const fmtd=d=>d?new Date(d).toLocaleDateString('fr-FR'):'—';
@@ -77,7 +77,7 @@ async function load(){
   try{
     const [orders,drafts,inv,quotes,msgs,rsvp]=await Promise.all([
       get('orders?select=*&order=created_at.desc&limit=200'),
-      get('drafts?select=id,code,theme,email,status,etsy_order,created_at,updated_at,expires_at,data&order=updated_at.desc&limit=200'),
+      get('drafts?select=id,code,theme,email,status,etsy_order,created_at,updated_at,expires_at,data,formula,requested_at,validated_at,review_note&order=updated_at.desc&limit=200'),
       get('invitations?select=*&order=created_at.desc&limit=200'),
       get('quote_requests?select=*&order=created_at.desc&limit=200'),
       get('contact_messages?select=*&order=created_at.desc&limit=200'),
@@ -86,12 +86,12 @@ async function load(){
     DATA={orders,drafts,inv,quotes,msgs,cnt}; render();
   }catch(e){ if(/JWT|expired/i.test(String(e))){ toast('Session expirée'); setTimeout(()=>location.reload(),900);} else toast('Erreur de chargement'); }
 }
-const TABS=[['orders','Commandes'],['drafts','Brouillons'],['inv','Invitations'],['quotes','Devis'],['msgs','Messages']];
+const TABS=[['req','Demandes'],['orders','Commandes'],['drafts','Brouillons'],['inv','Invitations'],['quotes','Devis'],['msgs','Messages']];
 function render(){
-  const n={orders:DATA.orders.filter(o=>o.status==='paid').length,drafts:DATA.drafts.filter(d=>d.status!=='published').length,inv:DATA.inv.length,quotes:DATA.quotes.filter(q=>q.status==='new').length,msgs:DATA.msgs.filter(m=>m.status==='new').length};
+  const n={req:DATA.drafts.filter(d=>d.status==='requested').length,orders:DATA.orders.filter(o=>o.status==='paid').length,drafts:DATA.drafts.filter(d=>['draft','submitted'].includes(d.status)).length,inv:DATA.inv.length,quotes:DATA.quotes.filter(q=>q.status==='new').length,msgs:DATA.msgs.filter(m=>m.status==='new').length};
   $('tabs').innerHTML=TABS.map(t=>`<button data-t="${t[0]}" class="${t[0]===TAB?'on':''}">${t[1]}<span class="n">${n[t[0]]}</span></button>`).join('');
   $('tabs').querySelectorAll('button').forEach(b=>b.onclick=()=>{TAB=b.dataset.t;render();});
-  $('list').innerHTML=({orders:rOrders,drafts:rDrafts,inv:rInv,quotes:rQuotes,msgs:rMsgs})[TAB]()||'<p class="m">Rien pour l’instant.</p>';
+  $('list').innerHTML=({req:rReq,orders:rOrders,drafts:rDrafts,inv:rInv,quotes:rQuotes,msgs:rMsgs})[TAB]()||'<p class="m">Rien pour l’instant.</p>';
   $('list').querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>act(b.dataset.a,b.dataset.i,b));
 }
 const linkOf=i=>`${BASE}${i.theme}/index.html?i=${i.slug}`, respOf=i=>`${BASE}reponses.html?t=${i.response_token}`;
@@ -100,16 +100,30 @@ function rOrders(){ return DATA.orders.map(o=>{ const i=DATA.inv.find(x=>x.id===
   return `<div class="card"><div class="top"><b>${esc(o.email||'—')} ${tagS(o.status)}<span class="tag">${esc(o.formula)}</span></b><small>${fmt(o.created_at)} · ${(o.amount_cents/100).toFixed(2)} €</small></div>
   <div class="m"><b>${esc(o.order_ref||'')}</b> · Thème ${esc(o.theme)} · brouillon ${esc(o.draft_code)}${o.error?` · <span style="color:var(--err)">${esc(o.error)}</span>`:''}${o.email_sent_at?' · e-mail envoyé':' · e-mail non envoyé'}</div>
   ${i?`<div class="acts"><button class="g" data-a="copyinv" data-i="${i.id}">Copier lien invitation</button><button class="g" data-a="copyresp" data-i="${i.id}">Copier lien réponses</button></div>`:''}</div>`; }).join(''); }
-function rDrafts(){ return DATA.drafts.map(d=>{ const dd=d.data||{};
+function rDrafts(){ return DATA.drafts.filter(d=>['draft','submitted','published'].includes(d.status)).map(d=>{ const dd=d.data||{};
   return `<div class="card"><div class="top"><b>${esc(dd.title||dd.host_names||'(sans titre)')} ${tagS(d.status)}</b><small>${fmt(d.updated_at)}</small></div>
   <div class="m">${esc(d.theme)} · ${esc(dd.formule||'—')} · ${esc(d.email||'pas d’e-mail')} · code ${esc(d.code)}${d.etsy_order?' · commande '+esc(d.etsy_order):''}</div>
-  <div class="acts">${d.status!=='published'&&d.email?`<button data-a="pub" data-i="${d.code}">Publier</button>`:''}${d.status!=='published'?`<button class="d" data-a="deldraft" data-i="${d.code}">Supprimer</button>`:''}<a href="commande.html?d=${esc(d.code)}" target="_blank" style="color:var(--champ2);align-self:center">Ouvrir l’aperçu</a></div></div>`; }).join(''); }
+  <div class="acts">${d.status!=='published'&&d.email?`<button data-a="pub" data-i="${d.code}">Publier</button>`:''}${d.status!=='published'?`<button class="d" data-a="deldraft" data-i="${d.code}">Supprimer</button>`:''}<a href="${BASE}${esc(d.theme)}/?preview=${esc(d.code)}" target="_blank" style="color:var(--champ2);align-self:center">Ouvrir l’aperçu</a></div></div>`; }).join(''); }
 function rInv(){ return DATA.inv.map(i=>{ const exp=i.expires_at&&new Date(i.expires_at)<new Date();
   return `<div class="card"><div class="top"><b>${esc(i.title||i.slug)} ${i.is_published?'<span class="tag ok">publiée</span>':'<span class="tag bad">non publiée</span>'}${exp?'<span class="tag bad">expirée</span>':''}${i.is_demo?'<span class="tag">démo</span>':''}</b><small>${esc(i.theme)} · ${esc(i.formula||'—')}</small></div>
   <div class="m">${fmtd(i.event_date)} ${esc(i.event_time||'')} · ${esc(i.venue_name||'')} · expire le ${fmtd(i.expires_at)} · ${DATA.cnt[i.id]||0} réponse(s)</div>
   ${(Array.isArray(i.media)&&i.media.length)||(i.card_text&&i.card_text.photo)?`<div class="m">Souvenirs Prestige : ${(i.media||[]).map((m,k)=>`<a href="${esc(m.url)}" target="_blank" rel="noopener" style="color:var(--champ2)">cadre ${k+1} (${m.kind==='video'?'vidéo':'photo'})</a>`).join(' · ')}${i.card_text&&i.card_text.photo?` · <a href="${esc(i.card_text.photo)}" target="_blank" rel="noopener" style="color:var(--champ2)">photo de la carte</a>`:''}</div>`:''}
   <div class="acts"><button class="g" data-a="copyinv" data-i="${i.id}">Lien invitation</button><button class="g" data-a="copyresp" data-i="${i.id}">Lien réponses</button>
   <button class="g" data-a="toggle" data-i="${i.id}">${i.is_published?'Dépublier':'Publier'}</button><button class="g" data-a="extend" data-i="${i.id}">Prolonger</button><button class="g" data-a="edit" data-i="${i.id}">Modifier</button></div></div>`; }).join(''); }
+const REQ_LABEL={requested:'À valider',validated:'Validée · en attente de paiement',refused:'Refusée'};
+const FN={ess:'Essentiel',sig:'Signature',pre:'Prestige'};
+function rReq(){ const L=DATA.drafts.filter(d=>['requested','validated','refused'].includes(d.status)).sort((a,b)=>(a.status==='requested'?0:1)-(b.status==='requested'?0:1)||new Date(b.requested_at||b.updated_at)-new Date(a.requested_at||a.updated_at));
+  return L.map(d=>{ const dd=d.data||{}; const cls=d.status==='requested'?'':'ok';
+  const ord=DATA.orders.find(o=>o.draft_code===d.code&&o.status==='paid');
+  return `<div class="card"><div class="top"><b>${esc(dd.title||dd.host_names||'(sans titre)')} <span class="tag ${cls}">${esc(ord?'Payée':REQ_LABEL[d.status])}</span><span class="tag">${esc(FN[d.formula]||'—')}</span></b><small>${fmt(d.requested_at||d.updated_at)}</small></div>
+  <div class="m">${esc(d.theme)} · ${esc(d.email||'—')} · code ${esc(d.code)}${d.validated_at?' · validée le '+fmtd(d.validated_at):''}${d.review_note?' · note : '+esc(d.review_note):''}</div>
+  <div class="acts"><a href="${BASE}${esc(d.theme)}/?preview=${esc(d.code)}" target="_blank" rel="noopener" style="color:var(--champ2);align-self:center">Voir l’aperçu</a>
+  ${d.status==='requested'?`<button data-a="validate" data-i="${esc(d.code)}">Valider et envoyer le lien de paiement</button><button class="g" data-a="refuse" data-i="${esc(d.code)}">Refuser</button>`:''}
+  ${d.status==='validated'&&!ord?`<button class="g" data-a="resend" data-i="${esc(d.code)}">Renvoyer le lien de paiement</button><button class="g" data-a="copypay" data-i="${esc(d.code)}">Copier le lien de paiement</button>`:''}</div></div>`; }).join(''); }
+async function notify(code,action,note){ const r=await fetch(SB+'/functions/v1/admin-notify',{method:'POST',headers:{apikey:KEY,Authorization:'Bearer '+TOKEN,'Content-Type':'application/json'},body:JSON.stringify({code,action,note:note||''})}); const j=await r.json().catch(()=>({})); if(!r.ok||!j.ok) throw new Error(j.error||('HTTP '+r.status)); return j; }
+function showMailResult(j){ if(j.sent){ toast('E-mail envoyé à '+j.to); return load(); }
+  const mailto='mailto:'+encodeURIComponent(j.to)+'?subject='+encodeURIComponent(j.subject)+'&body='+encodeURIComponent(j.text);
+  dialog(`<h1 style="font-size:1.4rem">Statut mis à jour</h1><p class="m">L’envoi automatique n’est pas encore actif (Resend non configuré). Envoie ce message depuis ta boîte mail :</p><label>À</label><input readonly value="${esc(j.to)}" onclick="this.select()"><label>Objet</label><input readonly value="${esc(j.subject)}" onclick="this.select()"><label>Message</label><textarea readonly rows="9" onclick="this.select()">${esc(j.text)}</textarea><div class="acts"><a href="${esc(mailto)}" style="color:var(--champ2);align-self:center">Ouvrir dans ma messagerie</a><button value="cancel">Fermer</button></div>`,null); load(); }
 function stSel(kind,id,cur){ return `<select data-s="${kind}" data-i="${id}">${['new','in_progress','done','archived'].map(s=>`<option value="${s}" ${s===cur?'selected':''}>${({new:'Nouveau',in_progress:'En cours',done:'Traité',archived:'Archivé'})[s]}</option>`).join('')}</select>`; }
 function rQuotes(){ return DATA.quotes.map(q=>`<div class="card"><div class="top"><b>${esc(q.name)} · ${esc(q.universe||'')} ${tagS(q.status)}</b><small>${fmt(q.created_at)}</small></div>
   <div class="m">${esc(q.email)} ${esc(q.phone||'')} · ${esc(q.formula||'')} · ${fmtd(q.event_date)} · ${q.guests||'?'} invités</div>
@@ -125,6 +139,10 @@ document.addEventListener('change',async e=>{ const s=e.target.closest('select[d
 async function act(a,id,btn){
   const inv=DATA.inv.find(x=>x.id===id);
   try{
+    if(a==='validate'){ return dialog(`<h1 style="font-size:1.4rem">Valider cette demande ?</h1><p class="m">Le client reçoit un e-mail avec le lien de paiement.</p><div class="acts"><button value="ok">Valider et envoyer</button><button class="g" value="cancel">Annuler</button></div>`,async()=>{ try{ showMailResult(await notify(id,'validate')); }catch(e){ toast('Échec : '+String(e.message||e).slice(0,80)); } }); }
+    if(a==='refuse'){ return dialog(`<h1 style="font-size:1.4rem">Refuser cette demande ?</h1><label>Message pour le client (facultatif)</label><textarea id="rf-n" rows="3" placeholder="Ex. : la date semble erronée…"></textarea><div class="acts"><button class="d" value="ok">Refuser</button><button class="g" value="cancel">Annuler</button></div>`,async()=>{ try{ showMailResult(await notify(id,'refuse',$('rf-n').value)); }catch(e){ toast('Échec : '+String(e.message||e).slice(0,80)); } }); }
+    if(a==='resend'){ try{ showMailResult(await notify(id,'validate')); }catch(e){ toast('Échec : '+String(e.message||e).slice(0,80)); } return; }
+    if(a==='copypay') return copy(`${BASE}commande.html?d=${id}`);
     if(a==='copyinv') return copy(linkOf(inv));
     if(a==='copyresp') return copy(respOf(inv));
     if(a==='toggle'){ await rpc('admin_set_published',{p_id:id,p_published:!inv.is_published}); toast('Fait'); return load(); }
