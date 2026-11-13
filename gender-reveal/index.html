@@ -280,7 +280,7 @@
   ['pointerdown','touchend','click'].forEach(ev => document.addEventListener(ev, ()=>{
     if(musicUrl && started && !musicPlaying && !userPaused) startMusic();
   }, {passive:true}));
-  window.onMusicReady = function(url){ musicUrl = url; musicBtn.style.display = 'flex'; if(started) startMusic(); };
+  window.onMusicReady = function(url){ musicUrl = url; musicBtn.style.display = 'flex'; if(started){ startMusic(); } else { bgm.src = url; bgm.dataset.src = url; bgm.preload = 'auto'; try{ bgm.load(); }catch(_){} } };
   musicBtn.addEventListener('click', function(){
     if(!musicUrl) return;
     if(bgm.paused || bgm.dataset.src !== musicUrl){ startMusic(); }
