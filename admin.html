@@ -51,7 +51,7 @@ dialog label{ display:block; font-size:.75rem; text-transform:uppercase; letter-
 const SB='https://sgatagagyfizuyrinmth.supabase.co', KEY='sb_publishable_YdlXEbQn9ZqILsjT6pyAug_ijgzm5fQ';
 const $=id=>document.getElementById(id);
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-let TOKEN=null, DATA={}, TAB='req', MCAT='all', MGRP=false, LASTSYNC=0;
+let STATD=30, STATS=null, STATERR='', TOKEN=null, DATA={}, TAB='req', MCAT='all', MGRP=false, LASTSYNC=0;
 const BASE=location.href.replace(/admin\.html.*$/,'');
 const fmt=d=>d?new Date(d).toLocaleString('fr-FR',{dateStyle:'short',timeStyle:'short'}):'';
 const fmtd=d=>d?new Date(d).toLocaleDateString('fr-FR'):'—';
@@ -88,12 +88,12 @@ async function load(){
     DATA={orders,drafts,inv,quotes,msgs,cnt,mails,mstate:(mstate&&mstate[0])||null}; render();
   }catch(e){ if(/JWT|expired/i.test(String(e))){ toast('Session expirée'); setTimeout(()=>location.reload(),900);} else toast('Erreur de chargement'); }
 }
-const TABS=[['req','Demandes'],['orders','Commandes'],['drafts','Brouillons'],['inv','Invitations'],['quotes','Devis'],['msgs','Messages'],['mail','Boîte mail']];
+const TABS=[['req','Demandes'],['orders','Commandes'],['drafts','Brouillons'],['inv','Invitations'],['quotes','Devis'],['msgs','Messages'],['mail','Boîte mail'],['stats','Statistiques']];
 function render(){
-  const n={req:DATA.drafts.filter(d=>d.status==='requested').length,orders:DATA.orders.filter(o=>o.status==='paid').length,drafts:DATA.drafts.filter(d=>['draft','submitted'].includes(d.status)).length,inv:DATA.inv.length,quotes:DATA.quotes.filter(q=>q.status==='new').length,msgs:DATA.msgs.filter(m=>m.status==='new').length,mail:DATA.mails.filter(m=>m.direction==='in'&&m.status==='new').length};
+  const n={req:DATA.drafts.filter(d=>d.status==='requested').length,orders:DATA.orders.filter(o=>o.status==='paid').length,drafts:DATA.drafts.filter(d=>['draft','submitted'].includes(d.status)).length,inv:DATA.inv.length,quotes:DATA.quotes.filter(q=>q.status==='new').length,msgs:DATA.msgs.filter(m=>m.status==='new').length,mail:DATA.mails.filter(m=>m.direction==='in'&&m.status==='new').length,stats:''};
   $('tabs').innerHTML=TABS.map(t=>`<button data-t="${t[0]}" class="${t[0]===TAB?'on':''}">${t[1]}<span class="n">${n[t[0]]}</span></button>`).join('');
   $('tabs').querySelectorAll('button').forEach(b=>b.onclick=()=>{TAB=b.dataset.t;render();});
-  $('list').innerHTML=({req:rReq,orders:rOrders,drafts:rDrafts,inv:rInv,quotes:rQuotes,msgs:rMsgs,mail:rMail})[TAB]()||'<p class="m">Rien pour l’instant.</p>';
+  $('list').innerHTML=({req:rReq,orders:rOrders,drafts:rDrafts,inv:rInv,quotes:rQuotes,msgs:rMsgs,mail:rMail,stats:rStats})[TAB]()||'<p class="m">Rien pour l’instant.</p>';
   $('list').querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>act(b.dataset.a,b.dataset.i,b));
   autoSync();
 }
@@ -161,7 +161,25 @@ function rMsgs(){ return DATA.msgs.map(m=>`<div class="card"><div class="top"><b
 async function copy(t){ try{ await navigator.clipboard.writeText(t); toast('Copié ✓'); }catch(_){ prompt('Copie ce lien :',t); } }
 document.addEventListener('change',async e=>{ const s=e.target.closest('select[data-s]'); if(!s) return;
   try{ await rpc('admin_set_status',{p_kind:s.dataset.s,p_id:s.dataset.i,p_status:s.value}); toast('Enregistré'); load(); }catch(_){ toast('Échec'); } });
+const TNAME={galerie:'Galerie Bohème',boheme:'Bohème doré','gender-reveal':'Gender reveal',jeux:'Soirée Jeux',noel:'Étoile de Noël',opaline:'Opaline',lettre:'Lettre & cachet'};
+const UNAME={mariage:'Mariage',bebe:'Bébé',anniversaire:'Anniversaire',fetes:'Réceptions'};
+async function loadStats(){ STATERR=''; try{ STATS=await rpc('admin_stats',{p_days:STATD}); }catch(e){ STATS=null; STATERR=String(e).slice(0,200); } if(TAB==='stats') render(); }
+function rStats(){
+  const bar=`<div class="acts" style="margin-bottom:.8rem">${[[7,'7 jours'],[30,'30 jours'],[90,'90 jours'],[365,'1 an']].map(d=>`<button class="${STATD===d[0]?'':'g'}" data-a="sdays" data-i="${d[0]}">${d[1]}</button>`).join('')}<button class="g" data-a="sdays" data-i="${STATD}">↻ Actualiser</button></div>`;
+  if(!STATS||STATS.days!==STATD){ if(!STATS&&STATERR) return bar+`<p class="m" style="color:var(--err)">Statistiques indisponibles : ${esc(STATERR)}</p>`; loadStats(); return bar+'<p class="m">Chargement…</p>'; }
+  const S=STATS, f=S.funnel, pct=(a,b)=>b?Math.round(100*a/b)+' %':'–', mx=Math.max(1,...S.perday.map(x=>x.sessions));
+  const tile=(v,l)=>`<div class="card" style="flex:1;min-width:130px;text-align:center;margin:0"><div style="font-size:1.7rem;font-weight:700">${v}</div><div class="m">${l}</div></div>`;
+  const tiles=`<div style="display:flex;gap:.6rem;flex-wrap:wrap;margin-bottom:.9rem">${tile(S.sessions,'visites')}${tile(S.pageviews,'pages vues')}${tile(f.request+f.quote,'demandes + devis')}${tile(f.paid,'commandes payées')}</div>`;
+  const days=`<div class="card"><b>Visites par jour</b><div style="display:flex;align-items:flex-end;gap:2px;height:90px;margin-top:.6rem">${S.perday.map(x=>`<div title="${x.day} : ${x.sessions} visite(s)" style="flex:1;min-width:2px;background:var(--champ2);height:${Math.max(3,Math.round(90*x.sessions/mx))}px;border-radius:2px 2px 0 0"></div>`).join('')||'<span class="m">Pas encore de données.</span>'}</div></div>`;
+  const th=`<div class="card"><b>Quels modèles plaisent ?</b><p class="m" style="margin:.2rem 0 .6rem">Intérêt = aperçus lancés + 2×démos + 3×favoris + 4×« personnaliser » + 10×demandes envoyées.</p><div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:.88rem"><tr style="text-align:left;color:var(--brume)"><th>Modèle</th><th>Aperçus</th><th>Démos</th><th>♥</th><th>Choisi</th><th>Demandes</th><th>Intérêt</th></tr>${S.themes.map(t=>`<tr style="border-top:1px solid var(--trait)"><td style="padding:.4rem 0"><b>${esc(TNAME[t.theme]||t.theme)}</b></td><td>${t.video}</td><td>${t.demo}</td><td>${t.fav}</td><td>${t.choose}</td><td>${t.request}</td><td><b>${t.score}</b></td></tr>`).join('')||'<tr><td colspan="7" class="m">Pas encore de données.</td></tr>'}</table></div></div>`;
+  const fun=`<div class="card"><b>Parcours des visiteurs</b><div class="m" style="margin-top:.5rem;line-height:1.9">Ont vu l’accueil : <b>${f.visit}</b><br>→ sont entrés dans un univers : <b>${f.univers}</b> (${pct(f.univers,f.visit)})<br>→ ont choisi un modèle : <b>${f.choose}</b> (${pct(f.choose,f.univers)})<br>→ ont ouvert la page de commande : <b>${f.commande}</b><br>→ ont envoyé une demande : <b>${f.request}</b> (${pct(f.request,f.visit)} des visiteurs) · demandes de devis : <b>${f.quote}</b><br>→ commandes payées : <b>${f.paid}</b></div></div>`;
+  const uv=`<div class="card"><b>Univers ouverts</b><div class="m" style="margin-top:.4rem">${S.univers.map(u=>`${esc(UNAME[u.univers]||u.univers)} : <b>${u.n}</b> (${u.s} visiteur(s))`).join('<br>')||'Pas encore de données.'}</div></div>`;
+  const pg=`<div class="card"><b>Pages les plus vues</b><div class="m" style="margin-top:.4rem">${S.pages.map(x=>`${esc(x.page)} : <b>${x.n}</b>`).join('<br>')||'—'}</div></div>`;
+  const rf=`<div class="card"><b>D’où viennent les visiteurs</b><div class="m" style="margin-top:.4rem">${S.refs.map(x=>`${esc(x.ref)} : <b>${x.n}</b>`).join('<br>')||'—'}</div></div>`;
+  return bar+tiles+th+fun+days+uv+pg+rf+`<p class="m">Mesure anonyme : aucune donnée personnelle ni cookie. Les visites faites depuis ton propre navigateur sont comptées aussi ; les événements sont gardés 13 mois.</p>`;
+}
 async function act(a,id,btn){
+    if(a==='sdays'){ STATD=Number(id); STATS=null; STATERR=''; return render(); }
   const inv=DATA.inv.find(x=>x.id===id);
   try{
     if(a==='validate'){ return dialog(`<h1 style="font-size:1.4rem">Valider cette demande ?</h1><p class="m">Le client reçoit un e-mail avec le lien de paiement.</p><div class="acts"><button value="ok">Valider et envoyer</button><button class="g" value="cancel">Annuler</button></div>`,async()=>{ try{ showMailResult(await notify(id,'validate')); }catch(e){ toast('Échec : '+String(e.message||e).slice(0,80)); } }); }

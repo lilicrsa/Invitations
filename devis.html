@@ -40,7 +40,7 @@ button.go:disabled{ opacity:.6; cursor:wait; }
 .err{ color:var(--err); margin-top:.8rem; min-height:1.2em; }
 .ok{ border:1px solid var(--champ); border-radius:16px; padding:1.6rem; text-align:center; display:none; }
 .ok h2{ margin-top:0; }
-</style><script src="protect.js?v=3"></script>
+</style><script src="protect.js?v=3"></script><script src="tracker.js?v=1"></script>
 </head><body>
 <div class="wrap">
   <a class="back" href="index.html#modeles">‹ Retour aux univers</a>
@@ -118,7 +118,7 @@ button.go:disabled{ opacity:.6; cursor:wait; }
     if(p.description.length < 10){ err.textContent = 'Décrivez votre univers en quelques mots.'; return; }
     $('go').disabled = true;
     fetch(URL_ + '/rest/v1/rpc/submit_quote', { method:'POST', headers:{ apikey:KEY, 'Content-Type':'application/json' }, body:JSON.stringify({ p:p }) })
-      .then(function(r){ if(!r.ok) throw 0; $('f').style.display = 'none'; $('ok').style.display = 'block'; window.scrollTo(0,0); })
+      .then(function(r){ if(!r.ok) throw 0; if(window.moTrack) moTrack('quote_sent', {}); $('f').style.display = 'none'; $('ok').style.display = 'block'; window.scrollTo(0,0); })
       .catch(function(){ err.textContent = 'Envoi impossible pour le moment. Réessayez dans un instant.'; $('go').disabled = false; });
   });
 })();

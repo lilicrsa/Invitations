@@ -104,6 +104,7 @@
   .vcap{ text-align:center; color:var(--brume); font-size:.85rem; margin:.9rem 0 0; }
   .how{ max-width:34rem; margin:1rem auto 0; border:1px solid var(--trait); border-radius:14px; padding:.2rem 1rem; } .how summary{ cursor:pointer; padding:.7rem 0; color:var(--champ); font-weight:600; font-size:.95rem; } .how[open] summary{ border-bottom:1px solid var(--trait); margin-bottom:.4rem; } .how .vf{ margin-bottom:1rem; }
 </style>
+<script src="tracker.js?v=1"></script>
 <script src="protect.js?v=4"></script>
 <script src="media-spec.js?v=4"></script>
 </head>
@@ -303,7 +304,7 @@
     const d = document.createElement('div'); d.className = 'b';
     d.innerHTML = '<b></b><small></small><span class="go">Choisir ce modèle →</span>';
     d.querySelector('b').textContent = t.name; d.querySelector('small').textContent = t.desc; b.appendChild(d);
-    b.addEventListener('click', () => pick(k)); list.appendChild(b);
+    b.addEventListener('click', () => { if(window.moTrack) moTrack('theme_choose', { theme:k, meta:{ from:'commande' } }); pick(k); }); list.appendChild(b);
   });
   function pick(k, keepValues){
     theme = k; const t = THEMES[k];
@@ -513,7 +514,7 @@
       try{ localStorage.setItem('draftCode', code); }catch(_){}
       const r = await fetch(SUPABASE_URL + '/functions/v1/submit-request', { method:'POST', headers:{ 'Content-Type':'application/json', apikey:SUPABASE_KEY }, body: JSON.stringify({ code, formula:formule, email, accepted_terms:true }) });
       const j = await r.json().catch(() => ({}));
-      if(r.ok && j.ok){ clearInterval(tick); tick = null; showRequestState('requested', { formula:formule, theme, email }); btn.disabled = false; btn.textContent = label; return; }
+      if(r.ok && j.ok){ clearInterval(tick); tick = null; if(window.moTrack) moTrack('request_sent', { theme:theme, meta:{ formule:formule } }); showRequestState('requested', { formula:formule, theme, email }); btn.disabled = false; btn.textContent = label; return; }
       err.textContent = j.error === 'busy' ? 'Beaucoup de demandes en ce moment. Réessayez dans quelques minutes.' : 'Votre demande n’a pas pu être envoyée. Réessayez dans un instant.';
     }catch(e){ err.textContent = (e && e.message && e.message !== 'save' && /^(Envoi|Échec)/.test(e.message)) ? e.message + ' Réessayez dans un instant.' : 'Oups, l’enregistrement a échoué. Réessayez dans un instant.'; }
     btn.disabled = false; btn.textContent = label;

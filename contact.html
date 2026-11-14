@@ -33,6 +33,7 @@ button:disabled{ opacity:.6; cursor:wait; }
 <div class="ok" id="ok"><h1 style="margin-top:0;font-size:2rem">Message envoyé ✨</h1><p>Merci, nous vous répondons par e-mail dès que possible.</p></div>
 <footer class="lg"><a href="./">Accueil</a><a href="mentions-legales.html">Mentions légales</a><a href="cgv.html">CGV</a><a href="confidentialite.html">Confidentialité et cookies</a></footer>
 </div>
+<script src="tracker.js?v=1"></script>
 <script>
 const URL_='https://sgatagagyfizuyrinmth.supabase.co', KEY='sb_publishable_YdlXEbQn9ZqILsjT6pyAug_ijgzm5fQ';
 const $=id=>document.getElementById(id);
@@ -48,7 +49,7 @@ $('f').addEventListener('submit', async ev=>{
   try{
     const r=await fetch(URL_+'/rest/v1/rpc/submit_contact',{method:'POST',headers:{apikey:KEY,'Content-Type':'application/json'},body:JSON.stringify({p})});
     const j=await r.json();
-    if(j && j.status==='ok'){ $('f').style.display='none'; $('ok').style.display='block'; }
+    if(j && j.status==='ok'){ if(window.moTrack) moTrack('contact_sent', {}); $('f').style.display='none'; $('ok').style.display='block'; }
     else err.textContent = (j && j.reason==='rate') ? 'Trop d’envois pour le moment, réessayez dans une heure.' : 'Vérifiez les champs et réessayez.';
   }catch(_){ err.textContent='Oups, l’envoi a échoué. Réessayez dans un instant.'; }
   b.disabled=false;
