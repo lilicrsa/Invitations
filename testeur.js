@@ -84,7 +84,7 @@
     pad();
   }
   function box(inner, pct){
-    return '<div class="box"><div class="hd"><span>Test</span><div class="bar"><i style="width:' + pct + '%"></i></div><span>' + (st.i < N && st.i >= 0 ? (st.i + 1) + '/' + N : '') + '</span>' + (st.i >= 0 && st.i < N ? '<button class="mn" type="button" data-a="min" aria-label="Réduire">–</button>' : '') + '</div>' + inner + '</div>';
+    return '<div class="box"><div class="hd"><span>Test</span><div class="bar"><i style="width:' + pct + '%"></i></div><span>' + (st.i < N && st.i >= 0 ? (st.i + 1) + '/' + N : '') + '</span>' + (st.i >= 0 && st.i < N ? '<button class="mn" type="button" data-a="min" aria-label="Réduire">–</button>' : '') + '</div>' + inner + '<p style="text-align:center;margin:.8rem 0 0"><button type="button" data-a="quit" style="background:none;border:0;color:#9aa1bd;text-decoration:underline;font:inherit;font-size:.75rem;cursor:pointer">Quitter le test</button></p></div>';
   }
 
   function render(){
@@ -126,7 +126,7 @@
       + '<p>On teste le site, pas vous : il n’y a ni bonne ni mauvaise réponse. Si quelque chose vous semble confus, c’est une information précieuse. Faites comme si vous étiez seul(e) : vous allez parcourir le site, de l’accueil jusqu’à la commande.</p>'
       + '<p>Vos touchers et vos réponses sont enregistrés de façon anonyme. <b>Rien n’est réellement envoyé ni payé</b> pendant ce test (durée : environ 10 minutes).</p>'
       + '<input type="text" id="mo-nm" maxlength="40" placeholder="Votre prénom ou pseudo (facultatif)" aria-label="Votre prénom ou pseudo">'
-      + '<div class="row"><button class="b p" type="button" data-a="start">Commencer</button></div></div>';
+      + '<div class="row"><button class="b p" type="button" data-a="start">Commencer</button></div><p style="text-align:center;margin:.8rem 0 0"><button type="button" data-a="quit" style="background:none;border:0;color:#9aa1bd;text-decoration:underline;font:inherit;font-size:.75rem;cursor:pointer">Quitter le test</button></p></div>';
     document.body.style.paddingBottom = '';
     pad();
     window.__moDev = dev;
@@ -136,6 +136,7 @@
   root.addEventListener('click', function(e){
     var el = e.target.closest('[data-a]'); if(!el) return;
     var a = el.getAttribute('data-a'), v = el.getAttribute('data-v'), m = M[st.i];
+    if(a === 'quit'){ if(!confirm('Quitter le test ? Vos réponses déjà données sont conservées.')) return; try{ localStorage.removeItem(KEY); }catch(_){} location.href = location.pathname; return; }
     if(a === 'start'){
       var nm = (document.getElementById('mo-nm') || {}).value || '';
       track('test_start', { name:nm.slice(0, 40), dev:window.__moDev, w:innerWidth, h:innerHeight, ua:navigator.userAgent.slice(0, 120) });

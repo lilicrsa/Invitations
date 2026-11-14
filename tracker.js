@@ -14,7 +14,7 @@
   try{
     var raw = localStorage.getItem(TKEY); ts = raw ? JSON.parse(raw) : null;
     if(/[?&]test(=|&|$)/.test(location.search) && (!ts || ts.done)){ ts = { sid:'t' + rnd(), i:-1, started:Date.now() }; localStorage.setItem(TKEY, JSON.stringify(ts)); }
-    if(ts && ts.done) ts = null;
+    if(ts && (ts.done || Date.now() - (ts.started || 0) > 3 * 3600 * 1000)){ ts = null; localStorage.removeItem(TKEY); }
   }catch(_){ ts = null; }
   var testOn = !!ts;
   if(testOn){ window.MO_TEST_ACTIVE = true; live = live || window.MO_TRACK_FORCE === true; }
@@ -49,6 +49,6 @@
       var lab = t ? String(t.getAttribute('aria-label') || t.innerText || t.id || t.tagName).replace(/\s+/g, ' ').trim().slice(0, 40) : '(zone sans lien)';
       window.moTrack('tclick', { meta:{ t:lab } });
     }, true);
-    [ 'test-missions.js?v=3', 'testeur.js?v=3' ].forEach(function(src){ var s = document.createElement('script'); s.src = src; s.async = false; document.head.appendChild(s); });
+    [ 'test-missions.js?v=4', 'testeur.js?v=4' ].forEach(function(src){ var s = document.createElement('script'); s.src = src; s.async = false; document.head.appendChild(s); });
   }
 })();
