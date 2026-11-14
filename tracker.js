@@ -13,7 +13,7 @@
   var TKEY = 'mo_test', ts = null;
   try{
     var raw = localStorage.getItem(TKEY); ts = raw ? JSON.parse(raw) : null;
-    if(/[?&]test(=|&|$)/.test(location.search) && (!ts || ts.done)){ ts = { sid:'t' + rnd(), i:-1, started:Date.now() }; localStorage.setItem(TKEY, JSON.stringify(ts)); }
+    if(/[?&]test(=|&|$)/.test(location.search) && (!ts || ts.done)){ ts = { sid:'t' + rnd(), i:-1, started:Date.now() }; localStorage.setItem(TKEY, JSON.stringify(ts)); localStorage.removeItem('mo_test_ctx'); }
     if(ts && (ts.done || Date.now() - (ts.started || 0) > 3 * 3600 * 1000)){ ts = null; localStorage.removeItem(TKEY); }
   }catch(_){ ts = null; }
   var testOn = !!ts;
@@ -41,6 +41,30 @@
   };
   window.moTrack('pageview', { meta:{ ref: testOn ? 'test' : ref() } });
 
+  // ---- reprise exacte du test : page, défilement et état de la page (univers ouvert, étape et champs de la commande…) ----
+  if(testOn){
+    var CKEY = 'mo_test_ctx';
+    var curUrl = function(){ try{ var u = new URL(location.href); u.searchParams.delete('test'); u.searchParams.delete('mo_resume'); return u.pathname + u.search + u.hash; }catch(_){ return location.pathname; } };
+    var saveCtx = function(){
+      try{ localStorage.setItem(CKEY, JSON.stringify({ url:curUrl(), sy:Math.round(window.scrollY || 0), state:(window.moGetCtx ? window.moGetCtx() : {}), at:Date.now() })); }catch(_){}
+    };
+    var ctx = null, firstInTab = false;
+    try{ ctx = JSON.parse(localStorage.getItem(CKEY) || 'null'); firstInTab = !sessionStorage.getItem('mo_test_tab'); sessionStorage.setItem('mo_test_tab', '1'); }catch(_){}
+    var resumeFlag = /[?&]mo_resume=1/.test(location.search);
+    if(ts.i >= 0 && ctx && ctx.url && (firstInTab || resumeFlag)){
+      var here = curUrl().replace(/\?$/, '');
+      if(firstInTab && ctx.url.split('#')[0] !== here.split('#')[0] && !resumeFlag){
+        // on revient d'ailleurs (autre onglet, retour sur le lien) : on rouvre la page où le testeur s'était arrêté
+        location.replace(ctx.url + (ctx.url.indexOf('?') > -1 ? '&' : '?') + 'mo_resume=1'); return;
+      }
+      window.MO_RESUME = ctx.state || {}; window.MO_RESUME.__sy = ctx.sy || 0; window.__moResumed = true;
+    }
+    setInterval(saveCtx, 3000);
+    document.addEventListener('visibilitychange', function(){ if(document.visibilityState === 'hidden') saveCtx(); });
+    window.addEventListener('pagehide', saveCtx);
+    window.addEventListener('load', function(){ setTimeout(saveCtx, 800); if(window.MO_RESUME && window.MO_RESUME.__sy && !/index|^$/.test(page())){ setTimeout(function(){ window.scrollTo(0, window.MO_RESUME.__sy); }, 700); } });
+  }
+
   if(testOn){
     // pour l'analyse du parcours : chaque toucher est noté (libellé court, jamais le contenu des champs)
     document.addEventListener('click', function(e){
@@ -49,6 +73,6 @@
       var lab = t ? String(t.getAttribute('aria-label') || t.innerText || t.id || t.tagName).replace(/\s+/g, ' ').trim().slice(0, 40) : '(zone sans lien)';
       window.moTrack('tclick', { meta:{ t:lab } });
     }, true);
-    [ 'test-missions.js?v=4', 'testeur.js?v=4' ].forEach(function(src){ var s = document.createElement('script'); s.src = src; s.async = false; document.head.appendChild(s); });
+    [ 'test-missions.js?v=5', 'testeur.js?v=5' ].forEach(function(src){ var s = document.createElement('script'); s.src = src; s.async = false; document.head.appendChild(s); });
   }
 })();

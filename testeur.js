@@ -165,6 +165,7 @@
     min = false; cur = null;
     (window.__moBuf || []).forEach(tally);
     render();
+    if(window.__moResumed){ var rn = document.createElement('div'); rn.textContent = 'Reprise du test là où vous vous étiez arrêté'; rn.style.cssText = 'position:fixed;left:50%;top:12px;transform:translateX(-50%);z-index:2147483000;background:#2b1a14;color:#f3e3b3;font:13px/1.3 Georgia,serif;padding:8px 14px;border-radius:20px;box-shadow:0 4px 16px rgba(0,0,0,.3);transition:opacity .6s'; document.body.appendChild(rn); setTimeout(function(){ rn.style.opacity = '0'; }, 3200); setTimeout(function(){ rn.remove(); }, 4000); }
     if(target() && (st.cnt || 0) >= target()) finishTask('auto');
   }
 })();

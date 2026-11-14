@@ -348,7 +348,7 @@
   </div></section>
 </div>
 
-<script src="tracker.js?v=4"></script>
+<script src="tracker.js?v=5"></script>
 <script>
 (function(){
   // ---- à renseigner ----
@@ -579,10 +579,12 @@
     window.__openFavs = function(){ set(true); };
   })();
 
-  function openWorld(u, btn){
-    lastBtn = btn;
+  var curWorld = null;
+  window.moGetCtx = function(){ return { entered:body.classList.contains('in'), world:body.classList.contains('inworld') ? curWorld : null, ws:Math.round(world.scrollTop || 0) }; };
+  function openWorld(u, btn, instant){
+    lastBtn = btn; curWorld = u.id;
     window.moTrack && moTrack('univers_open', { univers:u.id });
-    enterFx(u, function(){
+    (instant ? function(_u, sw){ sw(); } : enterFx)(u, function(){
       world.innerHTML = ''; world.style.setProperty('--tint', u.tint);
       var top = document.createElement('div'); top.className = 'top';
       var back = document.createElement('button'); back.type = 'button'; back.className = 'back'; back.textContent = '‹ Les univers'; back.addEventListener('click', closeWorld);
@@ -651,6 +653,14 @@
   document.getElementById('home').addEventListener('click', function(){ try{ sessionStorage.removeItem('entered'); }catch(_){} body.classList.remove('in'); window.scrollTo(0,0); });
   var already = false; try{ already = sessionStorage.getItem('entered') === '1'; }catch(_){}
   if(already || (location.hash && location.hash.length > 1)){ body.classList.add('in'); if(location.hash) setTimeout(function(){ var t = document.querySelector(location.hash); if(t) t.scrollIntoView(); }, 50); }
+
+  // reprise d'un test utilisateur : on rouvre l'univers où le testeur s'était arrêté
+  if(window.MO_RESUME){
+    var rc = window.MO_RESUME;
+    if(rc.entered){ body.classList.add('in'); try{ sessionStorage.setItem('entered', '1'); }catch(_){} }
+    if(rc.world){ var ru = UNIVERS.filter(function(x){ return x.id === rc.world; })[0]; if(ru){ openWorld(ru, null, true); setTimeout(function(){ world.scrollTop = rc.ws || 0; }, 400); } }
+    else if(rc.__sy){ setTimeout(function(){ window.scrollTo(0, rc.__sy); }, 500); }
+  }
 
   // étincelles de la porte
   var gate = document.getElementById('gate');

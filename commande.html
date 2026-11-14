@@ -104,7 +104,7 @@
   .vcap{ text-align:center; color:var(--brume); font-size:.85rem; margin:.9rem 0 0; }
   .how{ max-width:34rem; margin:1rem auto 0; border:1px solid var(--trait); border-radius:14px; padding:.2rem 1rem; } .how summary{ cursor:pointer; padding:.7rem 0; color:var(--champ); font-weight:600; font-size:.95rem; } .how[open] summary{ border-bottom:1px solid var(--trait); margin-bottom:.4rem; } .how .vf{ margin-bottom:1rem; }
 </style>
-<script src="tracker.js?v=4"></script>
+<script src="tracker.js?v=5"></script>
 <script src="protect.js?v=4"></script>
 <script src="media-spec.js?v=4"></script>
 </head>
@@ -289,7 +289,7 @@
     document.querySelectorAll('.panel').forEach(p => p.classList.toggle('on', p.id === 'p'+n));
     document.querySelectorAll('#steps span').forEach(s => s.classList.toggle('on', +s.dataset.s <= n));
     if(n !== 3){ $('frame').src = 'about:blank'; setFull(false); }
-    if(window.moTrack) moTrack('step', { theme:theme, meta:{ n:n } });
+    curStep = n; if(window.moTrack) moTrack('step', { theme:theme, meta:{ n:n } });
     window.scrollTo({ top:0, behavior:'smooth' });
   }
 
@@ -544,6 +544,13 @@
     const n = document.createElement('p'); n.style.cssText = 'font-size:.82rem;color:var(--brume);text-align:center;margin:.5rem 0 0'; n.textContent = 'Aperçu protégé : le filigrane disparaît sur l’invitation publiée.';
     box.appendChild(h); box.appendChild(w); box.appendChild(n);
   }
+  // test utilisateur : état sauvegardé / restauré (étape, modèle, champs)
+  let curStep = 1;
+  const FIELDS = ['f-title','f-date','f-time','f-msg','f-host','f-venue','f-address','f-cname','f-cphone','f-dress','f-email'];
+  window.moGetCtx = function(){
+    const f = {}; FIELDS.forEach(id => { const e = $(id); if(e && e.value) f[id] = e.value; });
+    return { theme:theme, step:curStep, fields:f, formule:formule, mode:mode, rsvp:$('f-rsvp') ? $('f-rsvp').checked : true };
+  };
   window.moTestShowValidated = function(){ showRequestState('validated', { formula:formule || 'sig', theme, email:'(e-mail de test)' }); };
   function showRequestState(status, info){
     info = info || {}; const box = $('req-state');
@@ -592,6 +599,21 @@
       code = c; theme = r.theme; fill(r.data, r.email); setMode('full'); pick(r.theme, true); $('email-step').style.display = 'none'; $('code-area').style.display = ''; $('code-box').textContent = code;
       if(r.status === 'requested' || r.status === 'validated' || r.status === 'refused'){ showRequestState(r.status, { formula:r.formula, theme:r.theme, email:r.email }); return; }
       if(r.status !== 'draft'){ $('code-box2').textContent = code; $('order-a').style.display = 'none'; $('order-b').style.display = ''; $('code-box').textContent = code; go(4); }
+    }catch(_){}
+  })();
+
+  // reprise d'un test utilisateur : même modèle, mêmes champs, même étape
+  (function(){
+    const R = window.MO_RESUME; if(!R || !R.theme || !THEMES[R.theme] || !(R.step >= 2)) return;
+    try{
+      pick(R.theme, true);
+      Object.keys(R.fields || {}).forEach(id => { const e = $(id); if(e) e.value = R.fields[id]; });
+      if($('f-rsvp')) $('f-rsvp').checked = R.rsvp !== false;
+      if(R.mode) setMode(R.mode);
+      if(R.formule){ formule = R.formule; document.querySelectorAll('#fm button').forEach(x => x.classList.toggle('on', x.dataset.f === formule)); }
+      if(R.step === 2) go(2);
+      else if(R.step === 3){ const gp = $('go-preview'); if(gp) setTimeout(() => gp.click(), 150); }
+      else if(R.step >= 4){ const gp = $('go-preview'); if(gp) gp.click(); setTimeout(() => { const v = $('validate'); if(v) v.click(); if(R.formule) formule = R.formule; }, 600); }
     }catch(_){}
   })();
 })();
