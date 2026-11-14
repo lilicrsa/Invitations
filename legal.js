@@ -8,6 +8,7 @@ window.LEGAL = {
   telephone: '',      // facultatif
   tva: 'TVA non applicable, article 293 B du CGI',   // à confirmer selon ton régime
   mediateur: '',      // nom et coordonnées du médiateur de la consommation
+  hebergement: '',    // mettre 'oui' pour afficher la section Hébergement
   maj: 'novembre 2026'
 };
 document.addEventListener('DOMContentLoaded', function(){
