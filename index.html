@@ -133,6 +133,7 @@
   .world{ position:fixed; inset:0; z-index:70; overflow-y:auto; background:var(--nuit); color:var(--champ); display:none; -webkit-overflow-scrolling:touch; padding-inline:max(16px,env(safe-area-inset-left,0px)); padding-bottom:max(2rem,env(safe-area-inset-bottom,0px)); }
   body.inworld .world{ display:block; } body.inworld{ overflow:hidden; }
   .world::before{ content:''; position:fixed; inset:0; pointer-events:none; background:radial-gradient(ellipse 70% 50% at 50% 0%,var(--tint,rgba(231,213,168,.2)),transparent 70%); }
+  .world .top .back, .world .top .eyebrow{ white-space:nowrap; } @media (max-width:520px){ .world .top{ gap:.5rem; } .world .top .eyebrow{ font-size:.62rem !important; letter-spacing:.1em !important; } .world .top .back{ padding:.5rem .8rem; font-size:.85rem; } }
   .world .top{ position:sticky; top:0; z-index:3; display:flex; align-items:center; justify-content:space-between; gap:1rem; padding:max(.8rem,env(safe-area-inset-top,0px)) 0 .8rem; background:linear-gradient(180deg,var(--nuit) 60%,transparent); }
   .world .back{ background:none; border:1px solid var(--trait); color:var(--champ); font:500 .88rem 'Manrope',sans-serif; padding:.5rem 1rem; border-radius:999px; cursor:pointer; }
   .world .intro{ text-align:center; position:relative; padding:1rem 0 0; }
@@ -211,11 +212,16 @@
   .vcap{ text-align:center; color:var(--brume); font-size:.85rem; margin:.9rem 0 0; }
   .result{ text-align:center; margin:3rem auto 2.4rem; max-width:34rem; } .result .rt{ font:400 clamp(1.8rem,5vw,2.6rem)/1.1 'Italiana',serif; color:var(--champ); margin:0; } .result .lead{ color:var(--brume); margin:.9rem auto 0; }
   /* ---- favoris ---- */
-  .heart{ position:absolute; top:10px; right:10px; z-index:3; width:40px; height:40px; border-radius:50%; border:1px solid rgba(255,255,255,.5); background:rgba(20,16,12,.55); color:#fff; font-size:1.2rem; line-height:1; cursor:pointer; display:flex; align-items:center; justify-content:center; padding:0; -webkit-backdrop-filter:blur(4px); backdrop-filter:blur(4px); transition:transform .15s; }
-  .heart:hover{ transform:scale(1.08); } .heart.on{ background:#fff; color:#d23b62; border-color:#fff; }
+  .heart{ position:absolute; top:12px; right:12px; z-index:3; width:42px; height:42px; border-radius:50%; border:1px solid rgba(231,213,168,.75); background:rgba(14,18,38,.58); color:#E7D5A8; cursor:pointer; display:flex; align-items:center; justify-content:center; padding:0; -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px); box-shadow:0 4px 14px rgba(0,0,0,.35), inset 0 0 0 3px rgba(231,213,168,.10); transition:transform .2s, background .25s, box-shadow .25s; }
+  .heart:hover{ transform:scale(1.07); background:rgba(14,18,38,.75); }
+  .hs{ width:21px; height:21px; fill:none; stroke:currentColor; stroke-width:1.5; stroke-linejoin:round; stroke-linecap:round; transition:fill .25s, filter .25s; }
+  .heart.on{ background:linear-gradient(145deg,#F6E7BE,#D2AC5C); border-color:#F6E7BE; color:#7A1E3A; box-shadow:0 0 0 4px rgba(231,213,168,.18), 0 6px 18px rgba(201,162,75,.45); animation:hpop .45s cubic-bezier(.3,1.6,.5,1); }
+  .heart.on .hs{ fill:#7A1E3A; stroke:#7A1E3A; }
+  @keyframes hpop{ 0%{ transform:scale(.8); } 60%{ transform:scale(1.18); } 100%{ transform:scale(1); } }
   .frame{ position:relative; }
   .favbtn{ background:none; border:0; color:inherit; cursor:pointer; font:inherit; font-size:.92rem; padding:0; text-decoration:none; color:var(--brume); } .favbtn:hover{ color:var(--champ); }
-  .favbtn .fn{ display:inline-block; min-width:1.3em; padding:0 .35em; margin-left:.3em; border-radius:999px; background:var(--champ); color:#0A0E1D; font-size:.74rem; font-weight:700; text-align:center; }
+  .favbtn{ display:inline-flex; align-items:center; gap:.45rem; white-space:nowrap; } .favbtn .hs{ width:17px; height:17px; }
+  .favbtn .fn{ display:inline-block; min-width:1.3em; padding:0 .35em; margin-left:.1em; border-radius:999px; background:var(--champ); color:#0A0E1D; font-size:.74rem; font-weight:700; text-align:center; }
   .favs{ position:fixed; inset:0; z-index:300; display:none; } .favs.open{ display:block; }
   .favs .bk{ position:absolute; inset:0; background:rgba(5,7,14,.7); }
   .favs .pn{ position:absolute; right:0; top:0; bottom:0; width:min(420px,100%); background:#121831; color:#F2ECDD; border-left:1px solid var(--trait); padding:1.2rem 1.1rem 2rem; overflow:auto; }
@@ -251,7 +257,7 @@
   <nav class="nav"><div class="wrap">
     <button class="brand" id="home" type="button" aria-label="Retour à l'entrée"><img class="logo" src="logo/emblem.png?v=1" alt="" width="42" height="31"><span class="bw"><span data-brand></span><small class="bsub">Des invitations qui font naître l’émerveillement</small></span></button>
     <a class="l" href="#modeles">Modèles</a><a class="l" href="#fonctionnement">Fonctionnement</a><a class="l" href="#tarifs">Tarifs</a><a class="l" href="#questions">Questions</a><a class="l" href="contact.html">Contact</a>
-    <button class="favbtn l" type="button" data-favopen aria-label="Mes favoris">♡ Favoris<span class="fn" data-favn>0</span></button>
+    <button class="favbtn l" type="button" data-favopen aria-label="Mes favoris"><svg class="hs" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5c-.3 0-.6-.1-.8-.3C6.2 16.6 3 13.6 3 9.9 3 7.2 5 5.2 7.5 5.2c1.7 0 3.3.9 4.5 2.5 1.2-1.6 2.8-2.5 4.5-2.5C19 5.2 21 7.2 21 9.9c0 3.7-3.2 6.7-8.2 10.3-.2.2-.5.3-.8.3z"/></svg>Favoris<span class="fn" data-favn>0</span></button>
     <a class="btn solid cta" href="commande.html">Créer mon invitation</a>
     <button class="burger" id="burger" type="button" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="menu"><span></span><span></span><span></span></button>
   </div></nav>
@@ -260,7 +266,7 @@
     <div class="pn" role="dialog" aria-label="Menu">
       <button class="x" type="button" aria-label="Fermer le menu" data-close>×</button>
       <a class="ml" href="#modeles">Modèles</a><a class="ml" href="#fonctionnement">Fonctionnement</a><a class="ml" href="#tarifs">Tarifs</a><a class="ml" href="#questions">Questions</a><a class="ml" href="contact.html">Contact</a>
-      <button class="ml favbtn" type="button" data-favopen style="text-align:left;font-size:1.05rem">♡ Mes favoris<span class="fn" data-favn>0</span></button>
+      <button class="ml favbtn" type="button" data-favopen style="text-align:left;font-size:1.05rem"><svg class="hs" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5c-.3 0-.6-.1-.8-.3C6.2 16.6 3 13.6 3 9.9 3 7.2 5 5.2 7.5 5.2c1.7 0 3.3.9 4.5 2.5 1.2-1.6 2.8-2.5 4.5-2.5C19 5.2 21 7.2 21 9.9c0 3.7-3.2 6.7-8.2 10.3-.2.2-.5.3-.8.3z"/></svg>Mes favoris<span class="fn" data-favn>0</span></button>
       <a class="btn solid" href="commande.html">Créer mon invitation</a>
     </div>
   </div>
@@ -533,7 +539,7 @@
     return box;
   }
   // ---- favoris (gardés dans le navigateur, sans compte) ----
-  var FKEY = 'mo_fav';
+  var FKEY = 'mo_fav', HEART = '<svg class="hs" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5c-.3 0-.6-.1-.8-.3C6.2 16.6 3 13.6 3 9.9 3 7.2 5 5.2 7.5 5.2c1.7 0 3.3.9 4.5 2.5 1.2-1.6 2.8-2.5 4.5-2.5C19 5.2 21 7.2 21 9.9c0 3.7-3.2 6.7-8.2 10.3-.2.2-.5.3-.8.3z"/></svg>';
   function getFavs(){ try{ var a = JSON.parse(localStorage.getItem(FKEY) || '[]'); return Array.isArray(a) ? a.filter(function(k){ return MODELS[k]; }) : []; }catch(_){ return []; } }
   function setFavs(a){ try{ localStorage.setItem(FKEY, JSON.stringify(a)); }catch(_){} refreshFavs(); }
   function universOf(k){ for(var i = 0; i < UNIVERS.length; i++){ if(UNIVERS[i].models.indexOf(k) > -1) return UNIVERS[i].id; } return null; }
@@ -545,9 +551,9 @@
   function refreshFavs(){
     var a = getFavs();
     document.querySelectorAll('[data-favn]').forEach(function(e){ e.textContent = a.length; });
-    document.querySelectorAll('.heart[data-k]').forEach(function(h){ var on = a.indexOf(h.getAttribute('data-k')) > -1; h.classList.toggle('on', on); h.textContent = on ? '♥' : '♡'; h.setAttribute('aria-pressed', on ? 'true' : 'false'); });
+    document.querySelectorAll('.heart[data-k]').forEach(function(h){ var on = a.indexOf(h.getAttribute('data-k')) > -1; h.classList.toggle('on', on); h.setAttribute('aria-pressed', on ? 'true' : 'false'); });
     var box = document.getElementById('favlist'); if(!box) return;
-    if(!a.length){ box.innerHTML = '<p style="color:var(--brume);margin-top:1.2rem">Aucun favori pour l’instant. Touchez le ♡ sur un modèle pour le garder ici.</p>'; return; }
+    if(!a.length){ box.innerHTML = '<p style="color:var(--brume);margin-top:1.2rem">Aucun favori pour l’instant. Touchez le cœur sur un modèle pour le garder ici.</p>'; return; }
     box.innerHTML = '';
     a.forEach(function(k){
       var m = MODELS[k], it = document.createElement('div'); it.className = 'it';
@@ -579,7 +585,7 @@
       var top = document.createElement('div'); top.className = 'top';
       var back = document.createElement('button'); back.type = 'button'; back.className = 'back'; back.textContent = '‹ Les univers'; back.addEventListener('click', closeWorld);
       var br = document.createElement('div'); br.className = 'eyebrow'; br.style.margin = '0'; br.textContent = 'Univers ' + u.n;
-      top.appendChild(back); top.appendChild(br); var fb = document.createElement('button'); fb.type = 'button'; fb.className = 'favbtn'; fb.style.marginLeft = 'auto'; fb.innerHTML = '♡ Favoris<span class="fn" data-favn>0</span>'; fb.addEventListener('click', function(){ window.__openFavs(); }); top.appendChild(fb); world.appendChild(top);
+      top.appendChild(back); top.appendChild(br); var fb = document.createElement('button'); fb.type = 'button'; fb.className = 'favbtn'; fb.style.marginLeft = 'auto'; fb.innerHTML = '<svg class="hs" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5c-.3 0-.6-.1-.8-.3C6.2 16.6 3 13.6 3 9.9 3 7.2 5 5.2 7.5 5.2c1.7 0 3.3.9 4.5 2.5 1.2-1.6 2.8-2.5 4.5-2.5C19 5.2 21 7.2 21 9.9c0 3.7-3.2 6.7-8.2 10.3-.2.2-.5.3-.8.3z"/></svg>Favoris<span class="fn" data-favn>0</span>'; fb.addEventListener('click', function(){ window.__openFavs(); }); top.appendChild(fb); world.appendChild(top);
       var wrap = document.createElement('div'); wrap.className = 'wrap';
       var intro = document.createElement('div'); intro.className = 'intro';
       var h = document.createElement('h2'); h.textContent = u.n; var p = document.createElement('p'); p.textContent = u.intro; intro.appendChild(h); intro.appendChild(p); wrap.appendChild(intro);
@@ -592,7 +598,7 @@
         keys.forEach(function(k){
           var m = MODELS[k], f = document.createElement('article'); f.className = 'uni screen';
           var fr = document.createElement('div'); fr.className = 'frame'; var v = mkVideo(k, 'Aperçu animé : ' + m.n); fr.appendChild(v); f.appendChild(fr); fr.classList.add('tap'); (function(vv, ff){ ff.addEventListener('click', function(){ if(vv.paused){ world.querySelectorAll('video').forEach(function(o){ if(o !== vv) o.pause(); }); vv.go(); window.moTrack && moTrack('video_play', { theme:k, univers:u.id }); } else vv.pause(); }); vv.addEventListener('play', function(){ ff.classList.add('playing'); }); vv.addEventListener('pause', function(){ ff.classList.remove('playing'); }); })(v, fr);
-          var hb = document.createElement('button'); hb.type = 'button'; hb.className = 'heart'; hb.setAttribute('data-k', k); hb.setAttribute('aria-label', 'Ajouter ' + m.n + ' aux favoris'); hb.textContent = '♡'; hb.addEventListener('click', function(e){ e.stopPropagation(); toggleFav(k); }); fr.appendChild(hb);
+          var hb = document.createElement('button'); hb.type = 'button'; hb.className = 'heart'; hb.setAttribute('data-k', k); hb.setAttribute('aria-label', 'Ajouter ' + m.n + ' aux favoris'); hb.innerHTML = HEART; hb.addEventListener('click', function(e){ e.stopPropagation(); toggleFav(k); }); fr.appendChild(hb);
           if(prestige){ var bd = document.createElement('span'); bd.className = 'badge'; bd.textContent = 'Prestige'; fr.appendChild(bd); }
           var t = document.createElement('h3'); t.textContent = m.n; f.appendChild(t);
           var o = document.createElement('p'); o.className = 'tag'; o.textContent = m.occ; f.appendChild(o);
