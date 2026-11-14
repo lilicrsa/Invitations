@@ -13,6 +13,11 @@ window.LEGAL = {
 document.addEventListener('DOMContentLoaded', function(){
   document.querySelectorAll('[data-l]').forEach(function(el){
     var k = el.getAttribute('data-l'), v = (window.LEGAL[k] || '').trim();
-    if(v){ el.textContent = v; } else { el.textContent = '[À compléter : ' + k + ']'; el.className = 'todo'; }
+    if(v){ el.textContent = v; }
+  });
+  // champs facultatifs vides : on retire la ligne entière (rien d'affiché au public)
+  document.querySelectorAll('[data-opt]').forEach(function(b){
+    var k = b.getAttribute('data-opt');
+    if(!(window.LEGAL[k] || '').trim()) b.remove();
   });
 });
