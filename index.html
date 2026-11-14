@@ -428,7 +428,7 @@
       rows += '<tr><td>' + u.n + '</td><td>' + u.prices[0] + ' €</td><td>' + u.prices[1] + ' €</td><td>' + (u.prices[2] ? u.prices[2] + ' €' : '–') + '</td></tr>';
     });
     var tb = document.querySelector('#ptab tbody'); if(tb) tb.innerHTML = rows;
-    var a = document.getElementById('p-ess'), b = document.getElementById('p-sig'); if(a) a.textContent = mn + ' €'; if(b) b.textContent = ms + ' €'; var c3 = document.getElementById('p-pre'); if(c3){ var mp = 1e9; UNIVERS.forEach(function(u){ if(!u.soon && u.prices && u.prices[2]) mp = Math.min(mp, u.prices[2]); }); c3.textContent = (mp < 1e9 ? mp : 89) + ' €'; }
+    var a = document.getElementById('p-ess'), b = document.getElementById('p-sig'); if(a) a.textContent = mn + ' €'; if(b) b.textContent = ms + ' €'; var c3 = document.getElementById('p-pre'); if(c3) c3.textContent = '49 €';   // prix d'appel Prestige : le moins cher des univers (Mariage 89 €, Bébé 59 €, Réceptions et Anniversaire 49 €)
   })();
 
   // ---- menu mobile ----
