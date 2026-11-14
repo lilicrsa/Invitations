@@ -289,6 +289,7 @@
     document.querySelectorAll('.panel').forEach(p => p.classList.toggle('on', p.id === 'p'+n));
     document.querySelectorAll('#steps span').forEach(s => s.classList.toggle('on', +s.dataset.s <= n));
     if(n !== 3){ $('frame').src = 'about:blank'; setFull(false); }
+    if(window.moTrack) moTrack('step', { theme:theme, meta:{ n:n } });
     window.scrollTo({ top:0, behavior:'smooth' });
   }
 
@@ -478,11 +479,12 @@
   document.querySelectorAll('#fsw button').forEach(b => b.addEventListener('click', () => { if(!liveInv) return; setPv(b.dataset.f); liveInv = buildInv(collect()); setFull(false); $('frame').src = theme + '/?preview=' + Math.random().toString(36).slice(2, 8).toUpperCase() + '&live=1'; }));
   function reopenPreview(){ if(!liveInv) return; go(3); $('stage').style.display = ''; $('expired').style.display = 'none'; $('frame').src = theme + '/?preview=' + Math.random().toString(36).slice(2, 8).toUpperCase() + '&live=1'; }
   $('back-prev').addEventListener('click', reopenPreview); $('back3').addEventListener('click', reopenPreview);
-  document.querySelectorAll('#fm button').forEach(b => b.addEventListener('click', () => { formule = b.dataset.f; document.querySelectorAll('#fm button').forEach(x => x.classList.toggle('on', x === b)); $('fm-err').textContent = ''; payLabel(); }));
+  document.querySelectorAll('#fm button').forEach(b => b.addEventListener('click', () => { formule = b.dataset.f; if(window.moTrack) moTrack('formula_pick', { theme:theme, meta:{ f:formule } }); document.querySelectorAll('#fm button').forEach(x => x.classList.toggle('on', x === b)); $('fm-err').textContent = ''; payLabel(); }));
   function payLabel(){ const p = PRICES[theme]; $('make-code').textContent = 'Envoyer ma demande'; $('req-recap').innerHTML = '<b>Aucun paiement maintenant.</b> Nous examinons votre demande, puis vous recevez <b>sous quelques jours</b> un e-mail pour la valider et passer au paiement' + ((formule && p && p[{ess:0,sig:1,pre:2}[formule]]) ? ' (' + p[{ess:0,sig:1,pre:2}[formule]] + ' €).' : '.'); }
   const WANT_F = new URLSearchParams(location.search).get('f');
   function showPrices(){ if(WANT_F === 'pre' && !formule && PRICES[theme] && PRICES[theme][2]){ formule = 'pre'; document.querySelectorAll('#fm button').forEach(x => x.classList.toggle('on', x.dataset.f === 'pre')); } const p = PRICES[theme]; document.querySelectorAll('#fm .pr').forEach(e => { e.textContent = p && p[+e.dataset.p] ? p[+e.dataset.p] + ' €' : ''; }); $('fm-pre').style.display = (p && p[2]) ? '' : 'none'; if(formule === 'pre' && !(p && p[2])){ formule = null; document.querySelectorAll('#fm button').forEach(x => x.classList.remove('on')); } payLabel(); }
   function showPreview(){
+    if(window.moTrack) moTrack('preview_open', { theme:theme });
     setPv('sig'); $('back-prev').style.display = '';
     $('expired').style.display = 'none'; $('stage').style.display = ''; go(3); startTimer(); setFull(false);
     $('demo-std').href = STD_DEMO[theme] || 'boheme/?i=boheme-demo';
@@ -505,6 +507,7 @@
     if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return err.textContent = 'Merci d’indiquer un e-mail valide.';
     if(!$('f-cgv').checked) return $('cgv-err').textContent = 'Merci d’accepter les conditions pour continuer.';
     if(formule === 'pre'){ const miss = mediaMissing(); if(miss) return $('fm-err').textContent = miss + ' Revenez à l’étape « Vos infos » pour les ajouter.'; }
+    if(window.MO_TEST_ACTIVE){ if(window.moTrack) moTrack('request_sim', { theme:theme, meta:{ f:formule } }); showRequestState('requested', { formula:formule, theme, email:'(e-mail de test)' }); return; }
     const btn = $('make-code'); btn.disabled = true; const label = btn.textContent; btn.textContent = 'Envoi de votre demande…';
     try{
       let ok = false;
@@ -541,6 +544,7 @@
     const n = document.createElement('p'); n.style.cssText = 'font-size:.82rem;color:var(--brume);text-align:center;margin:.5rem 0 0'; n.textContent = 'Aperçu protégé : le filigrane disparaît sur l’invitation publiée.';
     box.appendChild(h); box.appendChild(w); box.appendChild(n);
   }
+  window.moTestShowValidated = function(){ showRequestState('validated', { formula:formule || 'sig', theme, email:'(e-mail de test)' }); };
   function showRequestState(status, info){
     info = info || {}; const box = $('req-state');
     $('order-a').style.display = 'none'; $('order-b').style.display = 'none'; box.style.display = '';
@@ -555,7 +559,7 @@
         + '<div class="row"><button type="button" class="btn ghost" id="req-copy">Copier le lien de ma demande</button></div>'
         + '<div class="row" style="margin-top:1rem"><a class="btn solid" href="index.html#modeles">Créer une autre invitation</a><a class="btn ghost" href="index.html">Retour à l’accueil</a></div>';
       if(info.email && $('req-mail')) $('req-mail').textContent = info.email;
-      addPhonePreview(box, info.theme || theme);
+      if(window.MO_TEST_ACTIVE){ const tn = document.createElement('p'); tn.style.cssText = 'margin-top:1rem;padding:.7rem 1rem;border:1px dashed var(--champ);border-radius:12px;font-size:.88rem'; tn.textContent = 'Mode test : rien n’a été envoyé, et aucun e-mail n’a été expédié.'; box.appendChild(tn); } else addPhonePreview(box, info.theme || theme);
       $('req-copy').addEventListener('click', async () => { const u = location.href.replace(/commande\.html.*$/, '') + 'commande.html?d=' + code; try{ await navigator.clipboard.writeText(u); $('req-copy').textContent = 'Lien copié ✓'; }catch(_){ $('req-copy').textContent = u; } });
     } else if(status === 'validated'){
       box.innerHTML = '<p class="ok" style="font-size:1.25rem;margin-top:0">Votre demande est validée 🎉</p><p>Il ne reste qu’à régler pour publier votre invitation' + (info.formula ? ' (formule <b>' + FNAME[info.formula] + '</b>' + (price ? ', <b>' + price + ' €</b>' : '') + ')' : '') + '.</p>'
@@ -564,6 +568,7 @@
       $('pay-btn').addEventListener('click', async () => {
         const e2 = $('pay-err'); e2.textContent = '';
         if(!$('pay-waiver').checked) return e2.textContent = 'Merci de cocher la case pour continuer.';
+        if(window.MO_TEST_ACTIVE){ if(window.moTrack) moTrack('pay_sim', { theme:theme }); e2.style.color = 'var(--champ)'; e2.textContent = 'Mode test : paiement simulé, aucun montant n’a été débité. ✓'; return; }
         const b2 = $('pay-btn'); b2.disabled = true; const l2 = b2.textContent; b2.textContent = 'Ouverture du paiement…';
         try{
           const r = await fetch(SUPABASE_URL + '/functions/v1/create-checkout', { method:'POST', headers:{ 'Content-Type':'application/json', apikey:SUPABASE_KEY }, body: JSON.stringify({ code }) });
@@ -573,7 +578,7 @@
         }catch(_){ e2.textContent = 'Le paiement n’a pas pu démarrer. Réessayez dans un instant.'; }
         b2.disabled = false; b2.textContent = l2;
       });
-      addPhonePreview(box, info.theme || theme);
+      if(!window.MO_TEST_ACTIVE) addPhonePreview(box, info.theme || theme);
     } else if(status === 'refused'){
       box.innerHTML = '<p style="font-size:1.2rem;margin-top:0"><b>À propos de votre demande</b></p><p>Nous n’avons pas pu valider cette demande en l’état. Aucun paiement n’a été pris. Vous allez recevoir un e-mail avec les détails, ou <a href="contact.html">écrivez-nous</a>.</p><div class="row" style="margin-top:1rem"><a class="btn ghost" href="index.html">Retour à l’accueil</a></div>';
     }

@@ -47,11 +47,12 @@ dialog label{ display:block; font-size:.75rem; text-transform:uppercase; letter-
 </div>
 <dialog id="dlg"><form method="dialog" id="dform"></form></dialog>
 <div class="toast" id="toast"></div>
+<script src="test-missions.js?v=1"></script>
 <script>
 const SB='https://sgatagagyfizuyrinmth.supabase.co', KEY='sb_publishable_YdlXEbQn9ZqILsjT6pyAug_ijgzm5fQ';
 const $=id=>document.getElementById(id);
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-let STATD=30, STATS=null, STATERR='', TOKEN=null, DATA={}, TAB='req', MCAT='all', MGRP=false, LASTSYNC=0;
+let TESTS=null, TERR='', STATD=30, STATS=null, STATERR='', TOKEN=null, DATA={}, TAB='req', MCAT='all', MGRP=false, LASTSYNC=0;
 const BASE=location.href.replace(/admin\.html.*$/,'');
 const fmt=d=>d?new Date(d).toLocaleString('fr-FR',{dateStyle:'short',timeStyle:'short'}):'';
 const fmtd=d=>d?new Date(d).toLocaleDateString('fr-FR'):'—';
@@ -88,12 +89,12 @@ async function load(){
     DATA={orders,drafts,inv,quotes,msgs,cnt,mails,mstate:(mstate&&mstate[0])||null}; render();
   }catch(e){ if(/JWT|expired/i.test(String(e))){ toast('Session expirée'); setTimeout(()=>location.reload(),900);} else toast('Erreur de chargement'); }
 }
-const TABS=[['req','Demandes'],['orders','Commandes'],['drafts','Brouillons'],['inv','Invitations'],['quotes','Devis'],['msgs','Messages'],['mail','Boîte mail'],['stats','Statistiques']];
+const TABS=[['req','Demandes'],['orders','Commandes'],['drafts','Brouillons'],['inv','Invitations'],['quotes','Devis'],['msgs','Messages'],['mail','Boîte mail'],['stats','Statistiques'],['tests','Tests']];
 function render(){
-  const n={req:DATA.drafts.filter(d=>d.status==='requested').length,orders:DATA.orders.filter(o=>o.status==='paid').length,drafts:DATA.drafts.filter(d=>['draft','submitted'].includes(d.status)).length,inv:DATA.inv.length,quotes:DATA.quotes.filter(q=>q.status==='new').length,msgs:DATA.msgs.filter(m=>m.status==='new').length,mail:DATA.mails.filter(m=>m.direction==='in'&&m.status==='new').length,stats:''};
+  const n={req:DATA.drafts.filter(d=>d.status==='requested').length,orders:DATA.orders.filter(o=>o.status==='paid').length,drafts:DATA.drafts.filter(d=>['draft','submitted'].includes(d.status)).length,inv:DATA.inv.length,quotes:DATA.quotes.filter(q=>q.status==='new').length,msgs:DATA.msgs.filter(m=>m.status==='new').length,mail:DATA.mails.filter(m=>m.direction==='in'&&m.status==='new').length,stats:'',tests:''};
   $('tabs').innerHTML=TABS.map(t=>`<button data-t="${t[0]}" class="${t[0]===TAB?'on':''}">${t[1]}<span class="n">${n[t[0]]}</span></button>`).join('');
   $('tabs').querySelectorAll('button').forEach(b=>b.onclick=()=>{TAB=b.dataset.t;render();});
-  $('list').innerHTML=({req:rReq,orders:rOrders,drafts:rDrafts,inv:rInv,quotes:rQuotes,msgs:rMsgs,mail:rMail,stats:rStats})[TAB]()||'<p class="m">Rien pour l’instant.</p>';
+  $('list').innerHTML=({req:rReq,orders:rOrders,drafts:rDrafts,inv:rInv,quotes:rQuotes,msgs:rMsgs,mail:rMail,stats:rStats,tests:rTests})[TAB]()||'<p class="m">Rien pour l’instant.</p>';
   $('list').querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>act(b.dataset.a,b.dataset.i,b));
   autoSync();
 }
@@ -161,6 +162,32 @@ function rMsgs(){ return DATA.msgs.map(m=>`<div class="card"><div class="top"><b
 async function copy(t){ try{ await navigator.clipboard.writeText(t); toast('Copié ✓'); }catch(_){ prompt('Copie ce lien :',t); } }
 document.addEventListener('change',async e=>{ const s=e.target.closest('select[data-s]'); if(!s) return;
   try{ await rpc('admin_set_status',{p_kind:s.dataset.s,p_id:s.dataset.i,p_status:s.value}); toast('Enregistré'); load(); }catch(_){ toast('Échec'); } });
+async function loadTests(){ TERR=''; try{ TESTS=await rpc('admin_tests',{}); }catch(e){ TESTS=null; TERR=String(e).slice(0,200); } if(TAB==='tests') render(); }
+const EVL={pageview:e=>'Page : '+(e.page||''),univers_open:e=>'Univers ouvert : '+(e.univers||''),video_play:e=>'Aperçu lancé : '+(e.theme||''),demo_open:e=>'Démo ouverte : '+(e.theme||''),theme_choose:e=>'Modèle choisi : '+(e.theme||''),fav_add:e=>'♥ Favori ajouté : '+(e.theme||''),fav_remove:e=>'Favori retiré : '+(e.theme||''),fav_panel:()=>'Liste des favoris ouverte',step:e=>'Étape '+((e.meta&&e.meta.n)||'?')+' de la commande',preview_open:()=>'Aperçu de l’invitation ouvert',formula_pick:e=>'Formule choisie : '+((e.meta&&e.meta.f)||''),request_sim:()=>'Demande envoyée (simulée)',pay_sim:()=>'Paiement simulé',tclick:e=>'Toucher : '+((e.meta&&e.meta.t)||'')};
+const med=a=>{ if(!a.length) return null; const b=[...a].sort((x,y)=>x-y), m=Math.floor(b.length/2); return b.length%2?b[m]:(b[m-1]+b[m])/2; };
+const dur=ms=>ms==null?'–':(ms<60000?Math.round(ms/1000)+' s':Math.floor(ms/60000)+' min '+String(Math.round(ms%60000/1000)).padStart(2,'0')+' s');
+function rTests(){
+  const MS=window.MO_MISSIONS||[], link='https://maisonopaline-invitations.fr/?test=1';
+  const bar=`<div class="card"><b>Lien à envoyer à vos testeurs</b><div class="m" style="margin-top:.3rem;word-break:break-all">${link}</div><div class="acts" style="margin-top:.5rem"><button data-a="tcopy">Copier le lien</button><button class="g" data-a="treload">↻ Actualiser</button><button class="d" data-a="tpurge">Effacer toutes les données de test</button></div><p class="m" style="margin:.5rem 0 0">Le testeur suit ${MS.length} missions et questions, de l’accueil à la commande. Rien n’est envoyé ni payé pendant le test, et ses clics ne comptent pas dans les statistiques.</p></div>`;
+  if(!TESTS){ if(TERR) return bar+`<p class="m" style="color:var(--err)">Données indisponibles : ${esc(TERR)}</p>`; loadTests(); return bar+'<p class="m">Chargement…</p>'; }
+  const T=TESTS.testers||[]; if(!T.length) return bar+'<p class="m">Aucun test pour l’instant. Envoyez le lien ci-dessus à un testeur.</p>';
+  const last={}; // dernier résultat de chaque testeur pour chaque mission
+  T.forEach(t=>{ t.res={}; t.tasks.forEach(x=>{ t.res[x.m.m]=x.m; }); });
+  const rows=MS.map((m,i)=>{
+    const R=T.map(t=>t.res[m.id]).filter(Boolean); let det='';
+    if(m.type==='task'){ const ok=R.filter(x=>x.k==='auto'||x.k==='manual'), au=R.filter(x=>x.k==='auto'), gu=R.filter(x=>x.k==='giveup'), rt=R.filter(x=>x.r).map(x=>x.r);
+      det=`Réussi : <b>${ok.length}/${R.length}</b> (dont ${au.length} détecté(s) automatiquement) · Abandon : <b>${gu.length}</b> · Temps médian : <b>${dur(med(ok.map(x=>x.ms)))}</b> · Facilité : <b>${rt.length?(rt.reduce((a,b)=>a+b,0)/rt.length).toFixed(1)+' / 5':'–'}</b>`; }
+    else if(m.type==='choice'){ const c={}; R.filter(x=>x.k==='answer').forEach(x=>c[x.a]=(c[x.a]||0)+1); const good=R.filter(x=>x.c===1).length;
+      det=Object.keys(c).map(k=>`${esc(k)} : <b>${c[k]}</b>`).join('<br>')+(m.correct?`<br>Bonne réponse (« ${esc(m.correct)} ») : <b>${good}/${R.length}</b>`:''); }
+    else if(m.type==='scale'){ const v=R.filter(x=>x.k==='answer').map(x=>Number(x.a)); det=v.length?`Moyenne : <b>${(v.reduce((a,b)=>a+b,0)/v.length).toFixed(1)}</b> (${v.join(', ')})`:'–'; }
+    else { det=T.filter(t=>t.res[m.id]&&t.res[m.id].a).map(t=>`<div style="margin:.25rem 0">« ${esc(t.res[m.id].a)} » <span class="m">· ${esc((t.meta&&t.meta.name)||'anonyme')}</span></div>`).join('')||'–'; }
+    return `<div class="card"><div class="top"><b>${i+1}. ${esc(m.q)}</b><small>${esc(m.ph)} · ${R.length} réponse(s)</small></div><div class="m" style="line-height:1.7">${det}</div></div>`; }).join('');
+  const who=T.map(t=>{ const t0=new Date(t.at).getTime(), nb=Object.keys(t.res).length, name=(t.meta&&t.meta.name)||'anonyme', dev=(t.meta&&t.meta.dev)||'';
+    const path=t.path.map(e=>`<div class="m" style="margin:.1rem 0"><span style="opacity:.6">${dur(new Date(e.at).getTime()-t0)}</span> · ${esc((EVL[e.type]?EVL[e.type](e):e.type))}</div>`).join('');
+    const ans=MS.filter(m=>t.res[m.id]).map(m=>{ const x=t.res[m.id]; return `<div class="m" style="margin:.2rem 0"><b>${esc(m.q)}</b><br>${m.type==='task'?esc({auto:'✓ réussi',manual:'déclaré terminé',giveup:'✗ abandon',skip:'passé'}[x.k]||x.k)+' · '+dur(x.ms)+(x.r?' · facilité '+x.r+'/5':''):(x.k==='skip'?'(passé)':esc(x.a))}</div>`; }).join('');
+    return `<details class="card"><summary><b>${esc(name)}</b> ${t.done?'<span class="tag ok">terminé</span>':'<span class="tag">en cours</span>'}<span class="m"> · ${dev?esc(dev)+' · ':''}${fmt(t.at)} · ${nb}/${MS.length} missions · durée ${dur(new Date(t.last).getTime()-t0)}</span></summary><p class="m" style="margin:.6rem 0 .2rem"><b>Réponses</b></p>${ans||'<p class="m">–</p>'}<p class="m" style="margin:.8rem 0 .2rem"><b>Parcours détaillé</b></p>${path||'<p class="m">–</p>'}</details>`; }).join('');
+  return bar+`<p class="m" style="margin:.4rem 0"><b>${T.length}</b> testeur(s) · <b>${T.filter(t=>t.done).length}</b> ont terminé</p><h3 style="font:400 1.2rem Italiana,serif;margin:1rem 0 .4rem">Résultats par mission</h3>`+rows+`<h3 style="font:400 1.2rem Italiana,serif;margin:1.2rem 0 .4rem">Chaque testeur</h3>`+who;
+}
 const TNAME={galerie:'Galerie Bohème',boheme:'Bohème doré','gender-reveal':'Gender reveal',jeux:'Soirée Jeux',noel:'Étoile de Noël',opaline:'Opaline',lettre:'Lettre & cachet'};
 const UNAME={mariage:'Mariage',bebe:'Bébé',anniversaire:'Anniversaire',fetes:'Réceptions'};
 async function loadStats(){ STATERR=''; try{ STATS=await rpc('admin_stats',{p_days:STATD}); }catch(e){ STATS=null; STATERR=String(e).slice(0,200); } if(TAB==='stats') render(); }
@@ -179,6 +206,9 @@ function rStats(){
   return bar+tiles+th+fun+days+uv+pg+rf+`<p class="m">Mesure anonyme : aucune donnée personnelle ni cookie. Les visites faites depuis ton propre navigateur sont comptées aussi ; les événements sont gardés 13 mois.</p>`;
 }
 async function act(a,id,btn){
+    if(a==='treload'){ TESTS=null; TERR=''; return render(); }
+    if(a==='tcopy'){ try{ await navigator.clipboard.writeText('https://maisonopaline-invitations.fr/?test=1'); toast('Lien copié'); }catch(_){ toast('Copie impossible'); } return; }
+    if(a==='tpurge'){ if(!confirm('Effacer toutes les données de test (réponses et parcours) ? Les vraies statistiques ne sont pas touchées.')) return; try{ const n=await rpc('admin_tests_purge',{}); toast(n+' ligne(s) effacée(s)'); }catch(e){ toast('Échec'); } TESTS=null; return render(); }
     if(a==='sdays'){ STATD=Number(id); STATS=null; STATERR=''; return render(); }
   const inv=DATA.inv.find(x=>x.id===id);
   try{
