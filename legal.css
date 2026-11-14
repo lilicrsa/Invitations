@@ -7,5 +7,4 @@ h1,h2{ font-family:'Italiana',serif; font-weight:400; color:var(--champ); }
 h1{ font-size:clamp(2.2rem,7vw,3rem); line-height:1.1; margin:1.2rem 0 .4rem; } h2{ font-size:1.5rem; margin:2rem 0 .5rem; }
 .maj{ color:var(--brume); font-size:.9rem; }
 .todo{ background:rgba(255,200,120,.15); color:#ffcf8a; border-radius:6px; padding:0 .3em; }
-.draft{ border:1px dashed var(--champ2); border-radius:12px; padding:.8rem 1rem; color:var(--brume); font-size:.9rem; margin:1rem 0; }
 footer.lg{ margin-top:3rem; padding-top:1.2rem; border-top:1px solid var(--trait); font-size:.88rem; color:var(--brume); display:flex; flex-wrap:wrap; gap:.4rem 1.2rem; }
