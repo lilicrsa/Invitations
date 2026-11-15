@@ -16,7 +16,7 @@ window.MO_MISSIONS = [
   { id:'t09', ph:'Tarifs', type:'choice', q:'Vous voulez que vos invités puissent répondre à l’invitation. Quelle formule choisissez-vous ?', opts:['Essentiel','Signature','Prestige','Je ne sais pas'], correct:'Signature', hint:'Cherchez l’information sur le site avant de répondre.' },
   { id:'t10', ph:'Tarifs', type:'text', q:'Dans vos mots, quelle est la différence entre Signature et Prestige ?' },
   /* ---- Commande de A à Z ---- */
-  { id:'t11', ph:'Commande', type:'task', q:'Vous avez choisi : lancez la création de votre invitation avec le bouton « Créer mon invitation » en haut de la page.', auto:{ ev:'pageview', w:{ page:'commande' } }, rate:true },
+  { id:'t11', ph:'Commande', type:'task', q:'Vous avez choisi : lancez la personnalisation de votre invitation avec le bouton « Personnaliser mon invitation » en haut de la page.', auto:{ ev:'pageview', w:{ page:'commande' } }, rate:true },
   { id:'t12', ph:'Commande', type:'task', q:'Choisissez le modèle de votre invitation.', auto:{ ev:'step', w:{ n:2 } }, rate:true },
   { id:'t13', ph:'Commande', type:'task', q:'Remplissez vos informations (inventez-les) jusqu’à ouvrir l’aperçu de votre invitation.', auto:{ ev:'step', w:{ n:3 } }, rate:true },
   { id:'t14', ph:'Commande', type:'scale', q:'L’aperçu vous donne-t-il envie de commander ?', min:1, max:5, lo:'Pas du tout', hi:'Beaucoup' },
