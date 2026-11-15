@@ -84,7 +84,11 @@
   .ptab th, .ptab td{ padding:.7rem .6rem; border-bottom:1px solid var(--trait); text-align:center; }
   .ptab th:first-child, .ptab td:first-child{ text-align:left; }
   .ptab th{ font:600 .72rem 'Manrope',sans-serif; letter-spacing:.16em; text-transform:uppercase; color:var(--champ2); }
-  .ptab td.soon{ color:var(--brume); }
+  .pdet{ border:1px solid var(--trait); border-radius:16px; margin:1.4rem auto 0; max-width:44rem; padding:0 1rem; background:rgba(255,255,255,.02); }
+  .pdet summary{ cursor:pointer; list-style:none; padding:1rem 0; font:600 .78rem 'Manrope',sans-serif; letter-spacing:.14em; text-transform:uppercase; color:var(--champ); display:flex; justify-content:space-between; align-items:center; gap:1rem; }
+  .pdet summary::-webkit-details-marker{ display:none; } .pdet summary::after{ content:'+'; font-size:1.3rem; line-height:1; color:var(--champ2); } .pdet[open] summary::after{ content:'−'; }
+  .pdet .ptab{ margin-top:0; margin-bottom:.6rem; }
+  .ptab td.soon{ color:var(--brume); } .ptab small.soon{ margin:0; max-width:none; text-align:left; font-size:.78em; display:inline; }
   @media (max-width:520px){ .ptab{ font-size:.86rem; table-layout:fixed; } .ptab th, .ptab td{ padding:.65rem .2rem; } .ptab th{ font-size:.58rem; letter-spacing:.05em; } .ptab th:first-child, .ptab td:first-child{ width:32%; } .ptab td:first-child small{ display:block; } }
   .pnote{ text-align:center; color:var(--brume); font-size:.88rem; margin:1rem auto 0; max-width:34rem; }
 
@@ -323,7 +327,13 @@
         <ul><li>Tout Signature</li><li>Un modèle galerie spécial</li><li>Vos photos ou vidéos intégrées dans l’invitation</li></ul>
         <p class="pp">À partir de <b id="p-pre"></b></p></div>
     </div>
+    <div class="band" style="margin-top:1.4rem">
+      <div><h2>Une idée précise ?</h2><p>Une carte et une vidéo créées pour vous, à votre image : écrivez-nous pour un devis.</p></div>
+      <a class="btn" id="contact-btn" href="devis.html">Demander un devis</a>
+    </div>
+    <details class="pdet"><summary>Voir le détail des prix par univers</summary>
     <table class="ptab" id="ptab"><thead><tr><th>Univers</th><th>Essentiel</th><th>Signature</th><th>Prestige</th></tr></thead><tbody></tbody></table>
+    </details>
     <p class="pnote">Prix en euros, TVA non applicable (article 293 B du CGI). Une création sur mesure ? <a href="devis.html">Demandez un devis</a>.</p>
     <p style="text-align:center;margin:1.4rem 0 0"><a class="btn solid" href="commande.html">Personnaliser mon invitation</a></p>
   </div></section>
@@ -340,10 +350,6 @@
   </div></section>
 
   <section id="contact"><div class="wrap">
-    <div class="band">
-      <div><h2>Une idée précise ?</h2><p>Une carte et une vidéo créées pour vous, à votre image : écrivez-nous pour un devis.</p></div>
-      <a class="btn" id="contact-btn" href="devis.html">Demander un devis</a>
-    </div>
     <footer><span class="bw"><span data-brand></span><small class="bsub">Des invitations qui font naître l’émerveillement</small></span><span class="flinks"><a href="contact.html">Contact</a> · <a href="cgv.html">CGV</a> · <a href="mentions-legales.html">Mentions légales</a> · <a href="confidentialite.html">Confidentialité</a></span></footer>
   </div></section>
 </div>
