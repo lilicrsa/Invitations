@@ -48,6 +48,7 @@ dialog label{ display:block; font-size:.75rem; text-transform:uppercase; letter-
 <dialog id="dlg"><form method="dialog" id="dform"></form></dialog>
 <div class="toast" id="toast"></div>
 <script src="test-missions.js?v=1"></script>
+<script src="admin-musique.js?v=1"></script>
 <script>
 const SB='https://sgatagagyfizuyrinmth.supabase.co', KEY='sb_publishable_YdlXEbQn9ZqILsjT6pyAug_ijgzm5fQ';
 const $=id=>document.getElementById(id);
@@ -89,13 +90,14 @@ async function load(){
     DATA={orders,drafts,inv,quotes,msgs,cnt,mails,mstate:(mstate&&mstate[0])||null}; render();
   }catch(e){ if(/JWT|expired/i.test(String(e))){ toast('Session expirée'); setTimeout(()=>location.reload(),900);} else toast('Erreur de chargement'); }
 }
-const TABS=[['req','Demandes'],['orders','Commandes'],['drafts','Brouillons'],['inv','Invitations'],['quotes','Devis'],['msgs','Messages'],['mail','Boîte mail'],['stats','Statistiques'],['tests','Tests']];
+const TABS=[['req','Demandes'],['orders','Commandes'],['drafts','Brouillons'],['inv','Invitations'],['quotes','Devis'],['msgs','Messages'],['mail','Boîte mail'],['stats','Statistiques'],['tests','Tests'],['music','Musique']];
 function render(){
-  const n={req:DATA.drafts.filter(d=>d.status==='requested').length,orders:DATA.orders.filter(o=>o.status==='paid').length,drafts:DATA.drafts.filter(d=>['draft','submitted'].includes(d.status)).length,inv:DATA.inv.length,quotes:DATA.quotes.filter(q=>q.status==='new').length,msgs:DATA.msgs.filter(m=>m.status==='new').length,mail:DATA.mails.filter(m=>m.direction==='in'&&m.status==='new').length,stats:'',tests:''};
+  const n={req:DATA.drafts.filter(d=>d.status==='requested').length,orders:DATA.orders.filter(o=>o.status==='paid').length,drafts:DATA.drafts.filter(d=>['draft','submitted'].includes(d.status)).length,inv:DATA.inv.length,quotes:DATA.quotes.filter(q=>q.status==='new').length,msgs:DATA.msgs.filter(m=>m.status==='new').length,mail:DATA.mails.filter(m=>m.direction==='in'&&m.status==='new').length,stats:'',tests:'',music:(window.musicCount?(musicCount()||''):'')};
   $('tabs').innerHTML=TABS.map(t=>`<button data-t="${t[0]}" class="${t[0]===TAB?'on':''}">${t[1]}<span class="n">${n[t[0]]}</span></button>`).join('');
   $('tabs').querySelectorAll('button').forEach(b=>b.onclick=()=>{TAB=b.dataset.t;render();});
-  $('list').innerHTML=({req:rReq,orders:rOrders,drafts:rDrafts,inv:rInv,quotes:rQuotes,msgs:rMsgs,mail:rMail,stats:rStats,tests:rTests})[TAB]()||'<p class="m">Rien pour l’instant.</p>';
+  $('list').innerHTML=({req:rReq,orders:rOrders,drafts:rDrafts,inv:rInv,quotes:rQuotes,msgs:rMsgs,mail:rMail,stats:rStats,tests:rTests,music:window.rMusic||function(){return '';}})[TAB]()||'<p class="m">Rien pour l’instant.</p>';
   $('list').querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>act(b.dataset.a,b.dataset.i,b));
+  if(window.musicBind) musicBind();
   autoSync();
 }
 const linkOf=i=>`${BASE}${i.theme}/index.html?i=${i.slug}`, respOf=i=>`${BASE}reponses.html?t=${i.response_token}`;
