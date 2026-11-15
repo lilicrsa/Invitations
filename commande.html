@@ -306,7 +306,17 @@
   // ---- 1 : modèles
   const io = 'IntersectionObserver' in window ? new IntersectionObserver(es => es.forEach(e => { try{ if(e.isIntersecting){ e.target.play().catch(()=>{}); } else { e.target.pause(); } }catch(_){} }), { threshold:.35 }) : null;
   const list = $('themes');
+  const WANT_U = new URLSearchParams(location.search).get('u');
+  const UMAP = { mariage:['boheme','galerie'], bebe:['gender-reveal'], fetes:['noel','jeux'], anniversaire:[] };
+  const UNAME = { mariage:'Mariage', bebe:'Bébé', fetes:'Réceptions', anniversaire:'Anniversaire' };
+  const UKEYS = (WANT_U && UMAP[WANT_U]) ? UMAP[WANT_U] : null;
+  if(UKEYS){
+    const h = document.querySelector('#p1 h2');
+    if(h){ h.textContent = 'Modèles ' + UNAME[WANT_U]; const a = document.createElement('a'); a.href = 'commande.html'; a.textContent = 'Voir tous les modèles'; a.style.cssText = 'display:block;font-size:.85rem;margin:.3rem 0 1rem;color:inherit;opacity:.7'; h.after(a); }
+    if(!UKEYS.length){ const p = document.createElement('p'); p.textContent = 'Les modèles de cet univers sont en construction.'; p.style.opacity = '.7'; list.before(p); }
+  }
   Object.keys(THEMES).forEach(k => {
+    if(UKEYS && UKEYS.indexOf(k) < 0) return;
     const t = THEMES[k], b = document.createElement('button'); b.type = 'button'; b.className = 'theme';
     const vid = document.createElement('video'); vid.muted = true; vid.loop = true; vid.playsInline = true; vid.setAttribute('playsinline', ''); vid.preload = 'metadata'; vid.setAttribute('controlsList','nodownload noremoteplayback'); vid.setAttribute('disablePictureInPicture',''); vid.disableRemotePlayback = true;
     vid.poster = t.mini + '.jpg?v=3';
