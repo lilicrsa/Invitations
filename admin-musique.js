@@ -1,9 +1,9 @@
 /* Onglet « Musique » de l'admin : bibliothèque de morceaux Pixabay (fiches, import en lot, classement, licences, extraits).
    Utilise les globaux de admin.html : SB, KEY, TOKEN, api, get, esc, toast, $, render, TAB. */
 (function(){
-var TAX={ 'Mariage':['Oriental princier','Bohème chic','Méditerranéen','Kabyle','Romantique','Champêtre','Moderne'],
- 'Anniversaire':['Enfant','Adulte','Girly chic','Pirate','Princesse','Jungle','Anniversaire surprise'],
- 'Bébé':['Gender reveal','Baby shower','Annonce de grossesse','Naissance','Baptême','Premier anniversaire'],
+var TAX={ 'Mariage':['Oriental princier','Bohème chic','Méditerranéen','Kabyle','Romantique','Champêtre','Moderne','Princier','Cinématographique','Féerique','Classique'],
+ 'Anniversaire':['Enfant','Adulte','Girly chic','Pirate','Princesse','Jungle','Anniversaire surprise','Familial'],
+ 'Bébé':['Gender reveal','Baby shower','Annonce de grossesse','Naissance','Baptême','Premier anniversaire','Fête de bienvenue'],
  'Réceptions':['Noël','Nouvel An','Soirée jeux','Soirée casino','Halloween','Garden-party','Soirée chic','Soirée à thème'] };
 var PX=/pixabay\.com\/(?:[a-z]{2}\/)?music\/([a-z0-9][a-z0-9\-]*?)-(\d+)\/?/i;
 var M=null, MERR='', OPEN=null, F={cat:'',sub:'',st:'',q:'',fav:false}, REPORT=[], PEND=[], BUSY='';
@@ -101,6 +101,8 @@ window.rMusic=function(){
    REPORT.map(function(r){ return '<div class="m" style="color:'+(r.ok===1?'#2d7a4f':r.ok===2?'#b7791f':'#b3261e')+'">'+esc(r.t)+'</div>'; }).join('')+
    PEND.map(function(f,i){ return '<div style="margin-top:6px"><b>'+esc(f.name)+'</b> → <select data-pe="'+i+'">'+todo.map(function(t){ return '<option value="'+t.id+'">'+esc(label(t))+' ('+t.pixabay_id+')</option>'; }).join('')+'</select> <button class="btn" data-ma="assign" data-i="'+i+'">C’est ce morceau</button></div>'; }).join('')+'</div>'+
    '<div class="card" style="padding:12px;margin-bottom:12px"><div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center"><select id="mfcat">'+catOpts+'</select><select id="mfsub">'+subOpts+'</select><input id="mfq" placeholder="Rechercher…" value="'+esc(F.q)+'"><select id="mfst"><option value="">Tous statuts</option><option value="dl"'+(F.st==='dl'?' selected':'')+'>Téléchargés</option><option value="todo"'+(F.st==='todo'?' selected':'')+'>À télécharger</option><option value="ok"'+(F.st==='ok'?' selected':'')+'>Validés</option><option value="nok"'+(F.st==='nok'?' selected':'')+'>Non validés</option><option value="blk"'+(F.st==='blk'?' selected':'')+'>Bloqués</option></select><label><input type="checkbox" id="mffav"'+(F.fav?' checked':'')+'> ★ Favoris</label><span class="m">'+L.length+' / '+M.length+' morceaux</span> <button class="btn ghost" data-ma="export">Exporter (JSON + CSV)</button></div></div>';
+  var cov='<details style="margin-bottom:12px"><summary style="cursor:pointer"><b>Couverture des sous-thèmes</b> <span class="m">(objectif : 10 morceaux par sous-thème)</span></summary><div style="padding:8px 0">'+Object.keys(TAX).map(function(c){ return '<div style="margin:6px 0"><b>'+c+'</b><br>'+TAX[c].map(function(sb){ var n=M.filter(function(t){ return (t.themes||[]).some(function(x){ return x.c===c&&x.s===sb; }); }).length; return pill(esc(sb)+' · '+n,n>=10?'ok':n===0?'bad':'warn'); }).join(' ')+'</div>'; }).join('')+'</div></details>';
+  h+=cov;
   if(!M.length) h+='<p class="m">Aucun morceau. Collez vos liens ci-dessus.</p>';
   h+=L.map(function(t){ var open=OPEN===t.id; return '<div class="card" style="padding:10px 12px;margin-bottom:8px"><div style="display:flex;gap:10px;align-items:center;cursor:pointer" data-ma="open" data-i="'+t.id+'"><span data-ma="fav" data-i="'+t.id+'" style="font-size:20px;color:'+(t.favorite?'#6e1b2f':'#c9b27a')+'">'+(t.favorite?'★':'☆')+'</span><div style="flex:1"><b>'+esc(label(t))+'</b><br><span class="m">'+(tstr(t).map(esc).join(' · ')||'non classé')+(t.mood?' · '+esc(t.mood):'')+(t.duration?' · '+Math.round(t.duration)+' s':'')+'</span></div><div>'+pill(t.status==='downloaded'?'téléchargé':'à télécharger',t.status==='downloaded'?'ok':'warn')+pill(t.legal_status==='validated'?'validé':t.legal_status==='blocked'?'bloqué':'à vérifier',t.legal_status==='validated'?'ok':t.legal_status==='blocked'?'bad':'warn')+(t.clip_path?pill('extrait','ok'):'')+'</div></div>'+(open?detail(t):'')+'</div>'; }).join('');
   return h; };
