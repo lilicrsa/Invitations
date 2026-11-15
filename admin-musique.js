@@ -2,7 +2,7 @@
    Utilise les globaux de admin.html : SB, KEY, TOKEN, api, get, esc, toast, $, render, TAB. */
 (function(){
 var TAX={ 'Mariage':['Oriental princier','Bohème chic','Méditerranéen','Kabyle','Romantique','Champêtre','Moderne','Princier','Cinématographique','Féerique','Classique'],
- 'Anniversaire':['Enfant','Adulte','Girly chic','Pirate','Princesse','Jungle','Anniversaire surprise','Familial'],
+ 'Anniversaire':['Enfant','Adulte','Girly chic','Pirate','Princesse','Jungle','Anniversaire surprise','Familial','Adulte chic','Adulte festif','Premier anniversaire'],
  'Bébé':['Gender reveal','Baby shower','Annonce de grossesse','Naissance','Baptême','Premier anniversaire','Fête de bienvenue'],
  'Réceptions':['Noël','Nouvel An','Soirée jeux','Soirée casino','Halloween','Garden-party','Soirée chic','Soirée à thème'] };
 var PX=/pixabay\.com\/(?:[a-z]{2}\/)?music\/([a-z0-9][a-z0-9\-]*?)-(\d+)\/?/i;
