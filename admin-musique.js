@@ -12,8 +12,8 @@ var label=function(t){ return t.title||('« '+t.slug.replace(/-/g,' ')+' »'); }
 var tstr=function(t){ return (t.themes||[]).map(function(x){ return x.c+(x.s?' · '+x.s:''); }); };
 var save=function(id,patch){ patch.updated_at=new Date().toISOString(); return api('/rest/v1/music_library?id=eq.'+id,{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify(patch)}); };
 
-async function loadM(){ MERR=''; try{ M=await get('music_library?select=*&order=created_at.desc&limit=2000'); }catch(e){ M=null; MERR=String(e).slice(0,200); } if(TAB==='music') render(); }
-window.musicCount=function(){ return 0; };
+async function loadM(){ MERR=''; try{ M=await get('music_library?select=*&order=created_at.desc&limit=2000'); }catch(e){ M=null; MERR=String(e).slice(0,200); } if(TAB==='music') render(); else { var bd=document.querySelector('#tabs button[data-t=music] .n'); if(bd) bd.textContent=window.musicCount(); } }
+window.musicCount=function(){ if(!M) return ''; var d=M.filter(function(t){ return t.status==='downloaded'; }).length; return d+'/'+M.length; };
 
 function parseThemes(spec){ var out=[],warn=[]; String(spec||'').split(/[;|]/).forEach(function(p){ p=p.trim(); if(!p) return; var a=p.split('/'),c=a[0].trim(),s=(a[1]||'').trim();
   var cat=Object.keys(TAX).find(function(k){ return k.toLowerCase()===c.toLowerCase(); }); if(!cat){ warn.push('catégorie inconnue « '+c+' »'); return; }
