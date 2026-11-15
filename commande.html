@@ -217,7 +217,7 @@
         <div id="email-step">
           <p style="margin-top:0"><b>Quelle prestation souhaitez-vous commander ?</b></p>
           <div class="modes" id="fm">
-            <button type="button" data-f="ess"><b>Essentiel</b><small>Musique de notre sélection. Pas de choix de musique ni de réponses des invités.</small><span class="pr" data-p="0"></span></button>
+            <button type="button" data-f="ess"><b>Essentiel</b><small>Musique proposée par nos soins, que vous gardez ou remplacez. Sans réponses des invités.</small><span class="pr" data-p="0"></span></button>
             <button type="button" data-f="sig"><b>Signature</b><small>Votre musique, réponses des invités (présence, nombre de personnes) et page de suivi.</small><span class="pr" data-p="1"></span></button>
             <button type="button" data-f="pre" id="fm-pre" style="display:none"><b>Prestige</b><small>Tout Signature, et vos photos ou vidéos souvenir intégrées dans le modèle.</small><span class="pr" data-p="2"></span></button>
           </div>
@@ -494,7 +494,7 @@
       title:d.title, host_names:d.host_names || null, event_date:d.event_date, event_time:d.event_time || null, venue_name:d.venue_name || null, address:d.address || null, maps_url:d.maps_url || null,
       contact_name:d.contact_name || null, contact_phone:d.contact_phone || null, message:d.message || null, dress_code:d.dress_code || null, rsvp_enabled:d.rsvp_enabled !== false,
       invitation_programme:(d.programme || []).map((x, i) => ({ position:i + 1, time:x.time || null, title:x.title, description:x.description || null })),
-      music_tracks: (pv === 'ess') ? null : (musicUrl ? { url:musicUrl, title:musicTitle } : (blobUrl ? { url:blobUrl, title:'Votre musique' } : null)) };
+      music_tracks: (musicUrl ? { url:musicUrl, title:musicTitle } : (blobUrl ? { url:blobUrl, title:'Votre musique' } : null)) };
   }
   function startTimer(){
     clearInterval(tick); tEnd = Date.now() + 10 * 60 * 1000;
@@ -529,7 +529,7 @@
 
   const STD_DEMO = { boheme:'boheme/?i=boheme-demo', noel:'noel/?i=noel-demo', jeux:'jeux/?i=jeux-demo', 'gender-reveal':'gender-reveal/?i=gender-reveal-demo', galerie:'boheme/?i=boheme-demo' };
   const PRICES = { boheme:[29,59], galerie:[29,59,89], 'gender-reveal':[19,39], noel:[15,29], jeux:[15,29] };
-  const FNOTE = { ess:'Aperçu essentiel : musique de notre sélection, sans réponses des invités.', sig:'Aperçu signature : votre musique et les réponses des invités.', pre:'Aperçu signature : votre musique et les réponses des invités.' };
+  const FNOTE = { ess:'Aperçu essentiel : musique proposée (modifiable), sans réponses des invités.', sig:'Aperçu signature : avec les réponses des invités.', pre:'Aperçu prestige : avec les réponses des invités.' };
   function setPv(f){ pv = f; document.querySelectorAll('#fsw button').forEach(b => b.classList.toggle('on', b.dataset.f === f)); $('fsw-note').textContent = FNOTE[f]; }
   document.querySelectorAll('#fsw button').forEach(b => b.addEventListener('click', () => { if(!liveInv) return; setPv(b.dataset.f); liveInv = buildInv(collect()); setFull(false); setFrame(theme + '/?preview=' + Math.random().toString(36).slice(2, 8).toUpperCase() + '&live=1'); }));
   function reopenPreview(){ if(!liveInv) return; go(3); $('stage').style.display = ''; $('expired').style.display = 'none'; setFrame(theme + '/?preview=' + Math.random().toString(36).slice(2, 8).toUpperCase() + '&live=1'); }
