@@ -291,10 +291,14 @@
     return r.json();
   }
   function setFull(on){ $('phone').classList.toggle('full', !!on); document.body.classList.toggle('fs', !!on); }
+  // l'aperçu change d'adresse sans créer d'entrée dans l'historique (sinon le bouton « retour » ne fait que décharger l'aperçu)
+  function setFrame(u){ const f = $('frame'); try{ f.contentWindow.location.replace(u); }catch(_){ f.src = u; } }
+  let popping = false;   // vrai quand l'étape change à cause du bouton « retour » du téléphone
   function go(n){
     document.querySelectorAll('.panel').forEach(p => p.classList.toggle('on', p.id === 'p'+n));
     document.querySelectorAll('#steps span').forEach(s => s.classList.toggle('on', +s.dataset.s <= n));
-    if(n !== 3){ $('frame').src = 'about:blank'; setFull(false); }
+    if(n !== 3){ setFrame('about:blank'); setFull(false); }
+    if(!popping && n !== curStep){ try{ history.pushState({ step:n }, ''); }catch(_){} }
     curStep = n; if(window.moTrack) moTrack('step', { theme:theme, meta:{ n:n } });
     window.scrollTo({ top:0, behavior:'smooth' });
   }
@@ -489,7 +493,7 @@
   }
   function expire(){
     clearInterval(tick); tick = null; liveInv = null;
-    $('frame').src = 'about:blank';
+    setFrame('about:blank');
     if(blobUrl){ URL.revokeObjectURL(blobUrl); blobUrl = null; }
     clearMedia(); renderMedia(); $('form').reset(); musicPick = null; musicUrl = null; musicTitle = ''; musicUniv = null; musicSelNote(); renderMusic(); prog.textContent = ''; $('back-prev').style.display = 'none'; formule = null; document.querySelectorAll('#fm button').forEach(x => x.classList.remove('on')); setMode('express'); $('f-email').value = '';
     setFull(false); $('stage').style.display = 'none'; $('expired').style.display = 'block'; go(3);
@@ -517,8 +521,8 @@
   const PRICES = { boheme:[29,59], galerie:[29,59,89], 'gender-reveal':[19,39], noel:[15,29], jeux:[15,29] };
   const FNOTE = { ess:'Aperçu essentiel : musique de notre sélection, sans réponses des invités.', sig:'Aperçu signature : votre musique et les réponses des invités.', pre:'Aperçu signature : votre musique et les réponses des invités.' };
   function setPv(f){ pv = f; document.querySelectorAll('#fsw button').forEach(b => b.classList.toggle('on', b.dataset.f === f)); $('fsw-note').textContent = FNOTE[f]; }
-  document.querySelectorAll('#fsw button').forEach(b => b.addEventListener('click', () => { if(!liveInv) return; setPv(b.dataset.f); liveInv = buildInv(collect()); setFull(false); $('frame').src = theme + '/?preview=' + Math.random().toString(36).slice(2, 8).toUpperCase() + '&live=1'; }));
-  function reopenPreview(){ if(!liveInv) return; go(3); $('stage').style.display = ''; $('expired').style.display = 'none'; $('frame').src = theme + '/?preview=' + Math.random().toString(36).slice(2, 8).toUpperCase() + '&live=1'; }
+  document.querySelectorAll('#fsw button').forEach(b => b.addEventListener('click', () => { if(!liveInv) return; setPv(b.dataset.f); liveInv = buildInv(collect()); setFull(false); setFrame(theme + '/?preview=' + Math.random().toString(36).slice(2, 8).toUpperCase() + '&live=1'); }));
+  function reopenPreview(){ if(!liveInv) return; go(3); $('stage').style.display = ''; $('expired').style.display = 'none'; setFrame(theme + '/?preview=' + Math.random().toString(36).slice(2, 8).toUpperCase() + '&live=1'); }
   $('back-prev').addEventListener('click', reopenPreview); $('back3').addEventListener('click', reopenPreview);
   document.querySelectorAll('#fm button').forEach(b => b.addEventListener('click', () => { formule = b.dataset.f; if(window.moTrack) moTrack('formula_pick', { theme:theme, meta:{ f:formule } }); document.querySelectorAll('#fm button').forEach(x => x.classList.toggle('on', x === b)); $('fm-err').textContent = ''; payLabel(); }));
   function payLabel(){ const p = PRICES[theme]; $('make-code').textContent = 'Envoyer ma demande'; $('req-recap').innerHTML = '<b>Aucun paiement maintenant.</b> Nous examinons votre demande, puis vous recevez <b>sous quelques jours</b> un e-mail pour la valider et passer au paiement' + ((formule && p && p[{ess:0,sig:1,pre:2}[formule]]) ? ' (' + p[{ess:0,sig:1,pre:2}[formule]] + ' €).' : '.'); }
@@ -530,7 +534,7 @@
     $('expired').style.display = 'none'; $('stage').style.display = ''; go(3); startTimer(); setFull(false);
     $('demo-std').href = STD_DEMO[theme] || 'boheme/?i=boheme-demo';
     $('care3').style.display = mode === 'full' ? '' : 'none';
-    $('frame').src = theme + '/?preview=' + Math.random().toString(36).slice(2, 8).toUpperCase() + '&live=1';
+    setFrame(theme + '/?preview=' + Math.random().toString(36).slice(2, 8).toUpperCase() + '&live=1');
   }
   $('edit').addEventListener('click', () => go(2)); $('edit2').addEventListener('click', () => go(2)); $('edit3').addEventListener('click', () => go(2));
 
@@ -588,6 +592,12 @@
   // test utilisateur : état sauvegardé / restauré (étape, modèle, champs)
   let curStep = 1;
   const FIELDS = ['f-title','f-date','f-time','f-msg','f-host','f-venue','f-address','f-cname','f-cphone','f-dress','f-email'];
+  window.addEventListener('popstate', e => {
+    const n = (e.state && e.state.step) || 1; if(n === curStep) return;
+    popping = true;
+    try{ if(n === 3){ if(liveInv) reopenPreview(); else go(2); } else if(n === 4 && !formule && !$('p4')){ go(2); } else go(n); }catch(_){ go(1); }
+    finally{ popping = false; }
+  });
   window.moGetCtx = function(){
     const f = {}; FIELDS.forEach(id => { const e = $(id); if(e && e.value) f[id] = e.value; });
     return { theme:theme, step:curStep, fields:f, formule:formule, mode:mode, rsvp:$('f-rsvp') ? $('f-rsvp').checked : true };

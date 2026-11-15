@@ -570,13 +570,26 @@
       it.appendChild(t); box.appendChild(it);
     });
   }
+  // ---- bouton « retour » du téléphone : ferme d'abord le panneau favoris, puis l'univers, puis la collection ----
+  var layers = [], lastHash = location.hash;
+  function pushLayer(n){ try{ history.pushState({ mo:n }, ''); layers.push(n); }catch(_){} }
+  function dropLayer(n, fn){ if(layers.length && layers[layers.length - 1] === n){ history.back(); } else { var i = layers.lastIndexOf(n); if(i > -1) layers.splice(i, 1); fn(); } }
+  window.addEventListener('popstate', function(e){
+    if(!e.state && location.hash !== lastHash){ lastHash = location.hash; return; }   // simple ancre : on ne ferme rien
+    lastHash = location.hash;
+    var n = layers.pop(); if(!n) return;
+    if(n === 'favs' && window.__closeFavs) window.__closeFavs();
+    else if(n === 'world') closeWorld();
+    else if(n === 'in') goHome();
+  });
   (function(){
     var pnl = document.getElementById('favs');
     function set(o){ pnl.classList.toggle('open', o); pnl.setAttribute('aria-hidden', o ? 'false' : 'true'); if(o){ refreshFavs(); window.moTrack && moTrack('fav_panel', {}); } }
-    document.querySelectorAll('[data-favopen]').forEach(function(b){ b.addEventListener('click', function(){ set(true); }); });
-    pnl.querySelectorAll('[data-favclose]').forEach(function(b){ b.addEventListener('click', function(){ set(false); }); });
-    document.addEventListener('keydown', function(e){ if(e.key === 'Escape') set(false); });
-    window.__openFavs = function(){ set(true); };
+    document.querySelectorAll('[data-favopen]').forEach(function(b){ b.addEventListener('click', function(){ if(!pnl.classList.contains('open')){ set(true); pushLayer('favs'); } }); });
+    pnl.querySelectorAll('[data-favclose]').forEach(function(b){ b.addEventListener('click', function(){ dropLayer('favs', function(){ set(false); }); }); });
+    document.addEventListener('keydown', function(e){ if(e.key === 'Escape' && pnl.classList.contains('open')) dropLayer('favs', function(){ set(false); }); });
+    window.__openFavs = function(){ if(!pnl.classList.contains('open')){ set(true); pushLayer('favs'); } };
+    window.__closeFavs = function(){ set(false); };
   })();
 
   var curWorld = null;
@@ -587,7 +600,7 @@
     (instant ? function(_u, sw){ sw(); } : enterFx)(u, function(){
       world.innerHTML = ''; world.style.setProperty('--tint', u.tint);
       var top = document.createElement('div'); top.className = 'top';
-      var back = document.createElement('button'); back.type = 'button'; back.className = 'back'; back.textContent = '‹ Les univers'; back.addEventListener('click', closeWorld);
+      var back = document.createElement('button'); back.type = 'button'; back.className = 'back'; back.textContent = '‹ Les univers'; back.addEventListener('click', function(){ dropLayer('world', closeWorld); });
       var br = document.createElement('div'); br.className = 'eyebrow'; br.style.margin = '0'; br.textContent = 'Univers ' + u.n;
       top.appendChild(back); top.appendChild(br); var fb = document.createElement('button'); fb.type = 'button'; fb.className = 'favbtn'; fb.style.marginLeft = 'auto'; fb.innerHTML = '<svg class="hs" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5c-.3 0-.6-.1-.8-.3C6.2 16.6 3 13.6 3 9.9 3 7.2 5 5.2 7.5 5.2c1.7 0 3.3.9 4.5 2.5 1.2-1.6 2.8-2.5 4.5-2.5C19 5.2 21 7.2 21 9.9c0 3.7-3.2 6.7-8.2 10.3-.2.2-.5.3-.8.3z"/></svg>Favoris<span class="fn" data-favn>0</span>'; fb.addEventListener('click', function(){ window.__openFavs(); }); top.appendChild(fb); world.appendChild(top);
       var wrap = document.createElement('div'); wrap.className = 'wrap';
@@ -626,16 +639,16 @@
         wrap.appendChild(g1.el); wrap.appendChild(g2.el); wrap.appendChild(pricing(u)); world.appendChild(wrap);
         if(g1.tr) carousel(g1.tr, g1.dots, null); if(g2.tr) carousel(g2.tr, g2.dots, null);
       }
-      body.classList.add('inworld'); world.scrollTop = 0; refreshFavs();
+      body.classList.add('inworld'); world.scrollTop = 0; refreshFavs(); pushLayer('world'); try{ sessionStorage.setItem('mo_world', u.id); }catch(_){}
     });
   }
   function closeWorld(){
     var kind = reduce ? 'x' : 'fade';
-    var finish = function(){ body.classList.remove('inworld'); world.innerHTML = ''; if(lastBtn) try{ lastBtn.focus({ preventScroll:true }); }catch(_){} };
+    var finish = function(){ body.classList.remove('inworld'); world.innerHTML = ''; try{ sessionStorage.removeItem('mo_world'); }catch(_){} if(lastBtn) try{ lastBtn.focus({ preventScroll:true }); }catch(_){} };
     if(reduce){ finish(); return; }
     var o = world.animate([{ opacity:1 }, { opacity:0 }], { duration:350, fill:'forwards' }); o.onfinish = function(){ finish(); world.getAnimations().forEach(function(a){ a.cancel(); }); };
   }
-  document.addEventListener('keydown', function(e){ if(e.key === 'Escape' && body.classList.contains('inworld')) closeWorld(); });
+  document.addEventListener('keydown', function(e){ if(e.key === 'Escape' && body.classList.contains('inworld')) dropLayer('world', closeWorld); });
   function showSoon(btn){
     var n = btn.parentNode.querySelector('.count'); n.textContent = 'Les modèles arrivent bientôt'; btn.disabled = true; btn.textContent = 'Bientôt disponible';
   }
@@ -643,16 +656,20 @@
   // ---- entrée : le rideau se ferme, on arrive sur la collection, le rideau s'ouvre ----
   function enter(){
     try{ sessionStorage.setItem('entered','1'); }catch(_){}
-    if(reduce){ body.classList.add('in'); window.scrollTo(0,0); document.getElementById('modeles').scrollIntoView(); return; }
+    if(reduce){ body.classList.add('in'); pushLayer('in'); window.scrollTo(0,0); document.getElementById('modeles').scrollIntoView(); return; }
     portal('#efe1b8', function(){
-      body.classList.add('in'); document.documentElement.style.scrollBehavior = 'auto';
+      body.classList.add('in'); pushLayer('in'); document.documentElement.style.scrollBehavior = 'auto';
       document.getElementById('modeles').scrollIntoView(); document.documentElement.style.scrollBehavior = '';
     });
   }
   document.getElementById('ring').addEventListener('click', enter);
-  document.getElementById('home').addEventListener('click', function(){ try{ sessionStorage.removeItem('entered'); }catch(_){} body.classList.remove('in'); window.scrollTo(0,0); });
+  function goHome(){ try{ sessionStorage.removeItem('entered'); }catch(_){} body.classList.remove('in'); window.scrollTo(0,0); }
+  document.getElementById('home').addEventListener('click', function(){ dropLayer('in', goHome); });
   var already = false; try{ already = sessionStorage.getItem('entered') === '1'; }catch(_){}
   if(already || (location.hash && location.hash.length > 1)){ body.classList.add('in'); if(location.hash) setTimeout(function(){ var t = document.querySelector(location.hash); if(t) t.scrollIntoView(); }, 50); }
+
+  // retour depuis une autre page (commande, devis…) : on rouvre l'univers où l'on était
+  if(already && !window.MO_RESUME){ try{ var sw = sessionStorage.getItem('mo_world'); var su = sw && UNIVERS.filter(function(x){ return x.id === sw; })[0]; if(su) openWorld(su, null, true); }catch(_){} }
 
   // reprise d'un test utilisateur : on rouvre l'univers où le testeur s'était arrêté
   if(window.MO_RESUME){
