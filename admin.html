@@ -190,6 +190,8 @@ function rTests(){
     const ans=MS.filter(m=>t.res[m.id]).map(m=>{ const x=t.res[m.id]; return `<div class="m" style="margin:.2rem 0"><b>${esc(m.q)}</b><br>${m.type==='task'?esc({auto:'✓ réussi',manual:'déclaré terminé',giveup:'✗ abandon',skip:'passé'}[x.k]||x.k)+' · '+dur(x.ms)+(x.r?' · facilité '+x.r+'/5':''):(x.k==='skip'?'(passé)':esc(x.a))}</div>`; }).join('');
     return `<details class="card"><summary><b>${esc(name)}</b> ${t.done?'<span class="tag ok">terminé</span>':'<span class="tag">en cours</span>'}<span class="m"> · ${dev?esc(dev)+' · ':''}${fmt(t.at)} · ${nb}/${MS.length} missions · durée ${dur(new Date(t.last).getTime()-t0)}</span></summary><p class="m" style="margin:.6rem 0 .2rem"><b>Réponses</b></p>${ans||'<p class="m">–</p>'}<p class="m" style="margin:.8rem 0 .2rem"><b>Parcours détaillé</b></p>${path||'<p class="m">–</p>'}</details>`; }).join('');
   const nm=t=>esc((t.meta&&t.meta.name)||'anonyme');
+  const full=t=>{ const nb=MS.filter(m=>t.res[m.id]).length; return {nb,ok:!!t.done&&nb>=MS.length}; };
+  const badge=t=>{ const f=full(t); return f.ok?'<span class="tag ok">✓ Test complet</span>':`<span class="tag" style="color:var(--err)">⚠ Incomplet · ${f.nb}/${MS.length}</span>`; };
   const score=t=>{ const tk=MS.filter(m=>m.type==='task'), ok=tk.filter(m=>t.res[m.id]&&['auto','manual'].includes(t.res[m.id].k)).length, gu=tk.filter(m=>t.res[m.id]&&t.res[m.id].k==='giveup').length, rt=tk.map(m=>t.res[m.id]&&t.res[m.id].r).filter(Boolean); return {ok,gu,n:tk.length,pct:tk.length?Math.round(100*ok/tk.length):0,ease:rt.length?(rt.reduce((a,b)=>a+b,0)/rt.length):null}; };
   const tog=`<div class="acts" style="margin:.6rem 0">${[['mission','Par mission (moyennes)'],['tester','Par testeur']].map(v=>`<button class="${TVIEW===v[0]?'':'g'}" data-a="tview" data-i="${v[0]}">${v[1]}</button>`).join('')}</div>`;
   const H=t=>`<h3 style="font:400 1.2rem Italiana,serif;margin:1.2rem 0 .4rem">${t}</h3>`;
@@ -197,7 +199,7 @@ function rTests(){
   if(TVIEW==='tester'){
     const sel=T.findIndex((t,k)=>String(k)===String(TSEL));
     const list=T.map((t,k)=>{ const c=score(t), col=c.pct>=70?'#6c6':(c.pct>=40?'#e8c46a':'var(--err)'), on=k===sel;
-      return `<button class="card" data-a="tsel" data-i="${k}" style="display:block;width:100%;text-align:left;margin:.3rem 0;cursor:pointer;${on?'border-color:#e8d5a3;':''}"><div style="display:flex;justify-content:space-between;gap:.6rem;align-items:center"><b>${nm(t)}</b><b style="color:${col}">${c.pct} %</b></div><div style="height:6px;border-radius:3px;background:rgba(255,255,255,.12);margin:.4rem 0"><div style="height:6px;border-radius:3px;width:${c.pct}%;background:${col}"></div></div><div class="m">${c.ok}/${c.n} missions réussies · ${c.gu} abandon(s) · ${c.ease!=null?'facilité '+c.ease.toFixed(1)+'/5':'facilité –'} · ${t.done?'terminé':'en cours'} · ${fmt(t.at)}</div></button>`; }).join('');
+      return `<button class="card" data-a="tsel" data-i="${k}" style="display:block;width:100%;text-align:left;margin:.3rem 0;cursor:pointer;${on?'border-color:#e8d5a3;':''}"><div style="display:flex;justify-content:space-between;gap:.6rem;align-items:center"><span><b>${nm(t)}</b> ${badge(t)}</span><b style="color:${col}">${c.pct} %</b></div><div style="height:6px;border-radius:3px;background:rgba(255,255,255,.12);margin:.4rem 0"><div style="height:6px;border-radius:3px;width:${c.pct}%;background:${col}"></div></div><div class="m">${c.ok}/${c.n} missions réussies · ${c.gu} abandon(s) · ${c.ease!=null?'facilité '+c.ease.toFixed(1)+'/5':'facilité –'} · ${fmt(t.at)}</div></button>`; }).join('');
     let det='';
     if(sel>=0){ const t=T[sel], t0=new Date(t.at).getTime(), c=score(t), dev=(t.meta&&t.meta.dev)||'';
       const rowsT=MS.map((m,k)=>{ const x=t.res[m.id]; let r;
@@ -208,7 +210,7 @@ function rTests(){
         else r='« '+esc(String(x.a||''))+' »';
         return `<div style="padding:.5rem 0;border-bottom:1px solid rgba(255,255,255,.08)"><div class="m">${k+1}. ${esc(m.q)}</div><div style="margin-top:.2rem">${r}</div></div>`; }).join('');
       const path=t.path.map(e=>`<div class="m" style="margin:.1rem 0"><span style="opacity:.6">${dur(new Date(e.at).getTime()-t0)}</span> · ${esc((EVL[e.type]?EVL[e.type](e):e.type))}</div>`).join('');
-      det=H(nm(t))+`<p class="m">${dev?esc(dev)+' · ':''}${fmt(t.at)} · durée ${dur(new Date(t.last).getTime()-t0)} · ${c.ok}/${c.n} missions réussies</p><div class="card">${rowsT}</div><details class="card"><summary><b>Parcours détaillé</b></summary>${path||'<p class="m">–</p>'}</details>`; }
+      det=H(nm(t))+`<p style="margin:.2rem 0">${badge(t)}</p><p class="m">${dev?esc(dev)+' · ':''}${fmt(t.at)} · durée ${dur(new Date(t.last).getTime()-t0)} · ${c.ok}/${c.n} missions réussies</p><div class="card">${rowsT}</div><details class="card"><summary><b>Parcours détaillé</b></summary>${path||'<p class="m">–</p>'}</details>`; }
     else det='<p class="m" style="margin-top:.8rem">Touchez un testeur pour voir ses résultats.</p>';
     return bar+head+list+det; }
   return bar+head+H('Résultats par mission')+rows+H('Chaque testeur')+who;
