@@ -151,7 +151,7 @@
         <label for="f-msg">Message pour vos invités <i>(facultatif)</i></label>
         <textarea id="f-msg" maxlength="600"></textarea>
         <label id="l-music">Musique <i>(facultatif)</i></label>
-        <div class="mus-tabs" id="mus-tabs"><button type="button" data-m="lib" id="mus-tab-lib" style="display:none">Notre bibliothèque</button><button type="button" data-m="own" class="on" id="mus-tab-own">Ma musique</button></div>
+        <div class="mus-tabs" id="mus-tabs"><button type="button" data-m="lib" id="mus-tab-lib" >Notre bibliothèque</button><button type="button" data-m="own" class="on" id="mus-tab-own">Ma musique</button></div>
         <div id="mus-lib" style="display:none"><div id="mus-univ" class="mus-chips"></div><select id="mus-sub" aria-label="Ambiance"></select><div id="mus-list"></div><audio id="mus-aud" preload="none"></audio></div>
         <div id="mus-own"><label for="f-music" style="font-size:.9rem">Votre fichier audio <i>(15 Mo maximum)</i></label><input type="file" id="f-music" accept="audio/*"><p class="hint">Elle reste sur votre appareil et n'est utilisée que pour cet aperçu.</p></div>
         <p class="hint" id="mus-sel"></p>
@@ -363,6 +363,10 @@
   let formule = null, pv = 'sig', mode = 'express', liveInv = null, blobUrl = null, tEnd = 0, tick = null;
   // ---- musique : bibliothèque Maison Opaline (morceaux validés) ou fichier du client
   let musicList = [], musicPick = null, musicUrl = null, musicTitle = '', musicTab = 'own', pendingPick = null, musicUniv = null;
+  const MTAX = { 'Mariage':['Oriental princier','Bohème chic','Méditerranéen','Kabyle','Romantique','Champêtre','Moderne','Princier','Cinématographique','Féerique','Classique'],
+    'Anniversaire':['Enfant','Adulte','Girly chic','Pirate','Princesse','Jungle','Anniversaire surprise','Familial','Adulte chic','Adulte festif','Premier anniversaire'],
+    'Bébé':['Gender reveal','Baby shower','Annonce de grossesse','Naissance','Baptême','Premier anniversaire','Fête de bienvenue'],
+    'Réceptions':['Noël','Nouvel An','Soirée jeux','Soirée casino','Halloween','Garden-party','Soirée chic','Soirée à thème'] };
   const UNIV = { boheme:'Mariage', galerie:'Mariage', noel:'Réceptions', jeux:'Réceptions', 'gender-reveal':'Bébé' };
   const fmtD = s => s ? Math.floor(s / 60) + ':' + String(Math.round(s % 60)).padStart(2, '0') : '';
   function musicShown(){ const f = $('mus-sub') ? $('mus-sub').value : ''; return musicList.filter(t => !musicUniv || (t.themes || []).some(x => x.c === musicUniv && (!f || x.s === f))); }
@@ -370,23 +374,23 @@
   function musicSelNote(){ $('mus-sel').innerHTML = musicPick ? '✓ Musique choisie : <b></b> · <a href="#" id="mus-clear">Retirer</a>' : ''; if(musicPick){ $('mus-sel').querySelector('b').textContent = musicTitle; $('mus-clear').onclick = e => { e.preventDefault(); selectMusic(null); }; } }
   function selectMusic(t){ try{ $('mus-aud').pause(); }catch(_){} if(t){ musicPick = t.id; musicUrl = t.url; musicTitle = t.title; if(blobUrl){ URL.revokeObjectURL(blobUrl); blobUrl = null; } $('f-music').value = ''; } else { musicPick = null; musicUrl = null; musicTitle = ''; } musicSelNote(); renderMusic(); }
   function renderMusic(){
-    if(!theme) return; $('mus-tab-lib').style.display = musicList.length ? '' : 'none'; if(!musicList.length){ if(musicTab === 'lib') setMusicTab('own'); return; }
-    const univs = ['Mariage', 'Anniversaire', 'Bébé', 'Réceptions'].filter(c => musicList.some(t => (t.themes || []).some(x => x.c === c)));
-    if(musicUniv === null){ const u = UNIV[theme]; musicUniv = univs.indexOf(u) > -1 ? u : ''; }   // à l'ouverture : l'univers du modèle, mais toute la bibliothèque reste accessible
+    if(!theme) return;
+    const univs = Object.keys(MTAX);   // tous les univers sont affichés, même ceux qui sont encore vides
+    if(musicUniv === null){ const u = UNIV[theme]; musicUniv = (u && musicList.some(t => (t.themes || []).some(x => x.c === u))) ? u : ''; }   // à l'ouverture : l'univers du modèle s'il a des musiques
     $('mus-univ').innerHTML = ''; [['', 'Tout']].concat(univs.map(c => [c, c])).forEach(([v, l]) => { const b = document.createElement('button'); b.type = 'button'; b.textContent = l; b.className = musicUniv === v ? 'on' : ''; b.onclick = () => { musicUniv = v; $('mus-sub').value = ''; renderMusic(); }; $('mus-univ').appendChild(b); });
-    const subs = []; musicList.forEach(t => (t.themes || []).forEach(x => { if((!musicUniv || x.c === musicUniv) && x.s && subs.indexOf(x.s) < 0) subs.push(x.s); }));
-    const cur = $('mus-sub').value; $('mus-sub').style.display = musicUniv && subs.length ? '' : 'none'; $('mus-sub').innerHTML = '<option value="">Toutes les ambiances</option>' + subs.map(x => '<option>' + x + '</option>').join(''); $('mus-sub').value = subs.indexOf(cur) > -1 ? cur : '';
+    const subs = musicUniv ? MTAX[musicUniv] : [];   // sous-thèmes : facultatif
+    const cur = $('mus-sub').value; $('mus-sub').style.display = subs.length ? '' : 'none'; $('mus-sub').innerHTML = '<option value="">Tous les sous-thèmes (facultatif)</option>' + subs.map(x => '<option>' + x + '</option>').join(''); $('mus-sub').value = subs.indexOf(cur) > -1 ? cur : '';
     const L = musicShown(); const box = $('mus-list'); box.innerHTML = '';
     L.forEach(t => { const r = document.createElement('div'); r.className = 'mus-row' + (t.id === musicPick ? ' sel' : '');
       r.innerHTML = '<button type="button" class="pl" aria-label="Écouter">▶</button><div class="tx"><b></b><small></small></div><button type="button" class="ch"></button>';
       r.querySelector('b').textContent = t.title; r.querySelector('small').textContent = [t.mood, fmtD(t.duration)].filter(Boolean).join(' · '); r.querySelector('.ch').textContent = t.id === musicPick ? 'Choisie ✓' : 'Choisir';
       r.querySelector('.pl').onclick = () => { const a = $('mus-aud'), same = a.dataset.id === t.id && !a.paused; box.querySelectorAll('.pl').forEach(b => b.textContent = '▶'); if(same){ a.pause(); return; } a.dataset.id = t.id; a.src = t.url; a.play().catch(() => {}); r.querySelector('.pl').textContent = '❚❚'; a.onended = () => { r.querySelector('.pl').textContent = '▶'; }; };
       r.querySelector('.ch').onclick = () => selectMusic(t.id === musicPick ? null : t); box.appendChild(r); });
-    if(!L.length) box.innerHTML = '<p class="hint" style="padding:.7rem">Aucune musique dans cette sélection.</p>';
+    if(!L.length) box.innerHTML = '<p class="hint" style="padding:1rem;text-align:center">🎶 En construction<br>De nouvelles musiques arrivent bientôt dans cette sélection.<br>Vous pouvez aussi charger votre propre musique.</p>';
   }
   async function loadMusic(){ try{ const r = await rpc('list_music', {}); musicList = Array.isArray(r) ? r : []; }catch(_){ musicList = []; }
     if(pendingPick){ const t = musicList.find(x => x.id === pendingPick); pendingPick = null; if(t){ musicPick = t.id; musicUrl = t.url; musicTitle = t.title; musicSelNote(); } }
-    renderMusic(); }
+    musicUniv = null; renderMusic(); }
   document.querySelectorAll('#mus-tabs button').forEach(b => b.addEventListener('click', () => { setMusicTab(b.dataset.m); if(b.dataset.m === 'lib') renderMusic(); }));
   $('mus-sub').addEventListener('change', renderMusic);
   loadMusic();
