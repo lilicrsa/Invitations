@@ -164,6 +164,7 @@ function rMsgs(){ return DATA.msgs.map(m=>`<div class="card"><div class="top"><b
 async function copy(t){ try{ await navigator.clipboard.writeText(t); toast('Copié ✓'); }catch(_){ prompt('Copie ce lien :',t); } }
 document.addEventListener('change',async e=>{ const s=e.target.closest('select[data-s]'); if(!s) return;
   try{ await rpc('admin_set_status',{p_kind:s.dataset.s,p_id:s.dataset.i,p_status:s.value}); toast('Enregistré'); load(); }catch(_){ toast('Échec'); } });
+let TVIEW='mission';
 async function loadTests(){ TERR=''; try{ TESTS=await rpc('admin_tests',{}); }catch(e){ TESTS=null; TERR=String(e).slice(0,200); } if(TAB==='tests') render(); }
 const EVL={pageview:e=>'Page : '+(e.page||''),univers_open:e=>'Univers ouvert : '+(e.univers||''),video_play:e=>'Aperçu lancé : '+(e.theme||''),demo_open:e=>'Démo ouverte : '+(e.theme||''),theme_choose:e=>'Modèle choisi : '+(e.theme||''),fav_add:e=>'♥ Favori ajouté : '+(e.theme||''),fav_remove:e=>'Favori retiré : '+(e.theme||''),fav_panel:()=>'Liste des favoris ouverte',step:e=>'Étape '+((e.meta&&e.meta.n)||'?')+' de la commande',preview_open:()=>'Aperçu de l’invitation ouvert',formula_pick:e=>'Formule choisie : '+((e.meta&&e.meta.f)||''),request_sim:()=>'Demande envoyée (simulée)',pay_sim:()=>'Paiement simulé',tclick:e=>'Toucher : '+((e.meta&&e.meta.t)||'')};
 const med=a=>{ if(!a.length) return null; const b=[...a].sort((x,y)=>x-y), m=Math.floor(b.length/2); return b.length%2?b[m]:(b[m-1]+b[m])/2; };
@@ -188,7 +189,19 @@ function rTests(){
     const path=t.path.map(e=>`<div class="m" style="margin:.1rem 0"><span style="opacity:.6">${dur(new Date(e.at).getTime()-t0)}</span> · ${esc((EVL[e.type]?EVL[e.type](e):e.type))}</div>`).join('');
     const ans=MS.filter(m=>t.res[m.id]).map(m=>{ const x=t.res[m.id]; return `<div class="m" style="margin:.2rem 0"><b>${esc(m.q)}</b><br>${m.type==='task'?esc({auto:'✓ réussi',manual:'déclaré terminé',giveup:'✗ abandon',skip:'passé'}[x.k]||x.k)+' · '+dur(x.ms)+(x.r?' · facilité '+x.r+'/5':''):(x.k==='skip'?'(passé)':esc(x.a))}</div>`; }).join('');
     return `<details class="card"><summary><b>${esc(name)}</b> ${t.done?'<span class="tag ok">terminé</span>':'<span class="tag">en cours</span>'}<span class="m"> · ${dev?esc(dev)+' · ':''}${fmt(t.at)} · ${nb}/${MS.length} missions · durée ${dur(new Date(t.last).getTime()-t0)}</span></summary><p class="m" style="margin:.6rem 0 .2rem"><b>Réponses</b></p>${ans||'<p class="m">–</p>'}<p class="m" style="margin:.8rem 0 .2rem"><b>Parcours détaillé</b></p>${path||'<p class="m">–</p>'}</details>`; }).join('');
-  return bar+`<p class="m" style="margin:.4rem 0"><b>${T.length}</b> testeur(s) · <b>${T.filter(t=>t.done).length}</b> ont terminé</p><h3 style="font:400 1.2rem Italiana,serif;margin:1rem 0 .4rem">Résultats par mission</h3>`+rows+`<h3 style="font:400 1.2rem Italiana,serif;margin:1.2rem 0 .4rem">Chaque testeur</h3>`+who;
+  const cell=(t,m)=>{ const x=t.res[m.id]; if(!x) return '<span class="m">–</span>'; if(x.k==='skip') return '<span class="m">passé</span>';
+    if(m.type==='task'){ const ok=x.k==='auto'||x.k==='manual'; return (ok?'<b style="color:var(--ok,#6c6)">✓</b>':'<b style="color:var(--err)">✗</b>')+'<br><span class="m">'+dur(x.ms)+(x.r?' · '+x.r+'/5':'')+'</span>'; }
+    if(m.type==='choice'){ const g=m.correct?(x.c===1?'<b style="color:var(--ok,#6c6)">✓</b> ':'<b style="color:var(--err)">✗</b> '):''; return g+esc(x.a); }
+    return esc(String(x.a||'')).slice(0,60); };
+  const nm=t=>esc((t.meta&&t.meta.name)||'anonyme');
+  const sum=t=>{ const tk=MS.filter(m=>m.type==='task'&&t.res[m.id]), ok=tk.filter(m=>['auto','manual'].includes(t.res[m.id].k)).length, gu=tk.filter(m=>t.res[m.id].k==='giveup').length, rt=tk.map(m=>t.res[m.id].r).filter(Boolean); return `Missions réussies : <b>${ok}/${tk.length}</b> · Abandons : <b>${gu}</b> · Facilité moyenne : <b>${rt.length?(rt.reduce((a,b)=>a+b,0)/rt.length).toFixed(1)+' / 5':'–'}</b>`; };
+  const matrix=`<div style="overflow-x:auto;margin:.4rem 0"><table style="border-collapse:collapse;font-size:.82rem;min-width:100%"><thead><tr><th style="text-align:left;padding:.4rem;border-bottom:1px solid var(--line,#333)">Mission</th>${T.map(t=>`<th style="padding:.4rem;border-bottom:1px solid var(--line,#333)">${nm(t)}</th>`).join('')}</tr></thead><tbody>${MS.map((m,i)=>`<tr><td style="padding:.4rem;border-bottom:1px solid var(--line,#333);max-width:220px">${i+1}. ${esc(m.q)}</td>${T.map(t=>`<td style="padding:.4rem;border-bottom:1px solid var(--line,#333);text-align:center">${cell(t,m)}</td>`).join('')}</tr>`).join('')}<tr><td style="padding:.4rem"><b>Bilan</b></td>${T.map(t=>`<td style="padding:.4rem;text-align:center;font-size:.75rem">${sum(t)}</td>`).join('')}</tr></tbody></table></div>`;
+  const whoS=T.map(t=>`<div class="m" style="margin:.2rem 0"><b>${nm(t)}</b> · ${sum(t)}</div>`).join('');
+  const tog=`<div class="acts" style="margin:.6rem 0">${[['mission','Par mission (moyennes)'],['tester','Par testeur']].map(v=>`<button class="${TVIEW===v[0]?'':'g'}" data-a="tview" data-i="${v[0]}">${v[1]}</button>`).join('')}</div>`;
+  const H=t=>`<h3 style="font:400 1.2rem Italiana,serif;margin:1.2rem 0 .4rem">${t}</h3>`;
+  const head=`<p class="m" style="margin:.4rem 0"><b>${T.length}</b> testeur(s) · <b>${T.filter(t=>t.done).length}</b> ont terminé</p>`+tog;
+  if(TVIEW==='tester') return bar+head+H('Comparatif testeur par testeur')+matrix+H('Détail de chaque testeur')+whoS+who;
+  return bar+head+H('Résultats par mission')+rows+H('Chaque testeur')+who;
 }
 const TNAME={galerie:'Galerie Bohème',boheme:'Bohème doré','gender-reveal':'Gender reveal',jeux:'Soirée Jeux',noel:'Étoile de Noël',opaline:'Opaline',lettre:'Lettre & cachet'};
 const UNAME={mariage:'Mariage',bebe:'Bébé',anniversaire:'Anniversaire',fetes:'Réceptions'};
@@ -209,6 +222,7 @@ function rStats(){
 }
 async function act(a,id,btn){
     if(a==='treload'){ TESTS=null; TERR=''; return render(); }
+    if(a==='tview'){ TVIEW=id; render(); return; }
     if(a==='tcopy'){ try{ await navigator.clipboard.writeText('https://maisonopaline-invitations.fr/?test=1'); toast('Lien copié'); }catch(_){ toast('Copie impossible'); } return; }
     if(a==='tpurge'){ if(!confirm('Effacer toutes les données de test (réponses et parcours) ? Les vraies statistiques ne sont pas touchées.')) return; try{ const n=await rpc('admin_tests_purge',{}); toast(n+' ligne(s) effacée(s)'); }catch(e){ toast('Échec'); } TESTS=null; return render(); }
     if(a==='sdays'){ STATD=Number(id); STATS=null; STATERR=''; return render(); }
