@@ -644,7 +644,7 @@
 
   // ---- reprise d'un brouillon (?d=CODE ou navigateur)
   (async function resume(){
-    const qs = new URLSearchParams(location.search), u = qs.get('d'), tq = qs.get('t'); if(tq && THEMES[tq] && !u){ pick(tq); return; } const c = u || code; if(!c) return;
+    const qs = new URLSearchParams(location.search), u = qs.get('d'), tq = qs.get('t'); if(tq && THEMES[tq] && !u){ popping = true; try{ pick(tq); history.replaceState({ step:2 }, ''); } finally { popping = false; } return; }   // arrivée depuis un modèle : « retour » ramène à la page d'où l'on vient const c = u || code; if(!c) return;
     try{
       const r = await rpc('get_draft', { p_code:c }); if(!r || !THEMES[r.theme]) return;
       code = c; theme = r.theme; fill(r.data, r.email); setMode('full'); pick(r.theme, true); $('email-step').style.display = 'none'; $('code-area').style.display = ''; $('code-box').textContent = code;
