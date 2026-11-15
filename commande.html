@@ -70,6 +70,7 @@
   .mslot .rm{ position:absolute; right:6px; top:6px; width:26px; height:26px; border-radius:50%; border:0; background:rgba(10,14,29,.85); color:#E6D5AB; font-size:14px; cursor:pointer; line-height:1; }
   .mslot input{ display:none; }
   .mus-tabs{ display:flex; gap:.4rem; margin:.3rem 0 .6rem; } .mus-tabs button{ flex:1; border:1px solid var(--or,#b08a3e); background:transparent; color:inherit; border-radius:999px; padding:.5rem .6rem; font:inherit; cursor:pointer; } .mus-tabs button.on{ background:var(--or,#b08a3e); color:#fff; }
+  .mus-chips{ display:flex; flex-wrap:wrap; gap:.35rem; margin-bottom:.5rem; } .mus-chips button{ border:1px solid rgba(176,138,62,.7); background:transparent; color:inherit; border-radius:999px; padding:.3rem .8rem; font:inherit; font-size:.85rem; cursor:pointer; } .mus-chips button.on{ background:var(--or,#b08a3e); color:#fff; }
   #mus-sub{ width:100%; padding:.65rem .8rem; border-radius:12px; background:rgba(255,255,255,.05); color:inherit; border:1px solid rgba(176,138,62,.6); font:inherit; } #mus-sub option{ color:#222; }
   #mus-list{ max-height:260px; overflow:auto; border:1px solid rgba(0,0,0,.12); border-radius:12px; margin-top:.5rem; } .mus-row{ display:flex; align-items:center; gap:.6rem; padding:.55rem .7rem; border-bottom:1px solid rgba(0,0,0,.08); } .mus-row:last-child{ border-bottom:0; } .mus-row.sel{ background:rgba(176,138,62,.14); } .mus-row .pl{ flex:0 0 36px; height:36px; border-radius:50%; border:1px solid var(--or,#b08a3e); background:#fff; color:#6e1b2f; cursor:pointer; font-size:14px; } .mus-row .tx{ flex:1; min-width:0; line-height:1.25; } .mus-row .tx b{ display:block; font-weight:600; } .mus-row .tx small{ color:var(--brume); } .mus-row .ch{ flex:0 0 auto; border:1px solid #6e1b2f; background:transparent; color:#6e1b2f; border-radius:999px; padding:.3rem .8rem; font:inherit; font-size:.85rem; cursor:pointer; } .mus-row.sel .ch{ background:#6e1b2f; color:#fff; }
   .hint{ font-size:.82rem; color:var(--brume); margin:.3rem 0 0; }
@@ -151,7 +152,7 @@
         <textarea id="f-msg" maxlength="600"></textarea>
         <label id="l-music">Musique <i>(facultatif)</i></label>
         <div class="mus-tabs" id="mus-tabs"><button type="button" data-m="lib" id="mus-tab-lib" style="display:none">Notre bibliothèque</button><button type="button" data-m="own" class="on" id="mus-tab-own">Ma musique</button></div>
-        <div id="mus-lib" style="display:none"><select id="mus-sub" aria-label="Ambiance"></select><div id="mus-list"></div><audio id="mus-aud" preload="none"></audio></div>
+        <div id="mus-lib" style="display:none"><div id="mus-univ" class="mus-chips"></div><select id="mus-sub" aria-label="Ambiance"></select><div id="mus-list"></div><audio id="mus-aud" preload="none"></audio></div>
         <div id="mus-own"><label for="f-music" style="font-size:.9rem">Votre fichier audio <i>(15 Mo maximum)</i></label><input type="file" id="f-music" accept="audio/*"><p class="hint">Elle reste sur votre appareil et n'est utilisée que pour cet aperçu.</p></div>
         <p class="hint" id="mus-sel"></p>
         <div id="media-box" style="display:none">
@@ -313,7 +314,7 @@
     b.addEventListener('click', () => { if(window.moTrack) moTrack('theme_choose', { theme:k, meta:{ from:'commande' } }); pick(k); }); list.appendChild(b);
   });
   function pick(k, keepValues){
-    theme = k; const t = THEMES[k]; if(typeof renderMusic === 'function' && typeof musicList !== 'undefined') setTimeout(renderMusic, 0);
+    theme = k; const t = THEMES[k]; if(typeof renderMusic === 'function' && typeof musicList !== 'undefined'){ musicUniv = null; setTimeout(renderMusic, 0); }
     $('chosen-img').src = t.img + '?v=3'; $('chosen-name').textContent = t.name;
     $('l-title').textContent = t.titleLabel; $('h-title').textContent = t.titleHint;
     if(!keepValues){ if(!$('f-title').value || Object.values(THEMES).some(x => x.title === $('f-title').value)) $('f-title').value = t.title; }
@@ -361,18 +362,20 @@
   // ---- aperçu généré sur place : rien n'est enregistré, tout est effacé après 10 minutes
   let formule = null, pv = 'sig', mode = 'express', liveInv = null, blobUrl = null, tEnd = 0, tick = null;
   // ---- musique : bibliothèque Maison Opaline (morceaux validés) ou fichier du client
-  let musicList = [], musicPick = null, musicUrl = null, musicTitle = '', musicTab = 'own', pendingPick = null;
+  let musicList = [], musicPick = null, musicUrl = null, musicTitle = '', musicTab = 'own', pendingPick = null, musicUniv = null;
   const UNIV = { boheme:'Mariage', galerie:'Mariage', noel:'Réceptions', jeux:'Réceptions', 'gender-reveal':'Bébé' };
   const fmtD = s => s ? Math.floor(s / 60) + ':' + String(Math.round(s % 60)).padStart(2, '0') : '';
-  function musicShown(){ const u = UNIV[theme], f = $('mus-sub') ? $('mus-sub').value : ''; return musicList.filter(t => f === '*' || (t.themes || []).some(x => x.c === u && (!f || x.s === f))); }
+  function musicShown(){ const f = $('mus-sub') ? $('mus-sub').value : ''; return musicList.filter(t => !musicUniv || (t.themes || []).some(x => x.c === musicUniv && (!f || x.s === f))); }
   function setMusicTab(m){ musicTab = m; $('mus-tab-lib').classList.toggle('on', m === 'lib'); $('mus-tab-own').classList.toggle('on', m === 'own'); $('mus-lib').style.display = m === 'lib' ? '' : 'none'; $('mus-own').style.display = m === 'own' ? '' : 'none'; if(m !== 'lib'){ try{ $('mus-aud').pause(); }catch(_){} } }
   function musicSelNote(){ $('mus-sel').innerHTML = musicPick ? '✓ Musique choisie : <b></b> · <a href="#" id="mus-clear">Retirer</a>' : ''; if(musicPick){ $('mus-sel').querySelector('b').textContent = musicTitle; $('mus-clear').onclick = e => { e.preventDefault(); selectMusic(null); }; } }
   function selectMusic(t){ try{ $('mus-aud').pause(); }catch(_){} if(t){ musicPick = t.id; musicUrl = t.url; musicTitle = t.title; if(blobUrl){ URL.revokeObjectURL(blobUrl); blobUrl = null; } $('f-music').value = ''; } else { musicPick = null; musicUrl = null; musicTitle = ''; } musicSelNote(); renderMusic(); }
   function renderMusic(){
-    if(!theme) return; const u = UNIV[theme], mine = musicList.filter(t => (t.themes || []).some(x => x.c === u));
-    $('mus-tab-lib').style.display = musicList.length ? '' : 'none'; if(!musicList.length){ if(musicTab === 'lib') setMusicTab('own'); return; }
-    const subs = []; mine.forEach(t => (t.themes || []).forEach(x => { if(x.c === u && x.s && subs.indexOf(x.s) < 0) subs.push(x.s); }));
-    const cur = $('mus-sub').value; $('mus-sub').innerHTML = '<option value="">' + (mine.length ? 'Toutes les musiques ' + (u ? '« ' + u + ' »' : '') : 'Aucune musique pour cet univers') + '</option>' + subs.map(s => '<option>' + s + '</option>').join('') + '<option value="*">Toute la bibliothèque</option>'; $('mus-sub').value = [...$('mus-sub').options].some(o => o.value === cur) ? cur : (mine.length ? '' : '*');
+    if(!theme) return; $('mus-tab-lib').style.display = musicList.length ? '' : 'none'; if(!musicList.length){ if(musicTab === 'lib') setMusicTab('own'); return; }
+    const univs = ['Mariage', 'Anniversaire', 'Bébé', 'Réceptions'].filter(c => musicList.some(t => (t.themes || []).some(x => x.c === c)));
+    if(musicUniv === null){ const u = UNIV[theme]; musicUniv = univs.indexOf(u) > -1 ? u : ''; }   // à l'ouverture : l'univers du modèle, mais toute la bibliothèque reste accessible
+    $('mus-univ').innerHTML = ''; [['', 'Tout']].concat(univs.map(c => [c, c])).forEach(([v, l]) => { const b = document.createElement('button'); b.type = 'button'; b.textContent = l; b.className = musicUniv === v ? 'on' : ''; b.onclick = () => { musicUniv = v; $('mus-sub').value = ''; renderMusic(); }; $('mus-univ').appendChild(b); });
+    const subs = []; musicList.forEach(t => (t.themes || []).forEach(x => { if((!musicUniv || x.c === musicUniv) && x.s && subs.indexOf(x.s) < 0) subs.push(x.s); }));
+    const cur = $('mus-sub').value; $('mus-sub').style.display = musicUniv && subs.length ? '' : 'none'; $('mus-sub').innerHTML = '<option value="">Toutes les ambiances</option>' + subs.map(x => '<option>' + x + '</option>').join(''); $('mus-sub').value = subs.indexOf(cur) > -1 ? cur : '';
     const L = musicShown(); const box = $('mus-list'); box.innerHTML = '';
     L.forEach(t => { const r = document.createElement('div'); r.className = 'mus-row' + (t.id === musicPick ? ' sel' : '');
       r.innerHTML = '<button type="button" class="pl" aria-label="Écouter">▶</button><div class="tx"><b></b><small></small></div><button type="button" class="ch"></button>';
@@ -484,7 +487,7 @@
     clearInterval(tick); tick = null; liveInv = null;
     $('frame').src = 'about:blank';
     if(blobUrl){ URL.revokeObjectURL(blobUrl); blobUrl = null; }
-    clearMedia(); renderMedia(); $('form').reset(); musicPick = null; musicUrl = null; musicTitle = ''; musicSelNote(); renderMusic(); prog.textContent = ''; $('back-prev').style.display = 'none'; formule = null; document.querySelectorAll('#fm button').forEach(x => x.classList.remove('on')); setMode('express'); $('f-email').value = '';
+    clearMedia(); renderMedia(); $('form').reset(); musicPick = null; musicUrl = null; musicTitle = ''; musicUniv = null; musicSelNote(); renderMusic(); prog.textContent = ''; $('back-prev').style.display = 'none'; formule = null; document.querySelectorAll('#fm button').forEach(x => x.classList.remove('on')); setMode('express'); $('f-email').value = '';
     setFull(false); $('stage').style.display = 'none'; $('expired').style.display = 'block'; go(3);
   }
   $('fs-close').addEventListener('click', () => setFull(false)); $('refull').addEventListener('click', () => setFull(true));
