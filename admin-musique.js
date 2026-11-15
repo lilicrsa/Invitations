@@ -15,14 +15,23 @@ var save=function(id,patch){ patch.updated_at=new Date().toISOString(); return a
 async function loadM(){ MERR=''; try{ M=await get('music_library?select=*&order=created_at.desc&limit=2000'); }catch(e){ M=null; MERR=String(e).slice(0,200); } if(TAB==='music') render(); else { var bd=document.querySelector('#tabs button[data-t=music] .n'); if(bd) bd.textContent=window.musicCount(); } }
 window.musicCount=function(){ if(!M) return ''; var d=M.filter(function(t){ return t.status==='downloaded'; }).length; return d+'/'+M.length; };
 
+function fold(x){ return String(x||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim(); }
 function parseThemes(spec){ var out=[],warn=[]; String(spec||'').split(/[;|]/).forEach(function(p){ p=p.trim(); if(!p) return; var a=p.split('/'),c=a[0].trim(),s=(a[1]||'').trim();
-  var cat=Object.keys(TAX).find(function(k){ return k.toLowerCase()===c.toLowerCase(); }); if(!cat){ warn.push('catégorie inconnue « '+c+' »'); return; }
-  if(!s){ out.push({c:cat,s:''}); return; } var sub=TAX[cat].find(function(x){ return x.toLowerCase()===s.toLowerCase(); }); if(!sub){ warn.push('sous-thème inconnu « '+s+' » dans '+cat); return; } out.push({c:cat,s:sub}); }); return {out:out,warn:warn}; }
+  var cat=Object.keys(TAX).find(function(k){ return fold(k)===fold(c); });
+  if(!cat){ // un nom de sous-thème seul : on le retrouve dans n'importe quelle catégorie
+    var f=null; Object.keys(TAX).forEach(function(k){ TAX[k].forEach(function(x){ if(!f&&fold(x)===fold(c)) f={c:k,s:x}; }); }); if(f){ if(!out.some(function(y){ return y.c===f.c&&y.s===f.s; })) out.push(f); return; }
+    warn.push('catégorie ou sous-thème inconnu « '+c+' »'); return; }
+  if(!s){ out.push({c:cat,s:''}); return; } var sub=TAX[cat].find(function(x){ return fold(x)===fold(s); }); if(!sub){ warn.push('sous-thème inconnu « '+s+' » dans '+cat); return; } if(!out.some(function(y){ return y.c===cat&&y.s===sub; })) out.push({c:cat,s:sub}); }); return {out:out,warn:warn}; }
 function parseCSV(text){ var rows=[],row=[],cur='',q=false; for(var i=0;i<text.length;i++){ var ch=text[i]; if(q){ if(ch==='"'&&text[i+1]==='"'){cur+='"';i++;} else if(ch==='"') q=false; else cur+=ch; } else if(ch==='"') q=true; else if(ch===','||ch===';'&&false){ row.push(cur);cur=''; } else if(ch==='\n'){ row.push(cur);rows.push(row);row=[];cur=''; } else if(ch!=='\r') cur+=ch; } if(cur||row.length){ row.push(cur); rows.push(row); } return rows; }
+function TAXHAS(cat,sub){ var k=Object.keys(TAX).find(function(x){ return fold(x)===fold(cat); }); return !!k&&TAX[k].some(function(x){ return fold(x)===fold(sub); }); }
 function parseList(text, defThemes){
   text=text.trim(); var items=[];
   if(/^[\[{]/.test(text)){ var j=JSON.parse(text); j=Array.isArray(j)?j:(j.tracks||[j]); j.forEach(function(d){ items.push(typeof d==='string'?{url:d}:d); }); }
-  else if(/^url\s*,/i.test(text.split('\n')[0])){ var r=parseCSV(text), h=r[0].map(function(x){ return x.trim().toLowerCase(); }); r.slice(1).forEach(function(c){ var o={}; h.forEach(function(k,i){ o[k]=(c[i]||'').trim(); }); items.push(o); }); }
+  else if(/,/.test(text.split('\n')[0])&&/url|lien/i.test(text.split('\n')[0])&&!/^https?:/i.test(text)){ var r=parseCSV(text), h=r[0].map(function(x){ return fold(x).replace(/^\ufeff/,''); });
+    r.slice(1).forEach(function(c){ if(c.join('').trim()==='') return; var o={}; h.forEach(function(k,i){ o[k]=(c[i]||'').trim(); });
+      var u=o.url||o.url_pixabay||o.lien||''; var th=[]; ['sous_themes_associes','sous_themes','themes','theme'].forEach(function(k){ if(o[k]) th.push(o[k].replace(/\|/g,';').split(';').map(function(z){ return z.trim(); }).filter(Boolean).map(function(z){ return (o.categorie&&TAXHAS(o.categorie,z))?o.categorie+'/'+z:z; }).join(';')); });
+      if(!th.length&&o.categorie) th.push(o.sous_theme?o.categorie+'/'+o.sous_theme:o.categorie);
+      items.push({url:u,title:o.titre||o.title,author:o.artiste||o.author||o.auteur,mood:o.ambiance||o.mood,themes:th.join(';')}); }); }
   else text.split('\n').forEach(function(l){ l=l.trim(); if(!l||l[0]==='#') return; var p=l.split(/\s*;\s*/); items.push({url:p[0],themes:p.slice(1).join(';')}); });
   var good=[],problems=[];
   items.forEach(function(it){ var url=String(it.url||it.lien||''), m=PX.exec(url); if(!m){ problems.push('Lien non reconnu (attendu : pixabay.com/music/…-numéro/) : '+url.slice(0,70)); return; }
