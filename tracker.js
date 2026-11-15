@@ -73,6 +73,6 @@
       var lab = t ? String(t.getAttribute('aria-label') || t.innerText || t.id || t.tagName).replace(/\s+/g, ' ').trim().slice(0, 40) : '(zone sans lien)';
       window.moTrack('tclick', { meta:{ t:lab } });
     }, true);
-    [ 'test-missions.js?v=6', 'testeur.js?v=5' ].forEach(function(src){ var s = document.createElement('script'); s.src = src; s.async = false; document.head.appendChild(s); });
+    [ 'test-missions.js?v=3', 'testeur.js?v=5' ].forEach(function(src){ var s = document.createElement('script'); s.src = src; s.async = false; document.head.appendChild(s); });
   }
 })();
