@@ -570,7 +570,7 @@
       var b = document.createElement('b'); b.textContent = m.n; var sm = document.createElement('small'); sm.textContent = m.occ; t.appendChild(b); t.appendChild(sm);
       var ac = document.createElement('div'); ac.className = 'a';
       var d = document.createElement('a'); d.className = 'btn'; d.href = m.demo; d.target = '_blank'; d.rel = 'noopener'; d.textContent = 'Voir la démo'; d.addEventListener('click', function(){ window.moTrack && moTrack('demo_open', { theme:k, univers:universOf(k), meta:{ from:'fav' } }); });
-      var c = document.createElement('a'); c.className = 'btn solid'; c.href = 'commande.html?t=' + encodeURIComponent(k) + (m.prestige ? '&f=pre' : ''); c.textContent = m.prestige ? 'Choisir' : 'Personnaliser'; c.addEventListener('click', function(){ window.moTrack && moTrack('theme_choose', { theme:k, univers:universOf(k), meta:{ from:'fav' } }); });
+      var c = document.createElement('a'); c.className = 'btn solid'; c.href = 'commande.html?t=' + encodeURIComponent(k) + (m.prestige ? '&f=pre' : ''); c.textContent = 'Personnaliser'; c.addEventListener('click', function(){ window.moTrack && moTrack('theme_choose', { theme:k, univers:universOf(k), meta:{ from:'fav' } }); });
       ac.appendChild(d); ac.appendChild(c); t.appendChild(ac);
       var r = document.createElement('button'); r.type = 'button'; r.className = 'rm'; r.textContent = 'Retirer'; r.addEventListener('click', function(){ toggleFav(k); }); t.appendChild(r);
       it.appendChild(t); box.appendChild(it);
@@ -628,7 +628,7 @@
           var a = document.createElement('div'); a.className = 'acts';
           var d = document.createElement('a'); d.className = 'btn'; d.href = m.demo; d.target = '_blank'; d.rel = 'noopener'; d.textContent = 'Voir la démo'; d.addEventListener('click', function(){ window.moTrack && moTrack('demo_open', { theme:k, univers:u.id }); });
           var c = document.createElement('a'); c.className = 'btn solid'; c.addEventListener('click', function(){ window.moTrack && moTrack('theme_choose', { theme:k, univers:u.id }); });
-          if(prestige){ c.href = 'commande.html?t=' + encodeURIComponent(k) + '&f=pre'; c.textContent = 'Choisir ce modèle'; } else { c.href = 'commande.html?t=' + encodeURIComponent(k); c.textContent = 'Personnaliser'; }
+          if(prestige){ c.href = 'commande.html?t=' + encodeURIComponent(k) + '&f=pre'; c.textContent = 'Personnaliser'; } else { c.href = 'commande.html?t=' + encodeURIComponent(k); c.textContent = 'Personnaliser'; }
           a.appendChild(d); a.appendChild(c); f.appendChild(a); tr.appendChild(f);
         });
         car.appendChild(tr); car.appendChild(dots); sec.appendChild(car);
