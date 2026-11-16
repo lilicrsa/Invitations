@@ -13,6 +13,13 @@
 button,a.btn{ font:600 .95rem 'Manrope',sans-serif; padding:.7rem 1.3rem; border-radius:999px; border:1px solid var(--champ); background:var(--champ); color:var(--nuit); cursor:pointer; text-decoration:none; display:inline-block; }
 a.btn.g{ background:transparent; color:var(--champ); }
 .note{ border-left:3px solid var(--champ2); padding:.2rem 0 .2rem .9rem; color:#d9d3c4; margin:1rem 0; }
+
+#ok-ov{ position:fixed; inset:0; z-index:100; background:rgba(5,7,15,.82); display:none; align-items:center; justify-content:center; padding:1rem; overflow:auto; }
+#ok-ov.on{ display:flex; }
+#ok-box{ background:#11162a; border:1px solid var(--champ); border-radius:20px; max-width:34rem; width:100%; padding:1.4rem 1.3rem; margin:auto; box-shadow:0 20px 60px rgba(0,0,0,.6); }
+#ok-box h2{ font:400 1.7rem Italiana,serif; color:var(--champ); margin:.2rem 0 .3rem; }
+#ok-box .tick{ width:3rem; height:3rem; border-radius:50%; background:#7fd6a0; color:#0A0E1D; font-size:1.7rem; display:flex; align-items:center; justify-content:center; margin:0 auto .6rem; font-weight:700; }
+#ok-box .row{ display:flex; gap:.6rem; flex-wrap:wrap; margin-top:1rem; }
 </style></head><body><div class="wrap">
 <h1 id="h">Un instant…</h1>
 <p id="p" style="color:var(--brume)">Nous vérifions votre paiement.</p>
@@ -25,6 +32,15 @@ a.btn.g{ background:transparent; color:var(--champ); }
 </div>
 <footer class="lg"><a href="./">Accueil</a><a href="cgv.html">CGV</a><a href="contact.html">Contact</a></footer>
 </div>
+<div id="ok-ov" role="dialog" aria-modal="true" aria-labelledby="ok-h"><div id="ok-box">
+  <div class="tick">✓</div><h2 id="ok-h" style="text-align:center">Paiement réussi</h2>
+  <p style="text-align:center;color:var(--brume);margin:.2rem 0 .8rem">Merci ! Votre invitation est publiée.</p>
+  <div class="box"><b>Lien de votre invitation</b><small>À envoyer à vos invités.</small><div class="lk"><input id="m1" readonly><button data-c="m1">Copier</button></div></div>
+  <div class="box" id="mb2"><b>Lien de suivi des réponses</b><small>À garder pour vous : il donne accès aux réponses de vos invités.</small><div class="lk"><input id="m2" readonly><button data-c="m2">Copier</button></div></div>
+  <p class="note" id="ok-mail" style="margin:.8rem 0"></p>
+  <div class="row"><button id="pdf-btn" type="button">Télécharger en PDF</button><button id="ok-close" type="button" class="g" style="background:transparent;color:var(--champ)">Fermer</button></div>
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="tracker.js?v=5"></script>
 <script>
 const SB='https://sgatagagyfizuyrinmth.supabase.co', KEY='sb_publishable_YdlXEbQn9ZqILsjT6pyAug_ijgzm5fQ';
@@ -41,11 +57,29 @@ async function poll(n){
     if(j.formula==='sig'||j.formula==='pre'){ $('l2').value=rep; $('v2').href=rep; } else { $('b2').style.display='none'; }
     $('mailnote').textContent = j.email_sent ? 'Ces liens vous ont aussi été envoyés par e-mail à '+j.email+'. Pensez à regarder vos courriers indésirables.' : 'Copiez dès maintenant ces liens : gardez-les précieusement.';
     if(j.order_ref){ $('oref').textContent=j.order_ref; $('claim').href='contact.html?c='+encodeURIComponent(j.order_ref); }
-    $('res').style.display='block'; return;
+    $('res').style.display='block';
+    const hasRep=(j.formula==='sig'||j.formula==='pre'); window.__L={inv,rep:hasRep?rep:null,ref:j.order_ref,email:j.email,sent:!!j.email_sent};
+    $('m1').value=inv; if(hasRep){ $('m2').value=rep; } else { $('mb2').style.display='none'; }
+    $('ok-mail').textContent = j.email_sent ? 'Un e-mail contenant ces liens a aussi été envoyé à '+j.email+'. Pensez à regarder vos courriers indésirables.' : 'Copiez et gardez bien ces liens. Un e-mail avec ces liens est envoyé à '+(j.email||'votre adresse de contact')+'.';
+    $('ok-ov').classList.add('on'); return;
   }
   if(j && (j.status==='failed')){ $('h').textContent='Un souci est survenu'; $('p').innerHTML='Votre paiement a été reçu mais la publication a échoué. <a href="contact.html">Écrivez-nous</a>, nous nous en occupons tout de suite.'; return; }
   if(n<30){ setTimeout(()=>poll(n+1),2000); } else { $('h').textContent='Paiement en cours de confirmation'; $('p').innerHTML='Cela prend plus de temps que prévu. Rechargez cette page dans une minute, ou <a href="contact.html">écrivez-nous</a>.'; }
 }
 document.addEventListener('click',async e=>{ const b=e.target.closest('[data-c]'); if(!b) return; const i=$(b.dataset.c); i.select(); try{ await navigator.clipboard.writeText(i.value); b.textContent='Copié ✓'; }catch(_){ document.execCommand('copy'); b.textContent='Copié ✓'; } });
+$('ok-close').onclick=()=>$('ok-ov').classList.remove('on');
+$('pdf-btn').onclick=()=>{
+  const L=window.__L; if(!L) return;
+  if(!(window.jspdf&&window.jspdf.jsPDF)){ window.print(); return; }
+  const d=new window.jspdf.jsPDF({unit:'mm',format:'a4'}); let y=24;
+  const T=(t,sz,b)=>{ d.setFont('helvetica',b?'bold':'normal'); d.setFontSize(sz); d.splitTextToSize(t,170).forEach(l=>{ d.text(l,20,y); y+=sz*0.5; }); y+=2; };
+  const LK=(u)=>{ d.setTextColor(30,90,180); d.setFont('helvetica','normal'); d.setFontSize(10); d.splitTextToSize(u,170).forEach(l=>{ d.textWithLink(l,20,y,{url:u}); y+=5; }); d.setTextColor(0,0,0); y+=4; };
+  T('Maison Opaline',22,true); T('Votre invitation est en ligne',14,false); y+=4;
+  T('Lien de votre invitation (à envoyer à vos invités)',11,true); LK(L.inv);
+  if(L.rep){ T('Lien de suivi des réponses (à garder pour vous)',11,true); LK(L.rep); }
+  if(L.ref){ T('Numéro de commande : '+L.ref,10,false); }
+  T('Un e-mail avec ces liens a aussi été envoyé à '+(L.email||'votre adresse de contact')+'.',10,false); y+=4;
+  T('Conservez ce document. Une question : maisonopaline-invitations.fr/contact.html',9,false);
+  d.save('Maison-Opaline-mes-liens.pdf'); };
 poll(0);
 </script></body></html>
