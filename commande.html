@@ -595,9 +595,14 @@
     const h = document.createElement('p'); h.style.cssText = 'margin:1.4rem 0 .5rem;font-weight:700'; h.textContent = 'Votre invitation (aperçu)';
     const w = document.createElement('div'); w.className = 'phone'; w.style.margin = '0 auto';
     const f = document.createElement('iframe'); f.title = 'Aperçu de votre invitation'; f.setAttribute('allow', 'autoplay');
+    const ld = document.createElement('p'); ld.style.cssText = 'font-size:.85rem;color:var(--champ,#E7D5A8);text-align:center;margin:.5rem 0 0'; ld.textContent = 'Chargement de l’aperçu… (quelques secondes, c’est un fichier lourd)';
+    const rl = document.createElement('button'); rl.type = 'button'; rl.className = 'btn ghost'; rl.textContent = '↻ Relancer l’aperçu'; rl.style.cssText = 'display:block;margin:.6rem auto 0';
+    const src = () => th + '/?preview=' + encodeURIComponent(code) + '&r=' + Date.now();
+    f.addEventListener('load', () => { ld.style.display = 'none'; });
+    rl.addEventListener('click', () => { ld.style.display = ''; f.contentWindow.location.replace(src()); });
     f.src = th + '/?preview=' + encodeURIComponent(code); w.appendChild(f);
     const n = document.createElement('p'); n.style.cssText = 'font-size:.82rem;color:var(--brume);text-align:center;margin:.5rem 0 0'; n.textContent = 'Aperçu protégé : le filigrane disparaît sur l’invitation publiée.';
-    box.appendChild(h); box.appendChild(w); box.appendChild(n);
+    box.appendChild(h); box.appendChild(w); box.appendChild(ld); box.appendChild(n); box.appendChild(rl);
   }
   // test utilisateur : état sauvegardé / restauré (étape, modèle, champs)
   let curStep = 1;
