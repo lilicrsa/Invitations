@@ -292,6 +292,22 @@
   }
   function setFull(on){ $('phone').classList.toggle('full', !!on); document.body.classList.toggle('fs', !!on); }
   // l'aperçu change d'adresse sans créer d'entrée dans l'historique (sinon le bouton « retour » ne fait que décharger l'aperçu)
+  // aperçu : l'invitation s'affiche toujours à la largeur d'un vrai téléphone (390 px) puis est réduite pour tenir dans le cadre
+  const PHONE_W = 390;
+  function fitPhone(ph){
+    const f = ph.querySelector('iframe'); if(!f) return;
+    if(ph.classList.contains('full')){ f.style.cssText = ''; return; }
+    const w = ph.clientWidth, h = ph.clientHeight; if(!w || !h) return;
+    const k = w / PHONE_W;
+    f.style.cssText = 'width:' + PHONE_W + 'px;height:' + (h / k) + 'px;transform:scale(' + k + ');transform-origin:0 0;border:0;display:block';
+  }
+  function regPhone(ph){
+    fitPhone(ph);
+    if(window.ResizeObserver){ new ResizeObserver(() => fitPhone(ph)).observe(ph); }
+    new MutationObserver(() => fitPhone(ph)).observe(ph, { attributes:true, attributeFilter:['class'] });
+    window.addEventListener('resize', () => fitPhone(ph));
+  }
+  regPhone($('phone'));
   function setFrame(u){ const f = $('frame'); try{ f.contentWindow.location.replace(u); }catch(_){ f.src = u; } }
   let popping = false;   // vrai quand l'étape change à cause du bouton « retour » du téléphone
   function go(n){
@@ -602,7 +618,7 @@
     rl.addEventListener('click', () => { ld.style.display = ''; f.contentWindow.location.replace(src()); });
     f.src = th + '/?preview=' + encodeURIComponent(code); w.appendChild(f);
     const n = document.createElement('p'); n.style.cssText = 'font-size:.82rem;color:var(--brume);text-align:center;margin:.5rem 0 0'; n.textContent = 'Aperçu protégé : le filigrane disparaît sur l’invitation publiée.';
-    box.appendChild(h); box.appendChild(w); box.appendChild(ld); box.appendChild(n); box.appendChild(rl);
+    box.appendChild(h); box.appendChild(w); regPhone(w); box.appendChild(ld); box.appendChild(n); box.appendChild(rl);
   }
   // test utilisateur : état sauvegardé / restauré (étape, modèle, champs)
   let curStep = 1;
