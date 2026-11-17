@@ -364,12 +364,13 @@
   var MODELS = {
     galerie:{ prestige:true, n:'Galerie Bohème', occ:'Mariage, galerie de photos', demo:'galerie/?i=galerie-demo' },
     boheme:{ n:'Bohème doré', occ:'Mariage, fiançailles', demo:'boheme/?i=boheme-demo' },
+    palais:{ n:'Palais oriental', occ:'Mariage, fiançailles', demo:'palais/?i=palais-demo' },
     'gender-reveal':{ n:'Gender Reveal', occ:'Annonce de bébé', demo:'gender-reveal/?i=gender-reveal-demo' },
     jeux:{ n:'Royal Chic', occ:'Soirée entre amies', demo:'jeux/?i=jeux-demo' },
     noel:{ n:'Étoile de Noël', occ:'Fêtes de fin d’année', demo:'noel/?i=noel-demo' }
   };
   var UNIVERS = [
-    { id:'mariage', prices:[29,59,89], devis:[79,109,139], n:'Mariage', tag:'Quand deux histoires n’en font plus qu’une', cover:'galerie', models:['galerie','boheme'], fx:'bloom', wash:'#f7dccb', tint:'rgba(244,196,176,.24)',
+    { id:'mariage', prices:[29,59,89], devis:[79,109,139], n:'Mariage', tag:'Quand deux histoires n’en font plus qu’une', cover:'galerie', models:['galerie','boheme','palais'], fx:'bloom', wash:'#f7dccb', tint:'rgba(244,196,176,.24)',
       intro:'Le plus beau jour de votre vie mérite une invitation qui fait battre le cœur avant même la cérémonie. Fleurs, lumière dorée, musique : vos invités sont déjà dans la magie.', std:'Choisissez votre décor, ajoutez vos prénoms et vos mots : votre histoire prend vie en quelques minutes.', pre:'Vos plus beaux souvenirs offerts en ouverture : vos photos défilent dans un jardin doré, puis la carte se dévoile.' },
     { id:'bebe', prices:[19,39,59], devis:[69,89,129], n:'Bébé', tag:'Un petit miracle qui s’annonce en douceur', cover:'gender-reveal', models:['gender-reveal'], fx:'bubbles', wash:'#d9e9f8', tint:'rgba(160,205,240,.24)',
       intro:'Une petite merveille arrive. Annoncez-la dans un nuage de douceur : ballons, étoiles et nounours pour faire fondre vos proches dès l’ouverture.', std:'Choisissez l’ambiance, ajoutez votre message : la plus tendre des nouvelles, partagée en un simple lien.', pre:'Les plus beaux instants de votre histoire, en lumière : vos photos et vos vidéos au cœur de l’invitation.' },

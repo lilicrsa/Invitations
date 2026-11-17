@@ -17,14 +17,14 @@
   // filigrane discret sur les invitations de démonstration (jamais sur les vraies invitations)
   try{
     var slug = new URLSearchParams(location.search).get('i') || '';
-    if((slug === '' || /-demo$/.test(slug)) && /\/(boheme|noel|jeux|galerie|gender-reveal)\//.test(location.pathname) && !new URLSearchParams(location.search).get('preview')){
+    if((slug === '' || /-demo$/.test(slug)) && /\/(boheme|palais|noel|jeux|galerie|gender-reveal)\//.test(location.pathname) && !new URLSearchParams(location.search).get('preview')){
       var svg = "<svg xmlns='http://www.w3.org/2000/svg' width='300' height='150'><g transform='rotate(-24 150 75)'><text x='150' y='80' text-anchor='middle' font-family='system-ui,sans-serif' font-size='17' font-weight='800' letter-spacing='2' fill='rgba(0,0,0,0.22)' transform='translate(1.5 1.5)'>MAISON OPALINE</text><text x='150' y='80' text-anchor='middle' font-family='system-ui,sans-serif' font-size='17' font-weight='800' letter-spacing='2' fill='rgba(255,255,255,0.34)'>MAISON OPALINE</text></g></svg>";
       var w = document.createElement('div');
       w.style.cssText = 'position:fixed;inset:0;z-index:2147482000;pointer-events:none;background-image:url("data:image/svg+xml;utf8,' + encodeURIComponent(svg) + '")';
       document.addEventListener('DOMContentLoaded', function(){ document.body.appendChild(w); });
       setInterval(function(){ if(!w.isConnected && document.body) document.body.appendChild(w); }, 1500);
       // sortie simple du mode démo : retour à la collection, ou créer la sienne avec ce modèle
-      var th = (location.pathname.match(/\/(boheme|noel|jeux|galerie|gender-reveal)\//) || [])[1];
+      var th = (location.pathname.match(/\/(boheme|palais|noel|jeux|galerie|gender-reveal)\//) || [])[1];
       var bar = document.createElement('div');
       bar.style.cssText = 'position:fixed;top:max(10px,env(safe-area-inset-top,0px));left:10px;z-index:2147483000;display:flex;gap:.4rem;flex-wrap:wrap;max-width:calc(100vw - 80px);font:600 13px/1 system-ui,sans-serif';
       var css = 'display:inline-block;padding:.6rem .9rem;border-radius:999px;text-decoration:none;box-shadow:0 2px 10px rgba(0,0,0,.3);pointer-events:auto;';
