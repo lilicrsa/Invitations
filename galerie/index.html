@@ -373,7 +373,7 @@
 
   function normName(n){ return String(n||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,' ').trim().split(' ').filter(Boolean).sort().join(' '); }
   function buildPhotos(inv){
-    const demo = !!(PREVIEW || LIVE), KEY = 'gp_' + inv.id;
+    const demo = !!(PREVIEW || LIVE || inv.is_demo), KEY = 'gp_' + inv.id;
     let st = {}; try{ st = JSON.parse(localStorage.getItem(KEY) || '{}'); }catch(_){}
     if(!st.key){ st.key = (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random().toString(36).slice(2)).replace(/[^A-Za-z0-9_-]/g,'').slice(0,40); st.count = 0; }
     const save = () => { try{ localStorage.setItem(KEY, JSON.stringify(st)); }catch(_){} };
@@ -385,7 +385,7 @@
     const file = document.createElement('input'); file.type = 'file'; file.accept = 'image/jpeg,image/png,image/webp,image/*'; file.multiple = true; file.style.display = 'none';
     const btn = document.createElement('button'); btn.type = 'button'; btn.textContent = 'Choisir mes photos';
     const msg = el('div','gp-st');
-    const refresh = () => { msg.classList.remove('gp-err'); msg.textContent = demo ? 'Aperçu : l’envoi sera ouvert sur l’invitation publiée.' : (st.count ? st.count + ' / ' + MAX + ' photo' + (st.count > 1 ? 's' : '') + ' envoyée' + (st.count > 1 ? 's' : '') + '. Merci !' : ''); btn.disabled = demo || st.count >= MAX; };
+    const refresh = () => { msg.classList.remove('gp-err'); msg.textContent = demo ? 'Démonstration : sur la vraie invitation, vos invités envoient ici leurs photos.' : (st.count ? st.count + ' / ' + MAX + ' photo' + (st.count > 1 ? 's' : '') + ' envoyée' + (st.count > 1 ? 's' : '') + '. Merci !' : ''); btn.disabled = demo || st.count >= MAX; };
     function shrink(f){
       return new Promise((res, rej) => {
         const url = URL.createObjectURL(f), im = new Image();

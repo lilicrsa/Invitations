@@ -20,8 +20,8 @@ Deno.serve(async (req) => {
   if (!/^[A-Za-z0-9_-]{1,80}$/.test(slug) || !/^[A-Za-z0-9_-]{8,64}$/.test(gk)) return json({ error: "bad_request" }, 400);
 
   const db = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
-  const { data: inv } = await db.from("invitations").select("id,is_published,guest_photos_enabled,expires_at").eq("slug", slug).maybeSingle();
-  if (!inv || !inv.is_published || !inv.guest_photos_enabled || (inv.expires_at && new Date(inv.expires_at) < new Date())) return json({ error: "unavailable" }, 404);
+  const { data: inv } = await db.from("invitations").select("id,is_published,is_demo,guest_photos_enabled,expires_at").eq("slug", slug).maybeSingle();
+  if (!inv || inv.is_demo || !inv.is_published || !inv.guest_photos_enabled || (inv.expires_at && new Date(inv.expires_at) < new Date())) return json({ error: "unavailable" }, 404);
 
   if (action === "done") {
     const id = String(b.id ?? "");
