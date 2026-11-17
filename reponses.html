@@ -116,6 +116,12 @@
         </table>
       </div>
       <div class="muted hidden" id="empty" style="margin-top:.8rem">Aucune réponse pour le moment.</div>
+      <div id="photos" class="hidden" style="margin-top:2rem">
+        <h2 style="margin:0 0 .3rem">Photos de vos invités</h2>
+        <div class="muted" id="ph-sub" style="margin-bottom:.8rem"></div>
+        <div class="toolbar" style="margin-bottom:.8rem"><button class="secondary" id="ph-zip">Tout télécharger (ZIP)</button></div>
+        <div id="ph-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:.5rem"></div>
+      </div>
     </div>
   </div>
 </div>
@@ -204,6 +210,44 @@
     token = data.access_token; sessionStorage.setItem('sb_token', token);
   }
 
+  // ---- photos partagées par les invités (offre Prestige)
+  const STORE = SUPABASE_URL + '/storage/v1/object/public/guest-photos/';
+  let PH = [];
+  async function loadPhotos(){
+    if(!shareToken){ $('photos').classList.add('hidden'); return; }
+    try{
+      const res = await fetch(SUPABASE_URL + '/rest/v1/rpc/get_guest_photos', { method:'POST', headers:{ apikey:SUPABASE_KEY, 'Content-Type':'application/json' }, body: JSON.stringify({ p_token: shareToken }) });
+      PH = res.ok ? await res.json() : [];
+    }catch(_){ PH = []; }
+    const isPre = (urlThemeKey === 'galerie');
+    $('photos').classList.toggle('hidden', !(PH.length || isPre));
+    $('ph-sub').textContent = PH.length ? PH.length + ' photo' + (PH.length > 1 ? 's' : '') + ' reçue' + (PH.length > 1 ? 's' : '') + ' de la part de vos invités.' : 'Les photos envoyées par vos invités apparaîtront ici. Un ZIP de toutes les photos vous sera aussi envoyé par e-mail une semaine après l’événement.';
+    $('ph-zip').style.display = PH.length ? '' : 'none';
+    const g = $('ph-grid'); g.textContent = '';
+    PH.forEach((p, i) => {
+      const a = document.createElement('a'); a.href = STORE + p.path; a.target = '_blank'; a.rel = 'noopener'; a.title = p.guest ? 'De ' + p.guest : '';
+      const im = document.createElement('img'); im.src = STORE + p.path; im.loading = 'lazy'; im.alt = 'Photo ' + (i + 1); im.style.cssText = 'width:100%;aspect-ratio:1;object-fit:cover;border-radius:10px;display:block';
+      a.appendChild(im); g.appendChild(a);
+    });
+  }
+  async function zipPhotos(){
+    const b = $('ph-zip'), t0 = b.textContent; b.disabled = true;
+    try{
+      if(!window.JSZip) await new Promise((ok, ko) => { const sc = document.createElement('script'); sc.src = 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js'; sc.onload = ok; sc.onerror = ko; document.head.appendChild(sc); });
+      const z = new JSZip();
+      for(let i = 0; i < PH.length; i++){
+        b.textContent = 'Préparation… ' + (i + 1) + ' / ' + PH.length;
+        const r = await fetch(STORE + PH[i].path); if(!r.ok) continue;
+        const who = (PH[i].guest || 'invite').replace(/[^\p{L}\p{N}_-]+/gu, '-').slice(0, 24) || 'invite';
+        z.file(String(i + 1).padStart(3, '0') + '-' + who + '.' + PH[i].path.split('.').pop(), await r.blob());
+      }
+      const blob = await z.generateAsync({ type:'blob', compression:'STORE' });
+      const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'photos-invites.zip'; a.click();
+    }catch(_){ alert('Le ZIP n’a pas pu être créé. Vous pouvez aussi ouvrir chaque photo et l’enregistrer.'); }
+    b.disabled = false; b.textContent = t0;
+  }
+  $('ph-zip').addEventListener('click', zipPhotos);
+
   let shareToken = params.get('t');   // lien de suivi sans compte : reponses.html?t=<jeton>
   async function loadShared(){
     const res = await fetch(SUPABASE_URL + '/rest/v1/rpc/get_responses_by_token', { method:'POST', headers:{ apikey:SUPABASE_KEY, 'Content-Type':'application/json' }, body: JSON.stringify({ p_token: shareToken }) });
@@ -214,7 +258,7 @@
     invMeta = new Map([['shared', { title:j.title, theme:j.theme }]]);
     const sel = $('inv-select'); sel.textContent = ''; const o = document.createElement('option'); o.value = 'shared'; o.textContent = j.title; sel.appendChild(o); sel.value = 'shared'; sel.style.display = 'none';
     $('logout').style.display = 'none';
-    render();
+    render(); loadPhotos();
   }
   async function loadData(){
     if(shareToken) return loadShared();
