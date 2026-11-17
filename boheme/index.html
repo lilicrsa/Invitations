@@ -162,12 +162,9 @@
   .zone.ready{ opacity:1; }
   .zone > span{ display:inline-block; white-space:nowrap; }
   .gold{ background:linear-gradient(100deg,#8C5A12 0%,#C9922E 32%,#E8C56B 50%,#B8862B 70%,#8C5A12 100%); -webkit-background-clip:text; background-clip:text; color:transparent; -webkit-text-fill-color:transparent; padding:.06em .14em; }
-  #c-mono{ left:40%; width:21%; top:9.4%; height:17.2%; font-family:'Cormorant Garamond',serif; font-weight:500; line-height:1; container-type:inline-size; }
-  #c-mono .mono{ position:relative; width:100%; height:100%; }
-  #c-mono .mono > span{ position:absolute; font-size:95cqw; line-height:1; }
-  #c-mono .mono > .m1{ left:-5%; top:-17%; font-size:83cqw; } #c-mono .mono > .m2{ left:28%; top:40%; font-size:44cqw; } #c-mono .mono > .m3{ left:44%; top:15%; font-size:83cqw; }
-  #c-mono .mono.flat{ display:flex; align-items:center; justify-content:center; } #c-mono .mono.flat > span{ position:static; font-size:60cqw; }
-  #c-names > span.gold{ padding:.3em .08em .45em; -webkit-text-stroke:.6px #B8862B; }
+  #c-mono{ left:40.8%; width:21%; top:7.9%; height:17.4%; font-family:'Cormorant Garamond',serif; font-weight:500; line-height:1; container-type:inline-size; }
+  #c-mono svg{ display:block; width:100%; height:100%; overflow:visible; }
+  #c-names > span.gold{ padding:.3em .08em .45em; }
   #c-names{ left:5%; width:90%; top:27%; height:13.6%; font-family:'Ephesis',cursive; line-height:1; }
   #c-intro{ left:19%; width:62%; top:46.2%; height:7.6%; font-family:'Cormorant Garamond',serif; font-weight:500; letter-spacing:.045em; line-height:1.32; color:#2E2622; }
   #c-intro > span{ white-space:normal; text-wrap:balance; display:block; width:100%; }
@@ -556,16 +553,41 @@
     let s = startCqw; box.style.fontSize = s + 'cqw';
     while(s > minCqw && inner.getBoundingClientRect().height > box.clientHeight + 1){ s -= 0.15; box.style.fontSize = s.toFixed(2) + 'cqw'; }
   }
+  // monogramme dessiné en SVG : lettres mesurées puis centrées dans la couronne (quelles que soient les initiales)
+  function drawMono(box, txt){
+    const W = box.clientWidth, H = box.clientHeight; if(!W || !H) return;
+    const mm = txt.match(/^\s*(\S)\s*[&+]\s*(\S)\s*$/);
+    const FAM = '"Cormorant Garamond",serif', cv = document.createElement('canvas').getContext('2d');
+    const ext = (ch, fs) => { cv.font = '500 ' + fs + 'px ' + FAM; const m = cv.measureText(ch);
+      return { l:-m.actualBoundingBoxLeft, r:m.actualBoundingBoxRight, asc:m.actualBoundingBoxAscent, desc:m.actualBoundingBoxDescent }; };
+    const NS = 'http://www.w3.org/2000/svg';
+    const T = (ch, x, y, fs) => '<text x="'+x.toFixed(1)+'" y="'+y.toFixed(1)+'" font-size="'+fs.toFixed(1)+'" font-family=\'Cormorant Garamond\' font-weight="500" fill="url(#mg)">'+ch.replace('&','&amp;')+'</text>';
+    let body = '', cx = W/2, cy = H/2;
+    if(mm){
+      let fs = W*0.84; const A = mm[1], Y = mm[2];
+      const g = () => { const a = ext(A, fs), y = ext(Y, fs); return { a, y, wa:a.r-a.l, wy:y.r-y.l }; };
+      let G = g(); const ov = 0.03*fs;
+      if(G.wa + G.wy - ov > W*1.02){ fs *= (W*1.02)/(G.wa + G.wy - ov); G = g(); }
+      const capA = G.a.asc + G.a.desc, capY = G.y.asc, gt = Math.max(capA, G.y.asc + G.y.desc);
+      const total = gt*1.37, top = cy - total/2;
+      const baseA = top + capA - G.a.desc, baseY = top + total - G.y.desc;
+      const gw = G.wa + G.wy - ov, left = cx - gw/2;
+      const xa = left - G.a.l, xy = left + G.wa - ov - G.y.l;
+      // esperluette : ~50 % de la hauteur des capitales, centrée entre les deux lettres
+      const e0 = ext('&', 100), efs = 100 * (gt*0.5) / (e0.asc + e0.desc), e = ext('&', efs);
+      const ex = cx + W*0.02 - (e.l + e.r)/2, ey = cy + gt*0.30 + (e.asc - e.desc)/2;
+      body = T(A, xa, baseA, fs) + T('&', ex, ey, efs) + T(Y, xy, baseY, fs);
+    } else {
+      let fs = W*0.6; let e = ext(txt, fs); if(e.r - e.l > W*0.95){ fs *= W*0.95/(e.r - e.l); e = ext(txt, fs); }
+      body = T(txt, cx - (e.l + e.r)/2, cy + (e.asc - e.desc)/2, fs);
+    }
+    box.innerHTML = '<svg viewBox="0 0 '+W+' '+H+'" xmlns="'+NS+'"><defs><linearGradient id="mg" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="'+W+'" y2="'+H+'"><stop offset="0" stop-color="#8C5A12"/><stop offset=".32" stop-color="#C9922E"/><stop offset=".5" stop-color="#E8C56B"/><stop offset=".7" stop-color="#B8862B"/><stop offset="1" stop-color="#8C5A12"/></linearGradient></defs>'+body+'</svg>';
+  }
   function renderCard(inv){
     const c = deriveCard(inv);
     // monogramme
     const mono = $c('c-mono'); mono.style.display = c.monogram ? '' : 'none';
-    if(c.monogram){
-      const mm = String(c.monogram).match(/^\s*(\S)\s*[&+]\s*(\S)\s*$/);
-      mono.innerHTML = mm ? '<div class="mono"><span class="m1 gold">'+mm[1]+'</span><span class="m2 gold">&amp;</span><span class="m3 gold">'+mm[2]+'</span></div>'
-                          : '<div class="mono flat"><span class="gold"></span></div>';
-      if(!mm) mono.querySelector('.gold').textContent = c.monogram;
-    }
+    if(c.monogram) drawMono(mono, String(c.monogram));
     // noms (1 ligne si possible, sinon 2 lignes coupées sur « et »)
     const nm = $c('c-names'), ns = nm.firstChild; ns.textContent = c.names;
     nm.style.fontSize = '17cqw';
