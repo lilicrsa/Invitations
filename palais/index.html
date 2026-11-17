@@ -162,7 +162,7 @@
   .zone.ready{ opacity:1; }
   .zone > span{ display:inline-block; white-space:nowrap; }
   .gold{ background:linear-gradient(100deg,#8C5A12 0%,#C9922E 32%,#E8C56B 50%,#B8862B 70%,#8C5A12 100%); -webkit-background-clip:text; background-clip:text; color:transparent; -webkit-text-fill-color:transparent; padding:.06em .14em; }
-  #c-mono{ left:42%; width:16.4%; top:20.4%; height:10.6%; }
+  #c-mono{ left:39.2%; width:22%; top:18.7%; height:14%; }
   #c-mono svg{ display:block; width:100%; height:100%; overflow:visible; }
   #c-names .gold{ background-image:linear-gradient(100deg,#7C4D0E 0%,#B27C20 35%,#D2A24A 52%,#A8701A 72%,#7C4D0E 100%); }
   #c-names > span.pair{ display:grid; grid-template-columns:1fr auto 1fr; align-items:baseline; width:100%; }
@@ -556,35 +556,19 @@
     let s = startCqw; box.style.fontSize = s + 'cqw';
     while(s > minCqw && inner.getBoundingClientRect().height > box.clientHeight + 1){ s -= 0.15; box.style.fontSize = s.toFixed(2) + 'cqw'; }
   }
-  // monogramme dessiné en SVG : lettres mesurées puis centrées dans la couronne (quelles que soient les initiales)
+  // monogramme (même police que les prénoms), mesuré puis centré dans le cartouche
   function drawMono(box, txt){
     const W = box.clientWidth, H = box.clientHeight; if(!W || !H) return;
     const mm = txt.match(/^\s*(\S)\s*[&+]\s*(\S)\s*$/);
-    const FAM = '"Cormorant Garamond",serif', cv = document.createElement('canvas').getContext('2d');
-    const ext = (ch, fs) => { cv.font = '500 ' + fs + 'px ' + FAM; const m = cv.measureText(ch);
+    const label = mm ? mm[1] + '&' + mm[2] : txt.trim();
+    const cv = document.createElement('canvas').getContext('2d');
+    const ext = fs => { cv.font = '400 ' + fs + 'px Ephesis'; const m = cv.measureText(label);
       return { l:-m.actualBoundingBoxLeft, r:m.actualBoundingBoxRight, asc:m.actualBoundingBoxAscent, desc:m.actualBoundingBoxDescent }; };
-    const NS = 'http://www.w3.org/2000/svg';
-    const T = (ch, x, y, fs) => '<text x="'+x.toFixed(1)+'" y="'+y.toFixed(1)+'" font-size="'+fs.toFixed(1)+'" font-family=\'Cormorant Garamond\' font-weight="500" fill="url(#mg)">'+ch.replace('&','&amp;')+'</text>';
-    let body = '', cx = W/2, cy = H/2;
-    if(mm){
-      let fs = W*0.84; const A = mm[1], Y = mm[2];
-      const g = () => { const a = ext(A, fs), y = ext(Y, fs); return { a, y, wa:a.r-a.l, wy:y.r-y.l }; };
-      let G = g(); const ov = 0.03*fs;
-      if(G.wa + G.wy - ov > W*1.02){ fs *= (W*1.02)/(G.wa + G.wy - ov); G = g(); }
-      const capA = G.a.asc + G.a.desc, capY = G.y.asc, gt = Math.max(capA, G.y.asc + G.y.desc);
-      const total = gt*1.37, top = cy - total/2;
-      const baseA = top + capA - G.a.desc, baseY = top + total - G.y.desc;
-      const gw = G.wa + G.wy - ov, left = cx - gw/2;
-      const xa = left - G.a.l, xy = left + G.wa - ov - G.y.l;
-      // esperluette : ~50 % de la hauteur des capitales, centrée entre les deux lettres
-      const e0 = ext('&', 100), efs = 100 * (gt*0.5) / (e0.asc + e0.desc), e = ext('&', efs);
-      const ex = cx + W*0.02 - (e.l + e.r)/2, ey = cy + gt*0.30 + (e.asc - e.desc)/2;
-      body = T(A, xa, baseA, fs) + T('&', ex, ey, efs) + T(Y, xy, baseY, fs);
-    } else {
-      let fs = W*0.6; let e = ext(txt, fs); if(e.r - e.l > W*0.95){ fs *= W*0.95/(e.r - e.l); e = ext(txt, fs); }
-      body = T(txt, cx - (e.l + e.r)/2, cy + (e.asc - e.desc)/2, fs);
-    }
-    box.innerHTML = '<svg viewBox="0 0 '+W+' '+H+'" xmlns="'+NS+'"><defs><linearGradient id="mg" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="'+W+'" y2="'+H+'"><stop offset="0" stop-color="#8C5A12"/><stop offset=".32" stop-color="#C9922E"/><stop offset=".5" stop-color="#E8C56B"/><stop offset=".7" stop-color="#B8862B"/><stop offset="1" stop-color="#8C5A12"/></linearGradient></defs>'+body+'</svg>';
+    let fs = W * 0.7, e = ext(fs);
+    const k = Math.min(W * 0.74 / (e.r - e.l), H * 0.8 / (e.asc + e.desc)); fs *= k; e = ext(fs);
+    const x = W/2 - (e.l + e.r)/2, y = H/2 + (e.asc - e.desc)/2;
+    box.innerHTML = '<svg viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="mg" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="'+W+'" y2="'+H+'"><stop offset="0" stop-color="#7C4D0E"/><stop offset=".35" stop-color="#B27C20"/><stop offset=".52" stop-color="#D2A24A"/><stop offset=".72" stop-color="#A8701A"/><stop offset="1" stop-color="#7C4D0E"/></linearGradient></defs>'
+      + '<text x="'+x.toFixed(1)+'" y="'+y.toFixed(1)+'" font-size="'+fs.toFixed(1)+'" font-family="Ephesis" fill="url(#mg)" stroke="#A8701A" stroke-width=".5">'+label.replace(/&/g,'&amp;')+'</text></svg>';
   }
   function renderCard(inv){
     const c = deriveCard(inv);
