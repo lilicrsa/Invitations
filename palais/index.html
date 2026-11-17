@@ -571,16 +571,16 @@
       // repère : x=0 au bord gauche du A, baseline du A en y=0
       const ampF = f0 * 0.5 * (A.asc * 0.4) / AMP.asc;                       // « & » ≈ 40 % de la hauteur du A
       const amp = ext('&', ampF, '"Cormorant Garamond"');
-      const xA = -A.l, wA = A.r - A.l, xAmp = wA - amp.l + 0.16*f0, wAmp = amp.r - amp.l;
+      const xA = -A.l, wA = A.r - A.l, xAmp = wA - amp.l + 0.24*f0, wAmp = amp.r - amp.l;
       const yOff = A.asc * 0.40;                                              // le Y descend plus bas que le A
-      const xY = wA + wAmp + 0.30*f0 - Y.l, wY = Y.r - Y.l;
-      const x0 = 0, x1 = wA + wAmp + 0.30*f0 + wY;
+      const xY = wA + wAmp + 0.40*f0 - Y.l, wY = Y.r - Y.l;
+      const x0 = 0, x1 = wA + wAmp + 0.40*f0 + wY;
       const top = -A.asc, bot = yOff + Y.desc, bw = x1 - x0, bh = bot - top;
-      const k = Math.min(W*0.66/bw, H*0.62/bh);
+      const k = Math.min(W*0.76/bw, H*0.78/bh);
       const ox = W/2 - bw*k/2 - x0*k, oy = H/2 - bh*k/2 - top*k;
-      body = T(mm[1], ox + xA*k, oy, f0*k, 'Ephesis')
-           + T('&', ox + xAmp*k, oy + 0.02*f0*k, ampF*k, "'Cormorant Garamond'", 'font-weight="500"')
-           + T(mm[2], ox + xY*k, oy + yOff*k, f0*YS*k, 'Ephesis');
+      body = T(mm[1], ox + xA*k, oy, f0*k, 'Ephesis', 'stroke="#A8701A" stroke-width="'+(f0*k*0.022).toFixed(2)+'" paint-order="stroke"')
+           + T('&', ox + xAmp*k, oy + 0.02*f0*k, ampF*k, "'Cormorant Garamond'", 'font-weight="700"')
+           + T(mm[2], ox + xY*k, oy + yOff*k, f0*YS*k, 'Ephesis', 'stroke="#A8701A" stroke-width="'+(f0*k*0.024).toFixed(2)+'" paint-order="stroke"');
     } else {
       const t = txt.trim(); let f = 100, e = ext(t, f, 'Ephesis'); const k = Math.min(W*0.9/(e.r-e.l), H*0.8/(e.asc+e.desc)); f *= k; e = ext(t, f, 'Ephesis');
       body = T(t, W/2 - (e.l+e.r)/2, H/2 + (e.asc - e.desc)/2, f, 'Ephesis');
