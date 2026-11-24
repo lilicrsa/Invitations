@@ -191,6 +191,7 @@
   .fx .veil{ position:absolute; inset:0; background:radial-gradient(ellipse at 50% 55%,rgba(18,24,49,.35),rgba(6,8,18,.55)); opacity:0; }
   .fx svg{ position:absolute; left:50%; top:50%; width:min(62vw,300px); height:auto; margin:-30vh 0 0 calc(min(62vw,300px) / -2); overflow:visible; filter:drop-shadow(0 0 10px rgba(231,213,168,.75)); }
   .fx .wash{ position:absolute; left:50%; top:50%; width:170vmax; height:170vmax; margin:-85vmax 0 0 -85vmax; border-radius:50%; opacity:1; transform:scale(0); }
+  .fx .fxwin{ position:absolute; overflow:hidden; will-change:left,top,width,height; }
   .fx b{ position:absolute; display:block; font-weight:400; }
   .fx .soft{ position:absolute; inset:0; opacity:0; }
   .fx i{ position:absolute; display:block; width:4px; height:4px; border-radius:50%; background:#f6e7bd; box-shadow:0 0 8px 2px rgba(246,231,189,.8); opacity:0; }
@@ -401,13 +402,13 @@
     } else { history.scrollRestoration = 'auto'; }
   }catch(_){}
   var UNIVERS = [
-    { id:'mariage', prices:[29,59,89], devis:[79,109,139], n:'Mariage', tag:'Quand deux histoires n’en font plus qu’une', cover:'galerie', models:['galerie','boheme','palais'], fx:'gold', wash:'#f7dccb', tint:'rgba(244,196,176,.24)',
+    { id:'mariage', prices:[29,59,89], devis:[79,109,139], n:'Mariage', tag:'Quand deux histoires n’en font plus qu’une', cover:'galerie', models:['galerie','boheme','palais'], fx:'window', wash:'#f7dccb', tint:'rgba(244,196,176,.24)',
       intro:'Le plus beau jour de votre vie mérite une invitation qui fait battre le cœur avant même la cérémonie. Fleurs, lumière dorée, musique : vos invités sont déjà dans la magie.', std:'Choisissez votre décor, ajoutez vos prénoms et vos mots : votre histoire prend vie en quelques minutes.', pre:'Vos plus beaux souvenirs offerts en ouverture : vos photos défilent dans un jardin doré, puis la carte se dévoile.' },
-    { id:'bebe', prices:[19,39,59], devis:[69,89,129], n:'Bébé', tag:'Un petit miracle qui s’annonce en douceur', cover:'gender-reveal', models:['gender-reveal'], fx:'gold', wash:'#d9e9f8', tint:'rgba(160,205,240,.24)',
+    { id:'bebe', prices:[19,39,59], devis:[69,89,129], n:'Bébé', tag:'Un petit miracle qui s’annonce en douceur', cover:'gender-reveal', models:['gender-reveal'], fx:'window', wash:'#d9e9f8', tint:'rgba(160,205,240,.24)',
       intro:'Une petite merveille arrive. Annoncez-la dans un nuage de douceur : ballons, étoiles et nounours pour faire fondre vos proches dès l’ouverture.', std:'Choisissez l’ambiance, ajoutez votre message : la plus tendre des nouvelles, partagée en un simple lien.', pre:'Les plus beaux instants de votre histoire, en lumière : vos photos et vos vidéos au cœur de l’invitation.' },
-    { id:'anniversaire', prices:[15,29,49], devis:[65,79,109], n:'Anniversaire', tag:'Chaque bougie, une étincelle de joie', cover:'ornoir', models:['ornoir','funone'], fx:'gold', wash:'#fbe3a8', tint:'rgba(255,190,80,.22)',
+    { id:'anniversaire', prices:[15,29,49], devis:[65,79,109], n:'Anniversaire', tag:'Chaque bougie, une étincelle de joie', cover:'ornoir', models:['ornoir','funone'], fx:'window', wash:'#fbe3a8', tint:'rgba(255,190,80,.22)',
       intro:'Faites de chaque bougie un moment de joie. Bougies, lumières et surprises : une fête qui commence bien avant le gâteau.', std:'Ajoutez le prénom, la date et un mot doux : l’invitation qui donne envie de faire la fête.', pre:'Une année en souvenirs : les plus beaux moments de la personne fêtée, en photos et en vidéos.' },
-    { id:'fetes', prices:[15,29,49], devis:[65,79,109], n:'Réceptions', tag:'Des soirées qui scintillent longtemps', cover:'noel', models:['jeux','noel'], fx:'gold', wash:'#efe1b8', tint:'rgba(231,213,168,.22)',
+    { id:'fetes', prices:[15,29,49], devis:[65,79,109], n:'Réceptions', tag:'Des soirées qui scintillent longtemps', cover:'noel', models:['jeux','noel'], fx:'window', wash:'#efe1b8', tint:'rgba(231,213,168,.22)',
       intro:'Des soirées dont on se souvient. Noël scintillant, soirées jeux, réceptions chaleureuses : donnez le ton avant même l’arrivée de vos invités.', std:'Choisissez l’ambiance, personnalisez le titre, la date et le lieu : vos invités arrivent déjà de bonne humeur.', pre:'Vos plus beaux moments de l’année, racontés en images avant la fête.' }
   ];
   document.querySelectorAll('[data-brand]').forEach(function(e){ e.textContent = BRAND; });
@@ -457,7 +458,7 @@
   // ---- les 4 univers ----
   var track = document.getElementById('uni-track'), uCar = document.getElementById('uni-car');
   UNIVERS.forEach(function(u){
-    var c = document.createElement('article'); c.className = 'uni'; c.style.setProperty('--tint', u.tint);
+    var c = document.createElement('article'); c.className = 'uni'; c.dataset.id = u.id; c.style.setProperty('--tint', u.tint);
     var fr = document.createElement('div'); fr.className = 'frame';
     if(u.cover){ var v = mkVideo(u.cover, 'Aperçu animé : ' + u.n); fr.appendChild(v); fr.classList.add('tap'); (function(vv, ff){ ff.addEventListener('click', function(){ if(vv.paused){ track.querySelectorAll('video').forEach(function(o){ if(o !== vv) o.pause(); }); vv.go(); } else vv.pause(); }); vv.addEventListener('play', function(){ ff.classList.add('playing'); }); vv.addEventListener('pause', function(){ ff.classList.remove('playing'); }); })(v, fr); }
     else { var im = document.createElement('img'); im.className = 'ph'; im.src = 'univers/' + u.id + '.jpg?v=16'; im.alt = u.n; fr.appendChild(im); }
@@ -573,6 +574,22 @@
       var w = document.createElement('div'); w.className = 'soft'; w.style.background = 'linear-gradient(180deg,#e8f3ff,#ffe9f1)'; fx.appendChild(w);
       var wa = w.animate([{ opacity:0 }, { opacity:.85 }], { duration:1400, delay:1500, easing:'cubic-bezier(.37,0,.63,1)', fill:'forwards' });
       wa.onfinish = function(){ endFx(swap); };
+      return;
+    }
+    if(kind === 'window'){
+      /* on entre « par la fenêtre » de la collection : l'arche s'ouvre en grand jusqu'à remplir l'écran */
+      var card = track.querySelector('.uni[data-id="' + u.id + '"] .frame'), r = card ? card.getBoundingClientRect() : null;
+      if(!r || r.width < 40 || r.right < 0 || r.left > W){ var ww = Math.min(W * .74, 300); r = { left:(W - ww) / 2, top:H * .22, width:ww, height:ww * 1.45 }; }
+      var veil = document.createElement('div'); veil.className = 'soft'; veil.style.background = 'rgba(6,8,18,.92)'; fx.appendChild(veil);
+      veil.animate([{ opacity:0 }, { opacity:1 }], { duration:700, easing:'ease-out', fill:'forwards' });
+      var win = document.createElement('div'); win.className = 'fxwin';
+      win.style.cssText = 'left:' + r.left + 'px;top:' + r.top + 'px;width:' + r.width + 'px;height:' + r.height + 'px;border-radius:200px 200px 16px 16px;background:#0c1022 url("mini/' + (u.cover || 'ornoir') + '.jpg?v=16") center/cover no-repeat';
+      fx.appendChild(win);
+      var wa2 = win.animate([
+        { left:r.left + 'px', top:r.top + 'px', width:r.width + 'px', height:r.height + 'px', borderRadius:'200px 200px 16px 16px', boxShadow:'0 0 0 1px rgba(231,213,168,.9),0 0 40px 6px rgba(231,213,168,.35)', backgroundSize:'100%' },
+        { left:'0px', top:'0px', width:W + 'px', height:H + 'px', borderRadius:'0px', boxShadow:'0 0 0 1px rgba(231,213,168,0),0 0 0 0 rgba(231,213,168,0)', backgroundSize:'135%' }
+      ], { duration:1500, delay:150, easing:'cubic-bezier(.65,0,.25,1)', fill:'forwards' });
+      wa2.onfinish = function(){ swap(); var o2 = fx.animate([{ opacity:1 }, { opacity:0 }], { duration:800, easing:'ease-out', fill:'forwards' }); o2.onfinish = function(){ fx.className = 'fx'; fx.innerHTML = ''; fx.getAnimations().forEach(function(x){ x.cancel(); }); }; };
       return;
     }
     if(kind === 'gold'){
