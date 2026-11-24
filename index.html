@@ -143,6 +143,7 @@
   body.inworld .nav{ position:fixed; top:0; left:0; right:0; margin-inline:0; z-index:80; }
   body.inworld .world{ top:var(--navh,64px); }
   .world::before{ content:''; position:fixed; inset:0; pointer-events:none; background:radial-gradient(ellipse 70% 50% at 50% 0%,var(--tint,rgba(231,213,168,.2)),transparent 70%); }
+  @media (max-width:520px){ .world .top .eyebrow{ display:none; } .world .top .favbtn{ font-size:0; gap:.3rem; } .world .top .favbtn .fn{ font-size:.74rem; } }
   .world .top .back, .world .top .eyebrow{ white-space:nowrap; } @media (max-width:520px){ .world .top{ gap:.5rem; } .world .top .eyebrow{ font-size:.62rem !important; letter-spacing:.1em !important; } .world .top .back{ padding:.5rem .8rem; font-size:.85rem; } }
   .world .top{ position:sticky; top:0; z-index:3; display:flex; align-items:center; justify-content:space-between; gap:1rem; padding:max(.8rem,env(safe-area-inset-top,0px)) 0 .8rem; background:linear-gradient(180deg,var(--nuit) 60%,transparent); }
   .world .back{ background:none; border:1px solid var(--trait); color:var(--champ); font:500 .88rem 'Manrope',sans-serif; padding:.5rem 1rem; border-radius:999px; cursor:pointer; }
