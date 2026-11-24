@@ -456,7 +456,7 @@
       var wide = window.matchMedia('(hover:hover) and (min-width:1000px)').matches;
       var base = wide ? (Math.min(1120, vw - 96) - 72) / 4 : Math.min(vw * .74, 300);
       sec.style.scrollMarginTop = Math.max(0, navh - 28) + 'px'; /* le titre arrive juste sous la barre */
-      var used = navh + 11 + head.getBoundingClientRect().height + 19 + 14 + 8; /* barre, haut de section, titre, marge, rembourrage du carrousel */
+      var used = navh + 11 + head.getBoundingClientRect().height + 19 + 14 + 8 + 64; /* barre, haut de section, titre, marge, rembourrage du carrousel */
       var cw = Math.min(base, Math.max(130, (vh - used - 18) / 1.433));
       tr.style.setProperty('--cw', Math.round(cw) + 'px');
     }
