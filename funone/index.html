@@ -161,7 +161,8 @@
   .line{ left:40.6%; width:35%; height:5.4%; justify-content:flex-start; text-align:left; font-family:'Mali',cursive; font-style:italic; font-weight:500; }
   .line > span{ padding:0 .1em; }
   #c-date{ top:44.9%; } #c-time{ top:49.8%; } #c-place{ top:54.5%; }
-  #c-name{ left:26%; width:48%; top:82.2%; height:10%; font-family:'Sriracha',cursive; }
+  #c-name{ left:24%; width:52%; top:80.8%; height:12.6%; font-family:'Sriracha',cursive; transform:rotate(-4deg); transform-origin:50% 50%; }
+  #c-name > span{ position:relative; top:-.04em; }
   .scroll-hint{ color:var(--brun); text-shadow:0 1px 6px rgba(255,246,227,.95); }
   .scroll-hint span{ font-family:'Mali',sans-serif; }
 
@@ -524,7 +525,7 @@
   }
   function renderCard(inv){
     const c = deriveCard(inv);
-    [['c-phrase', c.phrase, 5.2, 2.4], ['c-name', c.name, 11.5, 3.2], ['c-date', c.date, 4.1, 2.2], ['c-time', c.time, 4.1, 2.2], ['c-place', c.place, 4.1, 2.0]].forEach(function(z){
+    [['c-phrase', c.phrase, 5.2, 2.4], ['c-name', c.name, 18, 3.2], ['c-date', c.date, 4.1, 2.2], ['c-time', c.time, 4.1, 2.2], ['c-place', c.place, 4.1, 2.0]].forEach(function(z){
       const box = $c(z[0]), sp = box.firstChild; box.style.display = z[1] ? '' : 'none';
       if(z[1]){ sp.textContent = z[1]; fitBox(box, sp, z[2], z[3]); }
     });
