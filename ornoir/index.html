@@ -577,6 +577,11 @@
         if(!res.ok) throw new Error('HTTP '+res.status);
         const one = await res.json(); data = one ? [one] : [];
       }
+      if(!data.length && slug === 'ornoir-demo' && !PREVIEW && !LIVE){   // démo intégrée tant que la fiche n'est pas en base
+        data = [{ id:'demo-ornoir', slug:'ornoir-demo', title:'Les 30 ans de Léa', host_names:'Léa', event_date:'2027-03-20', event_time:'20h00', venue_name:'Le Grand Salon', address:'Le Grand Salon, Paris', maps_url:'https://www.google.com/maps',
+          message:'Venez fêter ça avec nous !', dress_code:'Tenue chic, touche de doré', contact_name:'Julie', contact_phone:'06 12 34 56 78', rsvp_enabled:true, invitation_programme:[],
+          card_text:{ age:'30', slogan:'Une occasion en or\nde faire la fête.' }, music_tracks:{ url:'musique-ornoir.mp3', title:'Or & Noir' } }];
+      }
       box.textContent = '';
       if(!data.length){ box.appendChild(el('div','status','Invitation introuvable.')); return; }
       const inv = data[0];
