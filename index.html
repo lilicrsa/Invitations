@@ -386,8 +386,8 @@
   document.title = BRAND + ' — invitations animées';
 
   function mkVideo(k, label){
-    var v = document.createElement('video'); v.muted = true; v.loop = false; v.playsInline = true; v.setAttribute('playsinline',''); v.preload = 'metadata'; v.setAttribute('controlsList','nodownload noremoteplayback'); v.setAttribute('disablePictureInPicture',''); v.disableRemotePlayback = true; v.poster = 'mini/' + k + '.jpg?v=15';
-    v.setAttribute('aria-label', label); v.poster = 'mini/' + k + '.jpg?v=15'; v.addEventListener('click', function(){ if(v.paused) v.go(); });
+    var v = document.createElement('video'); v.muted = true; v.loop = false; v.playsInline = true; v.setAttribute('playsinline',''); v.preload = 'metadata'; v.setAttribute('controlsList','nodownload noremoteplayback'); v.setAttribute('disablePictureInPicture',''); v.disableRemotePlayback = true; v.poster = 'mini/' + k + '.jpg?v=16';
+    v.setAttribute('aria-label', label); v.poster = 'mini/' + k + '.jpg?v=16'; v.addEventListener('click', function(){ if(v.paused) v.go(); });
     ['mp4','webm'].forEach(function(x){ var s = document.createElement('source'); s.src = 'mini/' + k + '.' + x + '?v=18'; s.type = 'video/' + x; v.appendChild(s); });
     // l'aperçu s'arrête sur la carte (avant le fondu au noir de fin de clip) ; un nouveau clic le relance depuis le début
     v.addEventListener('timeupdate', function(){ if(!v.paused && v.duration && v.currentTime >= v.duration - 0.9){ v.pause(); v.dataset.done = '1'; } });
@@ -418,7 +418,7 @@
     var c = document.createElement('article'); c.className = 'uni'; c.style.setProperty('--tint', u.tint);
     var fr = document.createElement('div'); fr.className = 'frame';
     if(u.cover){ var v = mkVideo(u.cover, 'Aperçu animé : ' + u.n); fr.appendChild(v); fr.classList.add('tap'); (function(vv, ff){ ff.addEventListener('click', function(){ if(vv.paused){ track.querySelectorAll('video').forEach(function(o){ if(o !== vv) o.pause(); }); vv.go(); } else vv.pause(); }); vv.addEventListener('play', function(){ ff.classList.add('playing'); }); vv.addEventListener('pause', function(){ ff.classList.remove('playing'); }); })(v, fr); }
-    else { var im = document.createElement('img'); im.className = 'ph'; im.src = 'univers/' + u.id + '.jpg?v=15'; im.alt = u.n; fr.appendChild(im); }
+    else { var im = document.createElement('img'); im.className = 'ph'; im.src = 'univers/' + u.id + '.jpg?v=16'; im.alt = u.n; fr.appendChild(im); }
     c.appendChild(fr);
     var h = document.createElement('h3'); h.textContent = u.n; c.appendChild(h);
     var t = document.createElement('p'); t.className = 'tag'; t.textContent = u.tag; c.appendChild(t);
@@ -571,7 +571,7 @@
     box.innerHTML = '';
     a.forEach(function(k){
       var m = MODELS[k], it = document.createElement('div'); it.className = 'it';
-      var im = document.createElement('img'); im.src = 'mini/' + k + '.jpg?v=15'; im.alt = ''; it.appendChild(im);
+      var im = document.createElement('img'); im.src = 'mini/' + k + '.jpg?v=16'; im.alt = ''; it.appendChild(im);
       var t = document.createElement('div'); t.className = 't';
       var b = document.createElement('b'); b.textContent = m.n; var sm = document.createElement('small'); sm.textContent = m.occ; t.appendChild(b); t.appendChild(sm);
       var ac = document.createElement('div'); ac.className = 'a';
