@@ -446,7 +446,7 @@
     c.appendChild(fr);
     var h = document.createElement('h3'); h.textContent = u.n; c.appendChild(h);
     var t = document.createElement('p'); t.className = 'tag'; t.textContent = u.tag; c.appendChild(t);
-    var n = document.createElement('div'); n.className = 'count'; n.textContent = u.soon ? 'Modèles en préparation' : (u.models.length + (u.models.length > 1 ? ' modèles' : ' modèle')); c.appendChild(n);
+    if(u.soon){ var n = document.createElement('div'); n.className = 'count'; n.textContent = 'Modèles en préparation'; c.appendChild(n); }
     var b = document.createElement('button'); b.type = 'button'; b.className = 'btn solid'; b.textContent = 'Entrer dans la collection';
     b.addEventListener('click', function(){ openWorld(u, b); }); c.appendChild(b);
     track.appendChild(c);
