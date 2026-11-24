@@ -295,7 +295,7 @@
 
   <section id="modeles">
     <div class="valance"></div>
-    <div class="wrap sec" style="padding-top:2.4rem">
+    <div class="wrap sec" style="padding-top:1rem">
       <div class="uni-head">
         <h2>Choisissez votre collection</h2>
         <p class="lead">Des collections pensées pour vos plus beaux moments.</p>
@@ -466,7 +466,7 @@
       var navh = nav ? nav.getBoundingClientRect().height : 0; if(navh < 40) navh = 78;
       var wide = window.matchMedia('(hover:hover) and (min-width:1000px)').matches;
       var base = wide ? (Math.min(1120, vw - 96) - 72) / 4 : Math.min(vw * .74, 300);
-      sec.style.scrollMarginTop = Math.max(0, navh - 28) + 'px'; /* le titre arrive juste sous la barre */
+      sec.style.scrollMarginTop = Math.max(0, navh - 6) + 'px'; /* le titre arrive juste sous la barre */
       var u0 = tr.querySelector('.uni'), fr0 = u0 && u0.querySelector('.frame');
       var extra = (u0 && fr0) ? (u0.offsetHeight - fr0.offsetHeight) : 120; /* nom, phrase et bouton sous la fenêtre */
       var used = navh + 11 + head.getBoundingClientRect().height + 8 + 8 + extra + 16; /* barre, haut de section, titre, marges, texte sous la fenêtre */
