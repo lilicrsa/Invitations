@@ -253,6 +253,10 @@
   .favs .it .t{ flex:1; } .favs .it b{ display:block; font:400 1.15rem 'Italiana',serif; } .favs .it small{ color:var(--brume); }
   .favs .it .a{ display:flex; gap:.4rem; flex-wrap:wrap; margin-top:.5rem; } .favs .it .a .btn{ padding:.35rem .8rem; font-size:.8rem; }
   .favs .rm{ background:none; border:0; color:var(--brume); cursor:pointer; font-size:.8rem; text-decoration:underline; }
+  /* netteté : l'Italiana est très fine, on l'épaissit à peine pour les petits textes */
+  .brand-sub,.bsub,.nav .brand,.gate .brand,.menu a.ml,.opill .of-n,.grp .gt,.pricing h3,.tier h4,.tier .tp,.plan .pp b,.favs h3,.favs .it b,summary{ -webkit-text-stroke:.35px currentColor; }
+  .pdet summary{ -webkit-text-stroke:0; }
+  .hy{ font-family:'Manrope',sans-serif; font-size:.85em; -webkit-text-stroke:0; }
 </style>
 <script src="protect.js?v=3"></script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "Organization", "@id": "https://maisonopaline-invitations.fr/#org", "name": "Maison Opaline", "url": "https://maisonopaline-invitations.fr/", "logo": "https://maisonopaline-invitations.fr/logo/emblem.png", "description": "Invitations animées en ligne pour mariages, naissances, anniversaires et fêtes."}, {"@type": "WebSite", "@id": "https://maisonopaline-invitations.fr/#site", "url": "https://maisonopaline-invitations.fr/", "name": "Maison Opaline", "inLanguage": "fr", "publisher": {"@id": "https://maisonopaline-invitations.fr/#org"}}, {"@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Puis-je voir mon invitation avant de payer ?", "acceptedAnswer": {"@type": "Answer", "text": "Oui. Vous remplissez vos informations, puis vous ouvrez un aperçu avec votre date, votre lieu et votre programme. Il est protégé par un filigrane, généré pour vous seul et effacé au bout de 10 minutes : rien n'est enregistré tant que vous n'avez pas commandé."}}, {"@type": "Question", "name": "Faut-il installer une application ?", "acceptedAnswer": {"@type": "Answer", "text": "Non. Vos invités ouvrent un simple lien, sur téléphone ou ordinateur."}}, {"@type": "Question", "name": "Comment mes invités répondent-ils ?", "acceptedAnswer": {"@type": "Answer", "text": "Directement sur l'invitation : leur nom, leur présence, le nombre de personnes et d'éventuelles remarques. Avec la formule Signature, vous suivez les réponses sur une page dédiée."}}, {"@type": "Question", "name": "Puis-je changer la date ou le lieu après la publication ?", "acceptedAnswer": {"@type": "Answer", "text": "Oui. Les informations se modifient sans changer le lien déjà envoyé à vos invités."}}, {"@type": "Question", "name": "Combien de temps l'invitation reste-t-elle en ligne ?", "acceptedAnswer": {"@type": "Answer", "text": "Jusqu'à trois mois après la date de l'événement."}}]}]}</script>
@@ -357,11 +361,11 @@
   <section id="questions"><div class="wrap sec">
     <h2>Questions fréquentes</h2>
     <div class="faq">
-      <details><summary>Puis-je voir mon invitation avant de payer ?</summary><p>Oui. Vous remplissez vos informations, puis vous ouvrez un aperçu avec votre date, votre lieu et votre programme. Il est protégé par un filigrane, généré pour vous seul et effacé au bout de 10 minutes : rien n'est enregistré tant que vous n'avez pas commandé.</p></details>
-      <details><summary>Faut-il installer une application ?</summary><p>Non. Vos invités ouvrent un simple lien, sur téléphone ou ordinateur.</p></details>
-      <details><summary>Comment mes invités répondent-ils ?</summary><p>Directement sur l'invitation : leur nom, leur présence, le nombre de personnes et d'éventuelles remarques. Avec la formule Signature, vous suivez les réponses sur une page dédiée.</p></details>
-      <details><summary>Puis-je changer la date ou le lieu après la publication ?</summary><p>Oui. Les informations se modifient sans changer le lien déjà envoyé à vos invités.</p></details>
-      <details><summary>Combien de temps l'invitation reste-t-elle en ligne ?</summary><p>Jusqu'à trois mois après la date de l'événement.</p></details>
+      <details><summary>Puis<span class="hy">-</span>je voir mon invitation avant de payer ?</summary><p>Oui. Vous remplissez vos informations, puis vous ouvrez un aperçu avec votre date, votre lieu et votre programme. Il est protégé par un filigrane, généré pour vous seul et effacé au bout de 10 minutes : rien n'est enregistré tant que vous n'avez pas commandé.</p></details>
+      <details><summary>Faut<span class="hy">-</span>il installer une application ?</summary><p>Non. Vos invités ouvrent un simple lien, sur téléphone ou ordinateur.</p></details>
+      <details><summary>Comment mes invités répondent<span class="hy">-</span>ils ?</summary><p>Directement sur l'invitation : leur nom, leur présence, le nombre de personnes et d'éventuelles remarques. Avec la formule Signature, vous suivez les réponses sur une page dédiée.</p></details>
+      <details><summary>Puis<span class="hy">-</span>je changer la date ou le lieu après la publication ?</summary><p>Oui. Les informations se modifient sans changer le lien déjà envoyé à vos invités.</p></details>
+      <details><summary>Combien de temps l'invitation reste<span class="hy">-</span>t<span class="hy">-</span>elle en ligne ?</summary><p>Jusqu'à trois mois après la date de l'événement.</p></details>
     </div>
   </div></section>
 

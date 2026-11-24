@@ -20,6 +20,8 @@ a.btn.g{ background:transparent; color:var(--champ); }
 #ok-box h2{ font:400 1.7rem Italiana,serif; color:var(--champ); margin:.2rem 0 .3rem; }
 #ok-box .tick{ width:3rem; height:3rem; border-radius:50%; background:#7fd6a0; color:#0A0E1D; font-size:1.7rem; display:flex; align-items:center; justify-content:center; margin:0 auto .6rem; font-weight:700; }
 #ok-box .row{ display:flex; gap:.6rem; flex-wrap:wrap; margin-top:1rem; }
+  /* netteté : l'Italiana est très fine, on l'épaissit à peine pour les petits textes */
+  #ok-box h2{ -webkit-text-stroke:.35px currentColor; }
 </style></head><body><div class="wrap">
 <h1 id="h">Un instant…</h1>
 <p id="p" style="color:var(--brume)">Nous vérifions votre paiement.</p>
