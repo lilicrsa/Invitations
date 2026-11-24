@@ -106,8 +106,8 @@
   .uni-head{ text-align:center; }
   .uni-head .lead{ margin-inline:auto; }
   html{ overflow-x:clip; }
-  .car{ position:relative; margin-top:1.2rem; width:100vw; left:50%; margin-left:-50vw; }
-  .uni-track{ display:flex; gap:clamp(.8rem,2.4vw,1.6rem); overflow-x:auto; scroll-snap-type:x mandatory; scrollbar-width:none; padding:.9rem 0 1.2rem; padding-inline:calc(50% - var(--cw)/2); --cw:min(74vw,300px); -webkit-overflow-scrolling:touch; }
+  .car{ position:relative; margin-top:.5rem; width:100vw; left:50%; margin-left:-50vw; }
+  .uni-track{ display:flex; gap:clamp(.8rem,2.4vw,1.6rem); overflow-x:auto; scroll-snap-type:x mandatory; scrollbar-width:none; padding:.5rem 0 .7rem; padding-inline:calc(50% - var(--cw)/2); --cw:min(74vw,300px); -webkit-overflow-scrolling:touch; }
   .uni-track::-webkit-scrollbar{ display:none; }
   .uni{ flex:0 0 var(--cw); scroll-snap-align:center; display:flex; flex-direction:column; align-items:center; text-align:center; transition:transform .45s cubic-bezier(.2,.7,.2,1), opacity .45s; transform:scale(.86); opacity:.5; }
   .uni.on{ transform:scale(1); opacity:1; }
@@ -118,8 +118,9 @@
   video{ pointer-events:none; -webkit-touch-callout:none; -webkit-user-select:none; user-select:none; }
   .uni video,.uni .ph{ width:100%; aspect-ratio:3/4.3; object-fit:cover; border-radius:192px 192px 10px 10px; background:#000; display:block; }
   .uni .ph{ display:flex; align-items:center; justify-content:center; background:radial-gradient(circle at 30% 25%,rgba(255,196,80,.28),transparent 40%),radial-gradient(circle at 75% 60%,rgba(255,120,150,.22),transparent 40%),radial-gradient(circle at 40% 85%,rgba(120,200,255,.2),transparent 40%),#0c1022; color:var(--champ2); font:400 1.4rem 'Italiana',serif; letter-spacing:.1em; }
-  .uni h3{ font-size:clamp(1.7rem,4.4vw,2.1rem); margin-top:1.3rem; }
-  .uni .tag{ color:var(--brume); font-size:.92rem; margin:.3rem 0 1rem; max-width:19rem; }
+  .uni h3{ font-size:clamp(1.6rem,4.2vw,2rem); margin-top:.7rem; line-height:1.1; }
+  .uni .tag{ color:var(--brume); font-size:.88rem; line-height:1.35; margin:.2rem 0 .7rem; max-width:19rem; }
+  .uni .btn{ padding:.5rem 1.4rem; font-size:.84rem; white-space:nowrap; }
   .uni .count{ font:600 .7rem 'Manrope',sans-serif; letter-spacing:.18em; text-transform:uppercase; color:var(--champ2); margin-bottom:.9rem; }
   .uni .btn[disabled]{ opacity:.45; cursor:default; } .uni .btn[disabled]:hover{ background:none; color:var(--champ); }
   .car .arr{ position:absolute; top:42%; width:46px; height:46px; border-radius:50%; border:1px solid var(--champ2); background:rgba(10,14,29,.8); color:var(--champ); font-size:1.2rem; cursor:pointer; display:none; z-index:2; }
@@ -466,9 +467,12 @@
       var wide = window.matchMedia('(hover:hover) and (min-width:1000px)').matches;
       var base = wide ? (Math.min(1120, vw - 96) - 72) / 4 : Math.min(vw * .74, 300);
       sec.style.scrollMarginTop = Math.max(0, navh - 28) + 'px'; /* le titre arrive juste sous la barre */
-      var used = navh + 11 + head.getBoundingClientRect().height + 19 + 14 + 8 + 64; /* barre, haut de section, titre, marge, rembourrage du carrousel */
+      var u0 = tr.querySelector('.uni'), fr0 = u0 && u0.querySelector('.frame');
+      var extra = (u0 && fr0) ? (u0.offsetHeight - fr0.offsetHeight) : 120; /* nom, phrase et bouton sous la fenêtre */
+      var used = navh + 11 + head.getBoundingClientRect().height + 8 + 8 + extra + 16; /* barre, haut de section, titre, marges, texte sous la fenêtre */
       var cw = Math.min(base, Math.max(130, (vh - used - 18) / 1.433));
       tr.style.setProperty('--cw', Math.round(cw) + 'px');
+      if(!fit.again){ fit.again = 1; fit(); fit.again = 0; } /* 2e passage : le texte sous la fenêtre dépend de sa largeur */
     }
     fit(); try{ new MutationObserver(fit).observe(document.body, { attributes:true, attributeFilter:['class'] }); }catch(_){} window.addEventListener('resize', function(){ var w0 = document.documentElement.clientWidth, h0 = svh(); if(w0 === lw && h0 === lh) return; lw = w0; lh = h0; fit(); }); window.addEventListener('orientationchange', fit); if(document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
   })();
