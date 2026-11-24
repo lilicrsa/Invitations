@@ -446,8 +446,12 @@
   // ---- titre + fenêtre de collection toujours visibles ensemble, quel que soit l'écran ----
   (function(){
     var sec = document.getElementById('modeles'), tr = document.getElementById('uni-track'); if(!sec || !tr) return;
+    var probe = document.createElement('div'); probe.style.cssText = 'position:fixed;left:0;top:0;width:0;height:100svh;pointer-events:none;visibility:hidden'; document.body.appendChild(probe);
+    function svh(){ var h = probe.offsetHeight; return h > 200 ? h : window.innerHeight; } /* hauteur « barre d'adresse visible » : ne bouge pas au défilement */
+    var lw = 0, lh = 0;
     function fit(){
-      var head = sec.querySelector('.uni-head'), nav = document.querySelector('.nav'), vh = window.innerHeight, vw = document.documentElement.clientWidth;
+      var w0 = document.documentElement.clientWidth, h0 = svh(); if(w0 === lw && h0 === lh) return; lw = w0; lh = h0;
+      var head = sec.querySelector('.uni-head'), nav = document.querySelector('.nav'), vh = svh(), vw = document.documentElement.clientWidth;
       var navh = nav ? nav.getBoundingClientRect().height : 0; if(navh < 40) navh = 78;
       var wide = window.matchMedia('(hover:hover) and (min-width:1000px)').matches;
       var base = wide ? (Math.min(1120, vw - 96) - 72) / 4 : Math.min(vw * .74, 300);
