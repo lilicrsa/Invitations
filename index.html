@@ -106,8 +106,8 @@
   .uni-head{ text-align:center; }
   .uni-head .lead{ margin-inline:auto; }
   html{ overflow-x:clip; }
-  .car{ position:relative; margin-top:2.2rem; width:100vw; left:50%; margin-left:-50vw; }
-  .uni-track{ display:flex; gap:clamp(.8rem,2.4vw,1.6rem); overflow-x:auto; scroll-snap-type:x mandatory; scrollbar-width:none; padding:1.6rem 0 2rem; padding-inline:calc(50% - var(--cw)/2); --cw:min(74vw,300px); -webkit-overflow-scrolling:touch; }
+  .car{ position:relative; margin-top:1.2rem; width:100vw; left:50%; margin-left:-50vw; }
+  .uni-track{ display:flex; gap:clamp(.8rem,2.4vw,1.6rem); overflow-x:auto; scroll-snap-type:x mandatory; scrollbar-width:none; padding:.9rem 0 1.2rem; padding-inline:calc(50% - var(--cw)/2); --cw:min(74vw,300px); -webkit-overflow-scrolling:touch; }
   .uni-track::-webkit-scrollbar{ display:none; }
   .uni{ flex:0 0 var(--cw); scroll-snap-align:center; display:flex; flex-direction:column; align-items:center; text-align:center; transition:transform .45s cubic-bezier(.2,.7,.2,1), opacity .45s; transform:scale(.86); opacity:.5; }
   .uni.on{ transform:scale(1); opacity:1; }
@@ -258,7 +258,7 @@
 <body>
 <div class="fx" id="fx"></div>
 <div class="favs" id="favs" aria-hidden="true"><div class="bk" data-favclose></div><div class="pn" role="dialog" aria-label="Mes favoris"><button class="x" type="button" aria-label="Fermer" data-favclose>×</button><h3>Mes favoris</h3><p style="color:var(--brume);margin:.2rem 0 0;font-size:.9rem">Les modèles que vous avez aimés, gardés sur cet appareil.</p><div id="favlist"></div></div></div>
-<div class="world" id="world" role="dialog" aria-modal="true" aria-label="Univers"></div>
+<div class="world" id="world" role="dialog" aria-modal="true" aria-label="Collection"></div>
 
 <!-- PORTE D'ENTRÉE -->
 <header class="gate" id="gate">
@@ -295,14 +295,13 @@
     <div class="valance"></div>
     <div class="wrap sec" style="padding-top:2.4rem">
       <div class="uni-head">
-        <p class="eyebrow">La collection</p>
-        <h2>Choisissez votre univers</h2>
-        <p class="lead">Chaque occasion a son ambiance. Entrez dans un univers pour découvrir ses invitations, avec vidéo d'ouverture, carte et musique.</p>
+        <h2>Choisissez votre collection</h2>
+        <p class="lead">Chaque occasion a son ambiance. Entrez dans une collection pour découvrir ses invitations, avec vidéo d'ouverture, carte et musique.</p>
       </div>
       <div class="car" id="uni-car">
-        <button class="arr p" type="button" aria-label="Univers précédent">‹</button>
-        <div class="uni-track" id="uni-track" tabindex="0" aria-label="Les univers"></div>
-        <button class="arr n" type="button" aria-label="Univers suivant">›</button>
+        <button class="arr p" type="button" aria-label="Collection précédente">‹</button>
+        <div class="uni-track" id="uni-track" tabindex="0" aria-label="Les collections"></div>
+        <button class="arr n" type="button" aria-label="Collection suivante">›</button>
         <div class="dots" id="uni-dots"></div>
       </div>
     </div>
@@ -330,7 +329,7 @@
 
   <section id="tarifs"><div class="wrap sec">
     <h2>Des tarifs simples</h2>
-    <p class="lead" style="margin-inline:auto;text-align:center">Vous payez une seule fois. Le prix dépend de la formule et de l'univers, et il s'affiche avant de commander.</p>
+    <p class="lead" style="margin-inline:auto;text-align:center">Vous payez une seule fois. Le prix dépend de la formule et de la collection, et il s'affiche avant de commander.</p>
     <div class="plans">
       <div class="plan"><h3>Essentiel</h3><p class="pd">L'invitation animée, prête à partager.</p>
         <ul><li>Vidéo d'ouverture et carte à votre date</li><li>Heure, lieu, itinéraire et compte à rebours</li><li>Musique de notre sélection</li></ul>
@@ -346,8 +345,8 @@
       <div><h2>Une idée précise ?</h2><p>Une carte et une vidéo créées pour vous, à votre image : écrivez-nous pour un devis.</p></div>
       <a class="btn" id="contact-btn" href="devis.html">Demander un devis</a>
     </div>
-    <details class="pdet"><summary>Voir le détail des prix par univers</summary>
-    <table class="ptab" id="ptab"><thead><tr><th>Univers</th><th>Essentiel</th><th>Signature</th><th>Prestige</th></tr></thead><tbody></tbody></table>
+    <details class="pdet"><summary>Voir le détail des prix par collection</summary>
+    <table class="ptab" id="ptab"><thead><tr><th>Collection</th><th>Essentiel</th><th>Signature</th><th>Prestige</th></tr></thead><tbody></tbody></table>
     </details>
     <p class="pnote">Prix en euros, TVA non applicable (article 293 B du CGI). Une création sur mesure ? <a href="devis.html">Demandez un devis</a>.</p>
     <p style="text-align:center;margin:1.4rem 0 0"><a class="btn solid" href="commande.html">Personnaliser mon invitation</a></p>
@@ -438,11 +437,27 @@
     var h = document.createElement('h3'); h.textContent = u.n; c.appendChild(h);
     var t = document.createElement('p'); t.className = 'tag'; t.textContent = u.tag; c.appendChild(t);
     var n = document.createElement('div'); n.className = 'count'; n.textContent = u.soon ? 'Modèles en préparation' : (u.models.length + (u.models.length > 1 ? ' modèles' : ' modèle')); c.appendChild(n);
-    var b = document.createElement('button'); b.type = 'button'; b.className = 'btn solid'; b.textContent = 'Entrer dans l’univers';
+    var b = document.createElement('button'); b.type = 'button'; b.className = 'btn solid'; b.textContent = 'Entrer dans la collection';
     b.addEventListener('click', function(){ openWorld(u, b); }); c.appendChild(b);
     track.appendChild(c);
   });
   carousel(track, document.getElementById('uni-dots'), [uCar.querySelector('.arr.p'), uCar.querySelector('.arr.n')]);
+
+  // ---- titre + fenêtre de collection toujours visibles ensemble, quel que soit l'écran ----
+  (function(){
+    var sec = document.getElementById('modeles'), tr = document.getElementById('uni-track'); if(!sec || !tr) return;
+    function fit(){
+      var head = sec.querySelector('.uni-head'), nav = document.querySelector('.nav'), vh = window.innerHeight, vw = document.documentElement.clientWidth;
+      var navh = nav ? nav.getBoundingClientRect().height : 0; if(navh < 40) navh = 78;
+      var wide = window.matchMedia('(hover:hover) and (min-width:1000px)').matches;
+      var base = wide ? (Math.min(1120, vw - 96) - 72) / 4 : Math.min(vw * .74, 300);
+      sec.style.scrollMarginTop = Math.max(0, navh - 28) + 'px'; /* le titre arrive juste sous la barre */
+      var used = navh + 11 + head.getBoundingClientRect().height + 19 + 14 + 8; /* barre, haut de section, titre, marge, rembourrage du carrousel */
+      var cw = Math.min(base, Math.max(130, (vh - used - 18) / 1.433));
+      tr.style.setProperty('--cw', Math.round(cw) + 'px');
+    }
+    fit(); try{ new MutationObserver(fit).observe(document.body, { attributes:true, attributeFilter:['class'] }); }catch(_){} window.addEventListener('resize', fit); window.addEventListener('orientationchange', fit); if(document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
+  })();
 
   // ---- tarifs : lus depuis les données des univers (une seule source) ----
   (function(){
@@ -561,7 +576,7 @@
       g.appendChild(c);
     });
     box.appendChild(g);
-    var q = document.createElement('p'); q.className = 'devis'; q.innerHTML = 'Vous rêvez d’un <strong>univers complet</strong> créé pour vous ? Décrivez-nous votre projet et recevez un devis personnalisé.';
+    var q = document.createElement('p'); q.className = 'devis'; q.innerHTML = 'Vous rêvez d’une <strong>collection sur mesure</strong> créé pour vous ? Décrivez-nous votre projet et recevez un devis personnalisé.';
     var qb = document.createElement('a'); qb.className = 'btn'; qb.textContent = 'Demander un devis';
     qb.href = 'devis.html?u=' + u.id;
     box.appendChild(q); box.appendChild(qb);
@@ -627,8 +642,8 @@
     (instant ? function(_u, sw){ sw(); } : enterFx)(u, function(){
       world.innerHTML = ''; world.style.setProperty('--tint', u.tint);
       var top = document.createElement('div'); top.className = 'top';
-      var back = document.createElement('button'); back.type = 'button'; back.className = 'back'; back.textContent = '‹ Les univers'; back.addEventListener('click', function(){ dropLayer('world', closeWorld); });
-      var br = document.createElement('div'); br.className = 'eyebrow'; br.style.margin = '0'; br.textContent = 'Univers ' + u.n;
+      var back = document.createElement('button'); back.type = 'button'; back.className = 'back'; back.textContent = '‹ Les collections'; back.addEventListener('click', function(){ dropLayer('world', closeWorld); });
+      var br = document.createElement('div'); br.className = 'eyebrow'; br.style.margin = '0'; br.textContent = 'Collection ' + u.n;
       top.appendChild(back); top.appendChild(br); var fb = document.createElement('button'); fb.type = 'button'; fb.className = 'favbtn'; fb.style.marginLeft = 'auto'; fb.innerHTML = '<svg class="hs" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5c-.3 0-.6-.1-.8-.3C6.2 16.6 3 13.6 3 9.9 3 7.2 5 5.2 7.5 5.2c1.7 0 3.3.9 4.5 2.5 1.2-1.6 2.8-2.5 4.5-2.5C19 5.2 21 7.2 21 9.9c0 3.7-3.2 6.7-8.2 10.3-.2.2-.5.3-.8.3z"/></svg>Favoris<span class="fn" data-favn>0</span>'; fb.addEventListener('click', function(){ window.__openFavs(); }); top.appendChild(fb); world.appendChild(top);
       var wrap = document.createElement('div'); wrap.className = 'wrap';
       var intro = document.createElement('div'); intro.className = 'intro';
@@ -637,7 +652,7 @@
         var sec = document.createElement('section'); sec.className = 'grp' + (prestige ? ' prest' : '');
         var gh = document.createElement('h3'); gh.className = 'gt'; gh.textContent = title; sec.appendChild(gh);
         var gs = document.createElement('p'); gs.className = 'gs'; gs.textContent = sub; sec.appendChild(gs);
-        if(!keys.length){ var np = document.createElement('p'); np.className = 'soon'; np.style.margin = '1.2rem auto'; np.textContent = prestige ? 'Les modèles Prestige de cet univers arrivent bientôt.' : 'Les modèles arrivent bientôt.'; sec.appendChild(np); return { el:sec }; }
+        if(!keys.length){ var np = document.createElement('p'); np.className = 'soon'; np.style.margin = '1.2rem auto'; np.textContent = prestige ? 'Les modèles Prestige de cette collection arrivent bientôt.' : 'Les modèles arrivent bientôt.'; sec.appendChild(np); return { el:sec }; }
         var car = document.createElement('div'); car.className = 'car'; var tr = document.createElement('div'); tr.className = 'uni-track'; var dots = document.createElement('div'); dots.className = 'dots';
         keys.forEach(function(k){
           var m = MODELS[k], f = document.createElement('article'); f.className = 'uni screen';
