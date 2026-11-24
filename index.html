@@ -137,6 +137,8 @@
   /* ---------- dans un univers ---------- */
   .world{ position:fixed; inset:0; z-index:70; overflow-y:auto; background:var(--nuit); color:var(--champ); display:none; -webkit-overflow-scrolling:touch; padding-inline:max(16px,env(safe-area-inset-left,0px)); padding-bottom:max(2rem,env(safe-area-inset-bottom,0px)); }
   body.inworld .world{ display:block; } body.inworld{ overflow:hidden; }
+  body.inworld .nav{ position:fixed; top:0; left:0; right:0; margin-inline:0; z-index:80; }
+  body.inworld .world{ top:var(--navh,64px); }
   .world::before{ content:''; position:fixed; inset:0; pointer-events:none; background:radial-gradient(ellipse 70% 50% at 50% 0%,var(--tint,rgba(231,213,168,.2)),transparent 70%); }
   .world .top .back, .world .top .eyebrow{ white-space:nowrap; } @media (max-width:520px){ .world .top{ gap:.5rem; } .world .top .eyebrow{ font-size:.62rem !important; letter-spacing:.1em !important; } .world .top .back{ padding:.5rem .8rem; font-size:.85rem; } }
   .world .top{ position:sticky; top:0; z-index:3; display:flex; align-items:center; justify-content:space-between; gap:1rem; padding:max(.8rem,env(safe-area-inset-top,0px)) 0 .8rem; background:linear-gradient(180deg,var(--nuit) 60%,transparent); }
@@ -672,6 +674,7 @@
         of.appendChild(opw); intro.appendChild(of);
         if(g1.tr) carousel(g1.tr, g1.dots, null); if(g2.tr) carousel(g2.tr, g2.dots, null);
       }
+      try{ var nv = document.querySelector('.nav'); if(nv) document.documentElement.style.setProperty('--navh', Math.round(nv.getBoundingClientRect().height) + 'px'); }catch(_){}
       body.classList.add('inworld'); world.scrollTop = 0; refreshFavs(); pushLayer('world'); try{ sessionStorage.setItem('mo_world', u.id); }catch(_){}
     });
   }
@@ -681,6 +684,9 @@
     if(reduce){ finish(); return; }
     var o = world.animate([{ opacity:1 }, { opacity:0 }], { duration:350, fill:'forwards' }); o.onfinish = function(){ finish(); world.getAnimations().forEach(function(a){ a.cancel(); }); };
   }
+  // barre du site toujours visible dans un univers : un clic sur son menu ferme l'univers
+  function closeWorldNow(){ body.classList.remove('inworld'); world.innerHTML = ''; try{ sessionStorage.removeItem('mo_world'); }catch(_){} var i = layers.lastIndexOf('world'); if(i > -1) layers.splice(i, 1); }
+  document.querySelectorAll('.nav a.l, .menu a.ml, .menu a.btn, .nav .cta, #home').forEach(function(a){ a.addEventListener('click', function(){ if(body.classList.contains('inworld')) closeWorldNow(); }, true); });
   document.addEventListener('keydown', function(e){ if(e.key === 'Escape' && body.classList.contains('inworld')) dropLayer('world', closeWorld); });
   function showSoon(btn){
     var n = btn.parentNode.querySelector('.count'); n.textContent = 'Les modèles arrivent bientôt'; btn.disabled = true; btn.textContent = 'Bientôt disponible';
