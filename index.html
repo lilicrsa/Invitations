@@ -41,6 +41,7 @@
   .brandbox{ display:flex; align-items:center; gap:.6rem; } .brandbox .logo{ height:62px; width:auto; margin:-6px 0 -6px -6px; pointer-events:none; } .nav .brand{ display:inline-flex; align-items:center; gap:.5rem; } .nav .brand .logo{ height:32px; width:auto; pointer-events:none; }
   .brand-sub{ font:400 .86rem/1.2 'Italiana',serif; letter-spacing:.05em; color:var(--champ2); opacity:.95; margin:.2rem 0 0 .1rem; max-width:15.5rem; }
   .bw{ display:flex; flex-direction:column; align-items:flex-start; line-height:1.15; } .bsub{ font:400 .66rem/1.2 'Italiana',serif; letter-spacing:.06em; color:var(--champ2); opacity:.95; margin-top:.15rem; text-transform:none; }
+  body.inworld .bsub{ display:none; }
   .gate .brand{ font:400 1.5rem 'Italiana',serif; letter-spacing:.16em; }
   .gate main{ flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:1.8rem; padding-block:2rem; }
   .gate h1{ font-size:clamp(2.6rem,8vw,5.4rem); line-height:1.05; max-width:14ch; }
@@ -674,8 +675,8 @@
         of.appendChild(opw); intro.appendChild(of);
         if(g1.tr) carousel(g1.tr, g1.dots, null); if(g2.tr) carousel(g2.tr, g2.dots, null);
       }
-      try{ var nv = document.querySelector('.nav'); if(nv) document.documentElement.style.setProperty('--navh', Math.round(nv.getBoundingClientRect().height) + 'px'); }catch(_){}
       body.classList.add('inworld'); world.scrollTop = 0; refreshFavs(); pushLayer('world'); try{ sessionStorage.setItem('mo_world', u.id); }catch(_){}
+      try{ var nv = document.querySelector('.nav'); if(nv) document.documentElement.style.setProperty('--navh', Math.round(nv.getBoundingClientRect().height) + 'px'); }catch(_){}
     });
   }
   function closeWorld(){
