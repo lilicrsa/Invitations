@@ -5,9 +5,8 @@
 window.MO_MISSIONS = [
   /* ---- Première impression et découverte ---- */
   { id:'t01', ph:'Accueil', type:'text', q:'Sans faire défiler la page : que propose ce site, selon vous ?', hint:'Répondez avec vos mots, c’est votre première impression qui compte.' },
-  { id:'t02', ph:'Accueil', type:'choice', q:'À votre avis, combien de modèles d’invitation propose-t-on pour un mariage ?', opts:['Un seul','Deux','Entre 3 et 5','Plus de 5','Je ne sais pas'] },
-  { id:'t03', ph:'Découverte', type:'task', q:'Entrez dans l’univers « Mariage ».', auto:{ ev:'univers_open', w:{ univers:'mariage' } }, rate:true },
-  { id:'t04', ph:'Découverte', type:'choice', q:'Combien de modèles voyez-vous dans cet univers ?', opts:['Un','Deux','Trois ou plus','Je ne sais pas'] },
+  { id:'t03', ph:'Découverte', type:'task', q:'Entrez dans la collection « Mariage ».', auto:{ ev:'univers_open', w:{ univers:'mariage' } }, rate:true },
+  { id:'t04', ph:'Découverte', type:'choice', q:'Combien de modèles voyez-vous dans cette collection ?', opts:['Un','Deux','Trois ou plus','Je ne sais pas'] },
   { id:'t05', ph:'Découverte', type:'task', q:'Lancez l’aperçu animé d’un modèle.', auto:{ ev:'video_play' }, rate:true },
   { id:'t06', ph:'Découverte', type:'task', q:'Mettez deux modèles en favoris (le cœur sur la vidéo).', auto:{ ev:'fav_add', n:2 }, rate:true },
   { id:'t07', ph:'Découverte', type:'task', q:'Retrouvez la liste de vos favoris.', auto:{ ev:'fav_panel' }, rate:true },
