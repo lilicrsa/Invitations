@@ -4,7 +4,7 @@ window.LEGAL = {
   statut: 'Entrepreneur individuel (micro-entreprise)',
   siret: '853 187 508 00025',          // numéro SIRET (14 chiffres)
   adresse: '',        // adresse professionnelle
-  email: 'contact@maisonopaline-invitations.fr',   // adresse e-mail de contact
+  email: '',          // volontairement vide : le contact se fait par le formulaire
   telephone: '',      // facultatif
   tva: 'TVA non applicable, article 293 B du CGI',   // à confirmer selon ton régime
   mediateur: '',      // nom et coordonnées du médiateur de la consommation
