@@ -42,6 +42,8 @@
   .brand-sub{ font:400 .86rem/1.2 'Italiana',serif; letter-spacing:.05em; color:var(--champ2); opacity:.95; margin:.2rem 0 0 .1rem; max-width:15.5rem; }
   .bw{ display:flex; flex-direction:column; align-items:flex-start; line-height:1.15; } .bsub{ font:400 .66rem/1.2 'Italiana',serif; letter-spacing:.06em; color:var(--champ2); opacity:.95; margin-top:.15rem; text-transform:none; }
   body.inworld .bsub{ display:none; }
+  body.inworld .nav{ padding-top:max(.4rem,env(safe-area-inset-top,0px)); padding-bottom:.4rem; } body.inworld .nav .logo{ height:30px; width:auto; } body.inworld .nav .brand{ font-size:1.15rem; } body.inworld .burger{ width:36px; height:36px; }
+  .world .car{ scroll-margin-top:3.7rem; }
   .gate .brand{ font:400 1.5rem 'Italiana',serif; letter-spacing:.16em; }
   .gate main{ flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:1.8rem; padding-block:2rem; }
   .gate h1{ font-size:clamp(2.6rem,8vw,5.4rem); line-height:1.05; max-width:14ch; }
@@ -667,7 +669,7 @@
         function pill(cls, name, price, desc, target, tier){
           var b = document.createElement('button'); b.type = 'button'; b.className = 'opill ' + cls;
           [['of-n', name], ['of-p', price], ['of-d', desc], ['of-a', '↓']].forEach(function(x){ var d = document.createElement('span'); d.className = x[0]; d.textContent = x[1]; b.appendChild(d); });
-          b.addEventListener('click', function(){ window.moTrack && moTrack('offer_pill', { univers:u.id, tier:tier }); try{ target.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block:'start' }); }catch(_){ target.scrollIntoView(); } });
+          b.addEventListener('click', function(){ window.moTrack && moTrack('offer_pill', { univers:u.id, tier:tier }); var tg = target.querySelector('.car') || target; try{ tg.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block:'start' }); }catch(_){ tg.scrollIntoView(); } });
           return b;
         }
         opw.appendChild(pill('', 'Essentiel et Signature', 'dès ' + u.prices[0] + ' €', 'Votre invitation animée, avec le suivi des réponses.', g1.el, 'std'));
