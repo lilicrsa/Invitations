@@ -149,7 +149,7 @@
   .ofw{ margin:1.9rem auto 0; max-width:34rem; text-align:center; }
   .ofw .oe-t{ font:600 .72rem 'Manrope',sans-serif; letter-spacing:.2em; text-transform:uppercase; color:var(--champ2); margin:0 0 1.1rem; }
   .opills{ display:grid; grid-template-columns:1fr 1fr; gap:.6rem; }
-  .opill{ border:1px solid var(--trait); background:rgba(231,213,168,.07); color:var(--champ); font:inherit; border-radius:18px; padding:.85rem .6rem .8rem; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:.15rem; transition:background .2s,border-color .2s; }
+  .opill{ justify-content:center; min-height:84px; border:1px solid var(--trait); background:rgba(231,213,168,.07); color:var(--champ); font:inherit; border-radius:18px; padding:.85rem .6rem .8rem; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:.15rem; transition:background .2s,border-color .2s; }
   .opill:hover,.opill:focus-visible{ background:rgba(231,213,168,.15); border-color:var(--champ); outline:none; }
   .opill .of-n{ font:400 1.15rem/1.15 'Italiana',serif; } .opill .of-p{ font-size:.78rem; color:var(--champ2); font-weight:600; } .opill .of-d{ font-size:.74rem; color:var(--brume); line-height:1.35; } .opill .of-a{ font-size:.9rem; margin-top:.2rem; color:var(--champ); }
   .opill.pr{ border-color:var(--champ); background:linear-gradient(180deg,rgba(231,213,168,.24),rgba(231,213,168,.08)); box-shadow:0 0 22px rgba(231,213,168,.2); }
@@ -668,7 +668,7 @@
         var opw = document.createElement('div'); opw.className = 'opills';
         function pill(cls, name, price, desc, target, tier){
           var b = document.createElement('button'); b.type = 'button'; b.className = 'opill ' + cls;
-          [['of-n', name], ['of-p', price], ['of-d', desc], ['of-a', '↓']].forEach(function(x){ var d = document.createElement('span'); d.className = x[0]; d.textContent = x[1]; b.appendChild(d); });
+          [['of-n', name], ['of-a', '↓']].forEach(function(x){ var d = document.createElement('span'); d.className = x[0]; d.textContent = x[1]; b.appendChild(d); });
           b.addEventListener('click', function(){ window.moTrack && moTrack('offer_pill', { univers:u.id, tier:tier }); var tg = target.querySelector('.car') || target; try{ tg.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block:'start' }); }catch(_){ tg.scrollIntoView(); } });
           return b;
         }
