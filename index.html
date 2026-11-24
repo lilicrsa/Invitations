@@ -141,6 +141,15 @@
   .world .top .back, .world .top .eyebrow{ white-space:nowrap; } @media (max-width:520px){ .world .top{ gap:.5rem; } .world .top .eyebrow{ font-size:.62rem !important; letter-spacing:.1em !important; } .world .top .back{ padding:.5rem .8rem; font-size:.85rem; } }
   .world .top{ position:sticky; top:0; z-index:3; display:flex; align-items:center; justify-content:space-between; gap:1rem; padding:max(.8rem,env(safe-area-inset-top,0px)) 0 .8rem; background:linear-gradient(180deg,var(--nuit) 60%,transparent); }
   .world .back{ background:none; border:1px solid var(--trait); color:var(--champ); font:500 .88rem 'Manrope',sans-serif; padding:.5rem 1rem; border-radius:999px; cursor:pointer; }
+  .ofw{ margin:1.9rem auto 0; max-width:34rem; text-align:center; }
+  .ofw .oe-t{ font:600 .72rem 'Manrope',sans-serif; letter-spacing:.2em; text-transform:uppercase; color:var(--champ2); margin:0 0 .7rem; }
+  .opills{ display:grid; grid-template-columns:1fr 1fr; gap:.6rem; }
+  .opill{ border:1px solid var(--trait); background:rgba(231,213,168,.07); color:var(--champ); font:inherit; border-radius:18px; padding:.85rem .6rem .8rem; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:.15rem; transition:background .2s,border-color .2s; }
+  .opill:hover,.opill:focus-visible{ background:rgba(231,213,168,.15); border-color:var(--champ); outline:none; }
+  .opill .of-n{ font:400 1.15rem/1.15 'Italiana',serif; } .opill .of-p{ font-size:.78rem; color:var(--champ2); font-weight:600; } .opill .of-d{ font-size:.74rem; color:var(--brume); line-height:1.35; } .opill .of-a{ font-size:.9rem; margin-top:.2rem; color:var(--champ); }
+  .opill.pr{ border-color:var(--champ); background:linear-gradient(180deg,rgba(231,213,168,.24),rgba(231,213,168,.08)); box-shadow:0 0 22px rgba(231,213,168,.2); }
+  .opill.pr .of-n::before{ content:'✦ '; }
+  .world .grp{ scroll-margin-top:4.8rem; }
   .world .intro{ text-align:center; position:relative; padding:1rem 0 0; }
   .world .intro h2{ font-size:clamp(2.2rem,7vw,3.8rem); line-height:1.05; } .world .intro p{ color:var(--brume); max-width:30rem; margin:.8rem auto 0; }
   .screen{ display:flex; flex-direction:column; align-items:center; text-align:center; }
@@ -649,6 +658,18 @@
         var g1 = group(std, 'Essentiel et Signature', u.std, false);
         var g2 = group(pre, 'Prestige', u.pre, true);
         wrap.appendChild(g1.el); wrap.appendChild(g2.el); wrap.appendChild(pricing(u)); world.appendChild(wrap);
+        var of = document.createElement('div'); of.className = 'ofw';
+        var oe = document.createElement('p'); oe.className = 'oe-t'; oe.textContent = 'Deux offres au choix'; of.appendChild(oe);
+        var opw = document.createElement('div'); opw.className = 'opills';
+        function pill(cls, name, price, desc, target, tier){
+          var b = document.createElement('button'); b.type = 'button'; b.className = 'opill ' + cls;
+          [['of-n', name], ['of-p', price], ['of-d', desc], ['of-a', '↓']].forEach(function(x){ var d = document.createElement('span'); d.className = x[0]; d.textContent = x[1]; b.appendChild(d); });
+          b.addEventListener('click', function(){ window.moTrack && moTrack('offer_pill', { univers:u.id, tier:tier }); try{ target.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block:'start' }); }catch(_){ target.scrollIntoView(); } });
+          return b;
+        }
+        opw.appendChild(pill('', 'Essentiel et Signature', 'dès ' + u.prices[0] + ' €', 'Votre invitation animée, avec le suivi des réponses.', g1.el, 'std'));
+        opw.appendChild(pill('pr', 'Prestige', pre.length ? 'dès ' + u.prices[2] + ' €' : 'bientôt', 'Tout Signature, plus une galerie souvenir de vos photos.', g2.el, 'pre'));
+        of.appendChild(opw); intro.appendChild(of);
         if(g1.tr) carousel(g1.tr, g1.dots, null); if(g2.tr) carousel(g2.tr, g2.dots, null);
       }
       body.classList.add('inworld'); world.scrollTop = 0; refreshFavs(); pushLayer('world'); try{ sessionStorage.setItem('mo_world', u.id); }catch(_){}
