@@ -385,6 +385,15 @@
     jeux:{ n:'Royal Chic', occ:'Soirée entre amies', demo:'jeux/?i=jeux-demo' },
     noel:{ n:'Étoile de Noël', occ:'Fêtes de fin d’année', demo:'noel/?i=noel-demo' }
   };
+  // ---- un rafraîchissement ramène toujours en haut de la page ----
+  try{
+    var nv = performance.getEntriesByType('navigation')[0];
+    if(nv && nv.type === 'reload'){
+      history.scrollRestoration = 'manual';
+      if(location.hash) history.replaceState(null, '', location.pathname + location.search);
+      window.scrollTo(0, 0); window.addEventListener('load', function(){ window.scrollTo(0, 0); setTimeout(function(){ window.scrollTo(0, 0); }, 150); });
+    } else { history.scrollRestoration = 'auto'; }
+  }catch(_){}
   var UNIVERS = [
     { id:'mariage', prices:[29,59,89], devis:[79,109,139], n:'Mariage', tag:'Quand deux histoires n’en font plus qu’une', cover:'galerie', models:['galerie','boheme','palais'], fx:'bloom', wash:'#f7dccb', tint:'rgba(244,196,176,.24)',
       intro:'Le plus beau jour de votre vie mérite une invitation qui fait battre le cœur avant même la cérémonie. Fleurs, lumière dorée, musique : vos invités sont déjà dans la magie.', std:'Choisissez votre décor, ajoutez vos prénoms et vos mots : votre histoire prend vie en quelques minutes.', pre:'Vos plus beaux souvenirs offerts en ouverture : vos photos défilent dans un jardin doré, puis la carte se dévoile.' },
