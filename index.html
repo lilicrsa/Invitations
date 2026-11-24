@@ -366,6 +366,7 @@
     boheme:{ n:'Bohème doré', occ:'Mariage, fiançailles', demo:'boheme/?i=boheme-demo' },
     palais:{ n:'Palais oriental', occ:'Mariage, fiançailles', demo:'palais/?i=palais-demo' },
     ornoir:{ n:'Or & Noir', occ:'Anniversaire', demo:'ornoir/?i=ornoir-demo' },
+    funone:{ n:'Fun to be One', occ:'1er anniversaire', demo:'funone/?i=funone-demo' },
     'gender-reveal':{ n:'Gender Reveal', occ:'Annonce de bébé', demo:'gender-reveal/?i=gender-reveal-demo' },
     jeux:{ n:'Royal Chic', occ:'Soirée entre amies', demo:'jeux/?i=jeux-demo' },
     noel:{ n:'Étoile de Noël', occ:'Fêtes de fin d’année', demo:'noel/?i=noel-demo' }
@@ -375,7 +376,7 @@
       intro:'Le plus beau jour de votre vie mérite une invitation qui fait battre le cœur avant même la cérémonie. Fleurs, lumière dorée, musique : vos invités sont déjà dans la magie.', std:'Choisissez votre décor, ajoutez vos prénoms et vos mots : votre histoire prend vie en quelques minutes.', pre:'Vos plus beaux souvenirs offerts en ouverture : vos photos défilent dans un jardin doré, puis la carte se dévoile.' },
     { id:'bebe', prices:[19,39,59], devis:[69,89,129], n:'Bébé', tag:'Un petit miracle qui s’annonce en douceur', cover:'gender-reveal', models:['gender-reveal'], fx:'bubbles', wash:'#d9e9f8', tint:'rgba(160,205,240,.24)',
       intro:'Une petite merveille arrive. Annoncez-la dans un nuage de douceur : ballons, étoiles et nounours pour faire fondre vos proches dès l’ouverture.', std:'Choisissez l’ambiance, ajoutez votre message : la plus tendre des nouvelles, partagée en un simple lien.', pre:'Les plus beaux instants de votre histoire, en lumière : vos photos et vos vidéos au cœur de l’invitation.' },
-    { id:'anniversaire', prices:[15,29,49], devis:[65,79,109], n:'Anniversaire', tag:'Chaque bougie, une étincelle de joie', cover:'ornoir', models:['ornoir'], fx:'gold', wash:'#fbe3a8', tint:'rgba(255,190,80,.22)',
+    { id:'anniversaire', prices:[15,29,49], devis:[65,79,109], n:'Anniversaire', tag:'Chaque bougie, une étincelle de joie', cover:'ornoir', models:['ornoir','funone'], fx:'gold', wash:'#fbe3a8', tint:'rgba(255,190,80,.22)',
       intro:'Faites de chaque bougie un moment de joie. Éclats dorés, lumières et surprises : une fête qui commence bien avant le gâteau.', std:'Ajoutez le prénom, la date et un mot doux : l’invitation qui donne envie de faire la fête.', pre:'Une année en souvenirs : les plus beaux moments de la personne fêtée, en photos et en vidéos.' },
     { id:'fetes', prices:[15,29,49], devis:[65,79,109], n:'Réceptions', tag:'Des soirées qui scintillent longtemps', cover:'noel', models:['jeux','noel'], fx:'portal', wash:'#efe1b8', tint:'rgba(231,213,168,.22)',
       intro:'Des soirées dont on se souvient. Noël scintillant, soirées jeux, réceptions chaleureuses : donnez le ton avant même l’arrivée de vos invités.', std:'Choisissez l’ambiance, personnalisez le titre, la date et le lieu : vos invités arrivent déjà de bonne humeur.', pre:'Vos plus beaux moments de l’année, racontés en images avant la fête.' }
@@ -385,9 +386,9 @@
   document.title = BRAND + ' — invitations animées';
 
   function mkVideo(k, label){
-    var v = document.createElement('video'); v.muted = true; v.loop = false; v.playsInline = true; v.setAttribute('playsinline',''); v.preload = 'metadata'; v.setAttribute('controlsList','nodownload noremoteplayback'); v.setAttribute('disablePictureInPicture',''); v.disableRemotePlayback = true; v.poster = 'mini/' + k + '.jpg?v=11';
-    v.setAttribute('aria-label', label); v.poster = 'mini/' + k + '.jpg?v=11'; v.addEventListener('click', function(){ if(v.paused) v.go(); });
-    ['mp4','webm'].forEach(function(x){ var s = document.createElement('source'); s.src = 'mini/' + k + '.' + x + '?v=15'; s.type = 'video/' + x; v.appendChild(s); });
+    var v = document.createElement('video'); v.muted = true; v.loop = false; v.playsInline = true; v.setAttribute('playsinline',''); v.preload = 'metadata'; v.setAttribute('controlsList','nodownload noremoteplayback'); v.setAttribute('disablePictureInPicture',''); v.disableRemotePlayback = true; v.poster = 'mini/' + k + '.jpg?v=13';
+    v.setAttribute('aria-label', label); v.poster = 'mini/' + k + '.jpg?v=13'; v.addEventListener('click', function(){ if(v.paused) v.go(); });
+    ['mp4','webm'].forEach(function(x){ var s = document.createElement('source'); s.src = 'mini/' + k + '.' + x + '?v=16'; s.type = 'video/' + x; v.appendChild(s); });
     // l'aperçu s'arrête sur la carte (avant le fondu au noir de fin de clip) ; un nouveau clic le relance depuis le début
     v.addEventListener('timeupdate', function(){ if(!v.paused && v.duration && v.currentTime >= v.duration - 0.9){ v.pause(); v.dataset.done = '1'; } });
     v.go = function(){ if(v.dataset.done){ v.currentTime = 0; delete v.dataset.done; } return v.play().catch(function(){}); };
@@ -417,7 +418,7 @@
     var c = document.createElement('article'); c.className = 'uni'; c.style.setProperty('--tint', u.tint);
     var fr = document.createElement('div'); fr.className = 'frame';
     if(u.cover){ var v = mkVideo(u.cover, 'Aperçu animé : ' + u.n); fr.appendChild(v); fr.classList.add('tap'); (function(vv, ff){ ff.addEventListener('click', function(){ if(vv.paused){ track.querySelectorAll('video').forEach(function(o){ if(o !== vv) o.pause(); }); vv.go(); } else vv.pause(); }); vv.addEventListener('play', function(){ ff.classList.add('playing'); }); vv.addEventListener('pause', function(){ ff.classList.remove('playing'); }); })(v, fr); }
-    else { var im = document.createElement('img'); im.className = 'ph'; im.src = 'univers/' + u.id + '.jpg?v=11'; im.alt = u.n; fr.appendChild(im); }
+    else { var im = document.createElement('img'); im.className = 'ph'; im.src = 'univers/' + u.id + '.jpg?v=13'; im.alt = u.n; fr.appendChild(im); }
     c.appendChild(fr);
     var h = document.createElement('h3'); h.textContent = u.n; c.appendChild(h);
     var t = document.createElement('p'); t.className = 'tag'; t.textContent = u.tag; c.appendChild(t);
@@ -570,7 +571,7 @@
     box.innerHTML = '';
     a.forEach(function(k){
       var m = MODELS[k], it = document.createElement('div'); it.className = 'it';
-      var im = document.createElement('img'); im.src = 'mini/' + k + '.jpg?v=11'; im.alt = ''; it.appendChild(im);
+      var im = document.createElement('img'); im.src = 'mini/' + k + '.jpg?v=13'; im.alt = ''; it.appendChild(im);
       var t = document.createElement('div'); t.className = 't';
       var b = document.createElement('b'); b.textContent = m.n; var sm = document.createElement('small'); sm.textContent = m.occ; t.appendChild(b); t.appendChild(sm);
       var ac = document.createElement('div'); ac.className = 'a';

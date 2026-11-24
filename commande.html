@@ -276,6 +276,8 @@
               titleLabel:'Prénoms des mariés', titleHint:'Ex. Camille & Thomas', title:'', host:'' },
     ornoir: { name:'Or & Noir', img:'ornoir/apercu.jpg?v=3', mini:'mini/ornoir', desc:'Anniversaire : noir profond, ruban et cadeau dorés, une fête en or.',
               titleLabel:'Titre de l’invitation', titleHint:'Ex. Les 30 ans de Léa', title:'', host:'' },
+    funone: { name:'Fun to be One', img:'funone/apercu.jpg?v=1', mini:'mini/funone', desc:'Premier anniversaire : lapin tout doux, ballons pastel et gâteau à bougie.',
+              titleLabel:'Titre de l’invitation', titleHint:'Ex. Le 1er anniversaire de Léo', title:'', host:'' },
     noel:   { name:'Étoile de Noël', img:'noel/apercu.jpg?v=3', mini:'mini/noel', desc:'Fête de Noël, repas de famille ou entre amis : ivoire, rouge et or.',
               titleLabel:'Titre de l’invitation', titleHint:'Ex. La Magie de Noël', title:'La Magie de Noël', host:'' },
     jeux:   { name:'Soirée Jeux — Royal Chic', img:'jeux/apercu.jpg?v=3', mini:'mini/jeux', desc:'Soirée entre filles : rubis, noir et or, jeux de société et coffee corner.',
@@ -327,7 +329,7 @@
   const io = 'IntersectionObserver' in window ? new IntersectionObserver(es => es.forEach(e => { try{ if(e.isIntersecting){ e.target.play().catch(()=>{}); } else { e.target.pause(); } }catch(_){} }), { threshold:.35 }) : null;
   const list = $('themes');
   const WANT_U = new URLSearchParams(location.search).get('u');
-  const UMAP = { mariage:['boheme','palais','galerie'], bebe:['gender-reveal'], fetes:['noel','jeux'], anniversaire:['ornoir'] };
+  const UMAP = { mariage:['boheme','palais','galerie'], bebe:['gender-reveal'], fetes:['noel','jeux'], anniversaire:['ornoir','funone'] };
   const UNAME = { mariage:'Mariage', bebe:'Bébé', fetes:'Réceptions', anniversaire:'Anniversaire' };
   const UKEYS = (WANT_U && UMAP[WANT_U]) ? UMAP[WANT_U] : null;
   if(UKEYS){
@@ -401,7 +403,7 @@
     'Anniversaire':['Enfant','Adulte','Girly chic','Pirate','Princesse','Jungle','Anniversaire surprise','Familial','Adulte chic','Adulte festif','Premier anniversaire'],
     'Bébé':['Gender reveal','Baby shower','Annonce de grossesse','Naissance','Baptême','Premier anniversaire','Fête de bienvenue'],
     'Réceptions':['Noël','Nouvel An','Soirée jeux','Soirée casino','Halloween','Garden-party','Soirée chic','Soirée à thème'] };
-  const UNIV = { boheme:'Mariage', palais:'Mariage', galerie:'Mariage', ornoir:'Anniversaire', noel:'Réceptions', jeux:'Réceptions', 'gender-reveal':'Bébé' };
+  const UNIV = { boheme:'Mariage', palais:'Mariage', galerie:'Mariage', ornoir:'Anniversaire', funone:'Anniversaire', noel:'Réceptions', jeux:'Réceptions', 'gender-reveal':'Bébé' };
   const fmtD = s => s ? Math.floor(s / 60) + ':' + String(Math.round(s % 60)).padStart(2, '0') : '';
   function musicShown(){ const f = $('mus-sub') ? $('mus-sub').value : ''; return musicList.filter(t => !musicUniv || (t.themes || []).some(x => x.c === musicUniv && (!f || x.s === f))); }
   function setMusicTab(m){ musicTab = m; $('mus-tab-lib').classList.toggle('on', m === 'lib'); $('mus-tab-own').classList.toggle('on', m === 'own'); $('mus-lib').style.display = m === 'lib' ? '' : 'none'; $('mus-own').style.display = m === 'own' ? '' : 'none'; if(m !== 'lib'){ try{ $('mus-aud').pause(); }catch(_){} } }
@@ -547,8 +549,8 @@
     pv = 'sig'; liveInv = buildInv(d); showPreview();
   });
 
-  const STD_DEMO = { boheme:'boheme/?i=boheme-demo', palais:'palais/?i=palais-demo', ornoir:'ornoir/?i=ornoir-demo', noel:'noel/?i=noel-demo', jeux:'jeux/?i=jeux-demo', 'gender-reveal':'gender-reveal/?i=gender-reveal-demo', galerie:'boheme/?i=boheme-demo' };
-  const PRICES = { boheme:[29,59], palais:[29,59], ornoir:[15,29], galerie:[29,59,89], 'gender-reveal':[19,39], noel:[15,29], jeux:[15,29] };
+  const STD_DEMO = { boheme:'boheme/?i=boheme-demo', palais:'palais/?i=palais-demo', ornoir:'ornoir/?i=ornoir-demo', funone:'funone/?i=funone-demo', noel:'noel/?i=noel-demo', jeux:'jeux/?i=jeux-demo', 'gender-reveal':'gender-reveal/?i=gender-reveal-demo', galerie:'boheme/?i=boheme-demo' };
+  const PRICES = { boheme:[29,59], palais:[29,59], ornoir:[15,29], funone:[15,29], galerie:[29,59,89], 'gender-reveal':[19,39], noel:[15,29], jeux:[15,29] };
   const FNOTE = { ess:'Aperçu essentiel : musique proposée (modifiable), sans réponses des invités.', sig:'Aperçu signature : avec les réponses des invités.', pre:'Aperçu prestige : avec les réponses des invités.' };
   function setPv(f){ pv = f; document.querySelectorAll('#fsw button').forEach(b => b.classList.toggle('on', b.dataset.f === f)); $('fsw-note').textContent = FNOTE[f]; }
   document.querySelectorAll('#fsw button').forEach(b => b.addEventListener('click', () => { if(!liveInv) return; setPv(b.dataset.f); liveInv = buildInv(collect()); setFull(false); setFrame(theme + '/?preview=' + Math.random().toString(36).slice(2, 8).toUpperCase() + '&live=1'); }));

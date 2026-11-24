@@ -7,6 +7,7 @@
   var VIDEO = { types:['video/mp4','video/quicktime'], ext:'MP4 ou MOV', maxMB:100, maxSec:30, orientation:'portrait' };
   window.MEDIA_SPEC = {
     // modèles standard : une photo facultative sur la carte
+    funone:        { prestige:false, slots:[ { id:'card_photo', kind:'photo', min:0, max:1, label:'Photo de la carte', rule:PHOTO } ] },
     ornoir:        { prestige:false, slots:[ { id:'card_photo', kind:'photo', min:0, max:1, label:'Photo de la carte', rule:PHOTO } ] },
     palais:        { prestige:false, slots:[ { id:'card_photo', kind:'photo', min:0, max:1, label:'Photo de la carte', rule:PHOTO } ] },
     boheme:        { prestige:false, slots:[ { id:'card_photo', kind:'photo', min:0, max:1, label:'Photo de la carte', rule:PHOTO } ] },

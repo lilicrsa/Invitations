@@ -215,7 +215,7 @@ function rTests(){
     return bar+head+list+det; }
   return bar+head+H('Résultats par mission')+rows+H('Chaque testeur')+who;
 }
-const TNAME={galerie:'Galerie Bohème',boheme:'Bohème doré',palais:'Palais oriental',ornoir:'Or & Noir','gender-reveal':'Gender reveal',jeux:'Soirée Jeux',noel:'Étoile de Noël',opaline:'Opaline',lettre:'Lettre & cachet'};
+const TNAME={galerie:'Galerie Bohème',boheme:'Bohème doré',palais:'Palais oriental',ornoir:'Or & Noir',funone:'Fun to be One','gender-reveal':'Gender reveal',jeux:'Soirée Jeux',noel:'Étoile de Noël',opaline:'Opaline',lettre:'Lettre & cachet'};
 const UNAME={mariage:'Mariage',bebe:'Bébé',anniversaire:'Anniversaire',fetes:'Réceptions'};
 async function loadStats(){ STATERR=''; try{ STATS=await rpc('admin_stats',{p_days:STATD}); }catch(e){ STATS=null; STATERR=String(e).slice(0,200); } if(TAB==='stats') render(); }
 function rStats(){
