@@ -421,6 +421,30 @@ html.fr{ font-size:clamp(12px,4.44vw,18px)!important }
 #glow{ position:fixed; inset:0; z-index:60; pointer-events:none; opacity:0; background:radial-gradient(ellipse at 50% 42%, #fffaf0 0%, #fbe9bd 38%, #efca7a 78%, #e0b455 100%); transition:opacity 1.5s cubic-bezier(.4,0,.2,1) }
 #glow::after{ content:''; position:absolute; inset:0; background:radial-gradient(circle at 50% 45%, rgba(255,255,255,.55), rgba(255,255,255,0) 55%); animation:glowpulse 2.4s ease-in-out infinite }
 @keyframes glowpulse{ 0%,100%{opacity:.55} 50%{opacity:1} }
+.dv5,.dv6,.dv7,.dv8{ display:flex; flex-direction:column; align-items:center }
+.dv5 .w{ font:italic 400 1.2rem 'Cormorant Garamond',serif; color:#8a6b47; letter-spacing:.06em }
+.dv5 .n{ font:400 clamp(4.6rem,25cqw,6.4rem)/1.05 'Ephesis',cursive; padding:.05em .25em .12em; margin:-.05em 0 -.1em; background:linear-gradient(100deg,#7C4D0E 0%,#B27C20 35%,#D2A24A 52%,#A8701A 72%,#7C4D0E 100%); -webkit-background-clip:text; background-clip:text; color:transparent; -webkit-text-fill-color:transparent; filter:drop-shadow(0 1px 0 rgba(255,248,230,.9)) }
+.dv5 .m{ font:500 .7rem 'Jost',sans-serif; letter-spacing:.4em; text-transform:uppercase; color:#a9834a; margin-right:-.4em }
+.dv5 .h,.dv6 .h,.dv8 .h{ margin:.9rem 0 0; font:italic 400 1.35rem 'Cormorant Garamond',serif; color:#5b4029; letter-spacing:.05em }
+.dv6 .box{ position:relative; width:42cqw; aspect-ratio:100/124 }
+.dv6 .arc{ position:absolute; inset:0; width:100%; height:100% }
+.dv6 .in{ position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; padding-bottom:12%; gap:.05rem }
+.dv6 .w{ font:500 .56rem 'Jost',sans-serif; letter-spacing:.34em; text-transform:uppercase; color:#a9834a; margin-right:-.34em }
+.dv6 .n{ font:300 clamp(2.8rem,14cqw,3.8rem)/1 'Cormorant Garamond',serif; color:#5b4029 }
+.dv6 .m{ font:italic 400 1.05rem 'Cormorant Garamond',serif; color:#8a6b47 }
+.dv6 .y{ font:500 .56rem 'Jost',sans-serif; letter-spacing:.34em; color:#a9834a; margin-right:-.34em }
+.dv7 .leaf{ width:50cqw; border:1px solid rgba(196,150,63,.8); border-radius:10px; overflow:hidden; background:rgba(255,252,245,.6); box-shadow:0 10px 24px rgba(160,110,30,.14) }
+.dv7 .top{ position:relative; background:linear-gradient(180deg,#dcb765,#b8862f); color:#fffaf0; font:500 .66rem 'Jost',sans-serif; letter-spacing:.3em; text-transform:uppercase; padding:.6rem 0 .5rem; text-align:center }
+.dv7 .top i{ position:absolute; top:.28rem; width:.5rem; height:.5rem; border-radius:50%; background:#fff6e0; box-shadow:inset 0 0 0 1px rgba(120,80,20,.4) } .dv7 .top i:nth-child(1){ left:22% } .dv7 .top i:nth-child(2){ right:22% }
+.dv7 .top span{ margin-left:.3em; display:block; padding-top:.15rem }
+.dv7 .mid{ display:flex; flex-direction:column; align-items:center; padding:.5rem 0 .7rem }
+.dv7 .n{ font:300 clamp(3.4rem,17cqw,4.6rem)/1 'Cormorant Garamond',serif; color:#5b4029 }
+.dv7 .w{ font:italic 400 1.2rem 'Cormorant Garamond',serif; color:#8a6b47; letter-spacing:.05em }
+.dv7 .bot{ border-top:1px solid rgba(196,150,63,.5); padding:.55rem 0; text-align:center; font:500 .78rem 'Jost',sans-serif; letter-spacing:.3em; text-transform:uppercase; color:#8a6b47 }
+.dv8 .w{ font:italic 400 1.25rem 'Cormorant Garamond',serif; color:#8a6b47; letter-spacing:.06em; margin-bottom:.4rem }
+.dv8 .g{ display:grid; grid-template-columns:repeat(3,auto); align-items:center }
+.dv8 .g b{ font:300 clamp(2.6rem,13.5cqw,3.6rem)/1 'Cormorant Garamond',serif; color:#5b4029; padding:0 clamp(.9rem,5cqw,1.4rem); position:relative; letter-spacing:.03em; font-variant-numeric:lining-nums }
+.dv8 .g b + b::before{ content:''; position:absolute; left:0; top:10%; bottom:10%; width:1px; background:linear-gradient(180deg,transparent,rgba(196,150,63,.9),transparent) }
 /* mode démo (cadre téléphone) : remplir toute la largeur */
 html.fr #stage{ width:100vw!important; --w:100vw!important; --top:calc(100vw*.59)!important; --bot:calc(100vw*.15)!important }
 html.fr body{ background:var(--creme) }
@@ -1017,7 +1041,7 @@ function fitCardNames(){
 }
 
 // ---- date et heure : 4 présentations (?dv=1..4 pour comparer) ----
-const DV = Math.max(1, Math.min(4, +new URLSearchParams(location.search).get('dv') || 1));
+const DV = Math.max(1, Math.min(8, +new URLSearchParams(location.search).get('dv') || 1));
 const U20 = ['zéro','un','deux','trois','quatre','cinq','six','sept','huit','neuf','dix','onze','douze','treize','quatorze','quinze','seize','dix-sept','dix-huit','dix-neuf'];
 function nw(n){
   if(n < 20) return U20[n];
@@ -1045,6 +1069,20 @@ function buildDateBlock(inv, c){
   const p = dparts(inv);
   if(!p) return '<p class="lead">' + esc(c.date || '') + '</p>';
   const cal = CARD_ICONS[0], clk = CARD_ICONS[1];
+  if(DV === 5){ // écriture dorée
+    return '<div class="dv5"><span class="w">' + esc(p.wd) + '</span><span class="n">' + p.day + '</span><span class="m">' + esc(p.month) + ' ' + p.year + '</span>' + (p.hh ? '<p class="h">à ' + esc(p.hh.toLowerCase()) + '</p>' : '') + '</div>';
+  }
+  if(DV === 6){ // arche orientale
+    const arc = '<svg class="arc" viewBox="0 0 100 132" preserveAspectRatio="none" aria-hidden="true"><path d="M5 130V60C5 38 34 32 50 4c16 28 45 34 45 56v70z" fill="rgba(255,252,245,.45)" stroke="#c4963f" stroke-width=".9"/><path d="M9.5 130V61C9.5 41 36 35 50 11c14 24 40.500 30 40.500 50v69" fill="none" stroke="#c4963f" stroke-width=".4" opacity=".7"/></svg>';
+    return '<div class="dv6"><div class="box">' + arc + '<div class="in"><span class="w">' + esc(p.wd) + '</span><span class="n">' + p.day + '</span><span class="m">' + esc(p.month) + '</span><span class="y">' + p.year + '</span></div></div>' + (p.hh ? '<p class="h">' + esc(p.hh) + '</p>' : '') + '</div>';
+  }
+  if(DV === 7){ // feuillet de calendrier
+    return '<div class="dv7"><div class="leaf"><div class="top"><i></i><i></i><span>' + esc(p.month) + ' ' + p.year + '</span></div><div class="mid"><span class="n">' + p.day + '</span><span class="w">' + esc(p.wd) + '</span></div>' + (p.hh ? '<div class="bot">à ' + esc(p.hh) + '</div>' : '') + '</div></div>';
+  }
+  if(DV === 8){ // trois blocs numériques
+    const mm = String(new Date(inv.event_date + 'T12:00:00').getMonth() + 1).padStart(2,'0');
+    return '<div class="dv8"><span class="w">' + esc(p.wd) + '</span><div class="g"><b>' + String(p.day).padStart(2,'0') + '</b><b>' + mm + '</b><b>' + String(p.year).slice(2) + '</b></div>' + (p.hh ? '<p class="h">à ' + esc(p.hh.toLowerCase()) + '</p>' : '') + '</div>';
+  }
   if(DV === 2){ // colonnes avec icônes (disposition de la vraie carte)
     return '<div class="dv2"><div class="c"><div class="ico">' + cal + '</div><b>' + esc(p.wd) + '</b><span>' + p.day + ' ' + esc(p.month) + ' ' + p.year + '</span></div>'
       + (p.hh ? '<div class="c"><div class="ico">' + clk + '</div><b>' + esc(p.hh) + '</b></div>' : '') + '</div>';
