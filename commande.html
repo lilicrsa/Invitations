@@ -25,6 +25,10 @@
   .steps span.on{ background:var(--champ); color:var(--nuit); border-color:var(--champ); }
   .panel{ display:none; } .panel.on{ display:block; }
   h2{ font:400 1.9rem 'Italiana',serif; margin:.2rem 0 .9rem; letter-spacing:.02em; }
+  .filt{ display:flex; flex-wrap:wrap; gap:.5rem; margin:.2rem 0 1.2rem; }
+  .filt button{ background:none; border:1px solid var(--champ2); color:var(--champ,#E7D5A8); border-radius:999px; padding:.5rem 1rem; font:600 .85rem 'Manrope',system-ui,sans-serif; cursor:pointer; transition:background .2s,color .2s; }
+  .filt button.on{ background:var(--champ,#E7D5A8); color:#0A0E1D; }
+  .theme[hidden]{ display:none !important; }
   .themes{ display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:16px; }
   .theme{ background:var(--nuit2); border:1px solid var(--champ2); border-radius:16px; overflow:hidden; cursor:pointer; text-align:left; padding:6px; font:inherit; color:inherit; transition:transform .15s, box-shadow .15s; box-shadow:0 14px 30px rgba(0,0,0,.45); }
   .theme:hover,.theme:focus-visible{ transform:translateY(-3px); box-shadow:0 0 0 1px var(--champ), 0 18px 36px rgba(0,0,0,.55); outline:none; }
@@ -334,15 +338,24 @@
   const WANT_U = new URLSearchParams(location.search).get('u');
   const UMAP = { mariage:['boheme','palais','galerie'], bebe:['gender-reveal'], fetes:['noel','jeux'], anniversaire:['ornoir','funone'] };
   const UNAME = { mariage:'Mariage', bebe:'Bébé', fetes:'Réceptions', anniversaire:'Anniversaire' };
-  const UKEYS = (WANT_U && UMAP[WANT_U]) ? UMAP[WANT_U] : null;
+  const UKEYS = null;   // plus de page filtrée : un filtre par collection (ci-dessous) la remplace
   if(UKEYS){
     const h = document.querySelector('#p1 h2');
     if(h){ h.textContent = 'Modèles ' + UNAME[WANT_U]; const a = document.createElement('a'); a.href = 'commande.html'; a.textContent = 'Voir tous les modèles'; a.style.cssText = 'display:block;font-size:.85rem;margin:.3rem 0 1rem;color:inherit;opacity:.7'; h.after(a); }
     if(!UKEYS.length){ const p = document.createElement('p'); p.textContent = 'Les modèles de cette collection sont en construction.'; p.style.opacity = '.7'; list.before(p); }
   }
+  const fbar = document.createElement('div'); fbar.className = 'filt'; fbar.setAttribute('role', 'group'); fbar.setAttribute('aria-label', 'Filtrer par collection');
+  [['', 'Toutes les collections'], ['mariage', 'Mariage'], ['bebe', 'Bébé'], ['anniversaire', 'Anniversaire'], ['fetes', 'Réceptions']].forEach(function(x){
+    const c = document.createElement('button'); c.type = 'button'; c.textContent = x[1]; c.dataset.f = x[0]; c.setAttribute('aria-pressed', 'false'); fbar.appendChild(c);
+  });
+  list.before(fbar);
+  function applyFilter(f){
+    fbar.querySelectorAll('button').forEach(c => { const on = c.dataset.f === f; c.classList.toggle('on', on); c.setAttribute('aria-pressed', on ? 'true' : 'false'); });
+    list.querySelectorAll('.theme').forEach(t => { t.hidden = !!f && t.dataset.u !== f; });
+  }
+  fbar.addEventListener('click', e => { const c = e.target.closest('button'); if(c){ applyFilter(c.dataset.f); window.moTrack && moTrack('filter_collection', { univers:c.dataset.f || 'all' }); } });
   Object.keys(THEMES).forEach(k => {
-    if(UKEYS && UKEYS.indexOf(k) < 0) return;
-    const t = THEMES[k], b = document.createElement('button'); b.type = 'button'; b.className = 'theme';
+    const t = THEMES[k], b = document.createElement('button'); b.type = 'button'; b.className = 'theme'; b.dataset.u = Object.keys(UMAP).filter(u => UMAP[u].indexOf(k) > -1)[0] || '';
     const vid = document.createElement('video'); vid.muted = true; vid.loop = true; vid.playsInline = true; vid.setAttribute('playsinline', ''); vid.preload = 'metadata'; vid.setAttribute('controlsList','nodownload noremoteplayback'); vid.setAttribute('disablePictureInPicture',''); vid.disableRemotePlayback = true;
     vid.poster = t.mini + '.jpg?v=19';
     ['mp4','webm'].forEach(x => { const so = document.createElement('source'); so.src = t.mini + '.' + x + '?v=18'; so.type = 'video/' + x; vid.appendChild(so); }); vid.setAttribute('aria-label', 'Aperçu animé : ' + t.name); b.appendChild(vid);
@@ -352,6 +365,7 @@
     d.querySelector('b').textContent = t.name; d.querySelector('small').textContent = t.desc; b.appendChild(d);
     b.addEventListener('click', () => { if(window.moTrack) moTrack('theme_choose', { theme:k, meta:{ from:'commande' } }); pick(k); }); list.appendChild(b);
   });
+  applyFilter(WANT_U && UMAP[WANT_U] ? WANT_U : '');
   function pick(k, keepValues){
     theme = k; const t = THEMES[k]; if(typeof renderMusic === 'function' && typeof musicList !== 'undefined'){ musicUniv = null; setTimeout(renderMusic, 0); }
     $('chosen-img').src = t.img + '?v=3'; $('chosen-name').textContent = t.name;
