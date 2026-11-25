@@ -36,6 +36,8 @@
   button{ font-family:inherit; font-size:1rem; font-weight:700; color:var(--btn-text); background:var(--btn-bg); border:1.5px solid var(--btn-border); border-radius:var(--radius-btn); padding:.7rem 1.4rem; cursor:pointer;}
   button.secondary{ background:var(--btn2-bg); color:var(--btn2-text); border-color:var(--btn2-border);}
   .row{ display:flex; gap:.6rem; flex-wrap:wrap; align-items:center; justify-content:space-between;}
+  .newresp{ display:inline-block; margin:.9rem 0 0; padding:.5rem 1rem; border-radius:999px; background:var(--accent); color:var(--bg); font-weight:700; font-size:.9rem; box-shadow:0 6px 18px rgba(0,0,0,.35);}
+  tr.isnew td{ background:rgba(231,213,168,.10);} tr.isnew td.c-name::after{ content:'Nouveau'; margin-left:.5rem; font-size:.62rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; background:var(--accent); color:var(--bg); border-radius:999px; padding:.12rem .45rem; vertical-align:middle;}
   .stats{ display:grid; grid-template-columns:repeat(3,1fr); gap:.7rem; margin:1rem 0;}
   .stat{ background:var(--stat-bg); border-radius:14px; padding:.9rem; text-align:center;}
   .stat b{ display:block; font-family:var(--font-heading); font-size:1.9rem; color:var(--accent);}
@@ -104,6 +106,7 @@
           <button class="secondary" id="logout">Déconnexion</button>
         </div>
       </div>
+      <div class="newresp hidden" id="newresp" role="status"></div>
       <div class="stats">
         <div class="stat"><b id="s-yes">0</b><span>Réponses</span></div>
         <div class="stat"><b id="s-people">0</b><span>Personnes attendues</span></div>
@@ -277,16 +280,31 @@
 
   function current(){ const id = $('inv-select').value; return id ? all.filter(r => r.invitation_id === id) : all; }
 
+  /* nouvelles réponses depuis la dernière visite (mémorisé dans ce navigateur, par invitation) */
+  const baseline = {};
+  function seenBase(key){
+    if(key in baseline) return baseline[key];
+    let prev = null; try{ prev = localStorage.getItem('mo_seen_' + key); }catch(_){}
+    baseline[key] = prev ? new Date(prev).getTime() : null; /* null = première visite : rien n'est « nouveau » */
+    try{ localStorage.setItem('mo_seen_' + key, new Date().toISOString()); }catch(_){}
+    return baseline[key];
+  }
   function render(){
     applyTheme(dashboardThemeKey());
     const list = current();
+    const seen = seenBase($('inv-select').value || 'all');
+    const isNew = r => seen !== null && new Date(r.created_at).getTime() > seen;
+    const nNew = list.filter(isNew).length, nb = $('newresp');
+    nb.textContent = nNew === 1 ? '+1 nouvelle réponse depuis votre dernière visite' : '+' + nNew + ' nouvelles réponses depuis votre dernière visite';
+    nb.classList.toggle('hidden', nNew === 0);
+    document.title = (nNew ? '(' + nNew + ') ' : '') + document.title.replace(/^\(\d+\) /, '');
     const yes = list.filter(r => r.attending);
     $('s-yes').textContent = list.length;
     $('s-people').textContent = yes.reduce((n, r) => n + (r.guests_count || 0), 0);
     $('s-no').textContent = list.length - yes.length;
     const tb = $('rows'); tb.textContent = '';
     list.forEach(r => {
-      const tr = document.createElement('tr');
+      const tr = document.createElement('tr'); if(isNew(r)) tr.className = 'isnew';
       tr.appendChild(td(new Date(r.created_at).toLocaleString('fr-FR', { dateStyle: 'short', timeStyle: 'short' }), 'c-date', 'Date'));
       tr.appendChild(td(r.guest_name, 'c-name', 'Nom'));
       tr.appendChild(td(r.attending ? 'Présent' : 'Absent', (r.attending ? 'yes' : 'no') + ' c-att', 'Présence'));
