@@ -225,6 +225,9 @@
   .gphotos button:disabled{ opacity:.6; cursor:default; }
   .gphotos .gp-st{ font-weight:700; font-size:.92rem; color:#8C4A1E; margin-top:.7rem; min-height:1.2em; }
   .gphotos .gp-err{ color:#B3261E; }
+
+  /* grand écran : la vidéo d'ouverture s'affiche en entier, sans zoom (bandes sombres sur les côtés) */
+  @media (min-aspect-ratio:3/4){ #intro video{ object-fit:contain !important; } }
 </style>
 <script src="../protect.js?v=4"></script>
 <script>/*noindex-i*/if(new URLSearchParams(location.search).get("i")){var m=document.createElement("meta");m.name="robots";m.content="noindex,nofollow";document.head.appendChild(m);}</script>
