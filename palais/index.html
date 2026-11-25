@@ -286,7 +286,10 @@ body{ font-family:'Jost',system-ui,sans-serif; color:var(--encre); background:#1
 .tab,.tab *{ pointer-events:none!important }
 .tab{ z-index:5 }
 .tab.on a,.tab.on button,.tab.on input,.tab.on textarea,.tab.on label,.tab.on .drop,.tab.on .dupe,.tab.on .dupe *,.tab.on .confirm-edit{ pointer-events:auto!important }
-#track{ z-index:4 }
+#track{ z-index:1 }
+.scr{ position:absolute; inset:0; will-change:transform; pointer-events:none }
+#s1{ z-index:2; transform:translate3d(0,100%,0) }
+#s0{ z-index:3 }
 .dots,.hint{ z-index:6 }
 .status{ font:italic 500 1.05rem 'Cormorant Garamond',serif; color:#7a5a37; text-align:center; padding:1rem }
 .nm{display:none}
@@ -446,7 +449,7 @@ html.fr{ font-size:clamp(12px,4.44vw,18px)!important }
 .dv8 .g b{ font:300 clamp(2.6rem,13.5cqw,3.6rem)/1 'Cormorant Garamond',serif; color:#5b4029; padding:0 clamp(.9rem,5cqw,1.4rem); position:relative; letter-spacing:.03em; font-variant-numeric:lining-nums }
 .dv8 .g b + b::before{ content:''; position:absolute; left:0; top:10%; bottom:10%; width:1px; background:linear-gradient(180deg,transparent,rgba(196,150,63,.9),transparent) }
 .bz{ position:absolute; left:0; right:0; top:0; aspect-ratio:780/460; background:url(maquette/top.jpg) center/100% 100% no-repeat; pointer-events:none; -webkit-mask-image:radial-gradient(ellipse 22% 31% at 50% 57.6%,#000 70%,transparent 100%); mask-image:radial-gradient(ellipse 22% 31% at 50% 57.6%,#000 70%,transparent 100%) }
-.bg2{ position:absolute; inset:0; background:url(maquette/fond.jpg) center/cover no-repeat; opacity:0; pointer-events:none }
+.bg2{ position:absolute; inset:0; background:url(maquette/fond.jpg) center/cover no-repeat; pointer-events:none }
 /* mode démo (cadre téléphone) : remplir toute la largeur */
 html.fr #stage{ width:100vw!important; --w:100vw!important; --top:calc(100vw*.59)!important; --bot:calc(100vw*.15)!important }
 html.fr body{ background:var(--creme) }
@@ -475,12 +478,18 @@ html.fr body{ background:var(--creme) }
 
 <div id="app">
  <div id="stage">
-  <div class="bg" id="bg1"><div class="mid"></div><div class="top"></div><div class="bot"></div></div>
-  <div class="bg2" id="bg2"></div>
-  <div class="bz"></div>
   <div class="dust" id="dust"></div>
-  <div class="plate" id="plate"></div>
-  <div id="tabs"></div>
+  <div class="scr" id="s1">
+   <div class="bg2" id="bg2"></div>
+   <div class="bz"></div>
+   <div class="plate"></div>
+   <div id="tabs"></div>
+  </div>
+  <div class="scr" id="s0">
+   <div class="bg" id="bg1"><div class="mid"></div><div class="top"></div><div class="bot"></div></div>
+   <div class="plate"></div>
+   <div id="tabs0"></div>
+  </div>
   <div class="hint" id="hint">Faites glisser<b>⌄</b></div>
   <nav class="dots" id="dots" aria-label="Sections"></nav>
   <div id="track"></div>
@@ -882,7 +891,9 @@ const svgI = k => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" st
 
 // ---- monogramme (initiales dorées en relief, dans le blason) ----
 function drawMono(txt){
-  const box = document.getElementById('plate');
+  document.querySelectorAll('.plate').forEach((box,bi)=>drawMonoIn(box,txt,bi));
+}
+function drawMonoIn(box,txt,bi){
   const t = String(txt||'').trim(); if(!t){ box.innerHTML = ''; return; }
   let a, b;
   let mm = t.match(/^(\S)\s*[&+]\s*(\S)$/) || (t.length === 2 ? [t, t[0], t[1]] : null);
@@ -895,14 +906,14 @@ function drawMono(txt){
     const fs = Math.max(40, Math.min(110, 300 / Math.max(1, t.length) * 1.25));
     letters = '<text x="150" y="' + (100 + fs * 0.3) + '" font-size="' + fs.toFixed(0) + '" text-anchor="middle">' + esc(t) + '</text>';
   }
-  box.innerHTML = '<svg viewBox="0 0 300 200" aria-label="' + esc(t) + '"><defs><linearGradient id="gg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f3d88e"/><stop offset=".4" stop-color="#c99a43"/><stop offset=".7" stop-color="#9a6a1c"/><stop offset="1" stop-color="#d9b15c"/></linearGradient>'
-    + '<g id="mono" font-family="Ephesis, cursive">' + letters + '</g></defs>'
-    + '<g id="monoW"><use href="#mono" x="1.2" y="1.8" fill="#8a5a12" fill-opacity=".35" style="filter:blur(.8px)"/><use href="#mono" x="-.8" y="-1" fill="#fff8e6" fill-opacity=".95"/><use href="#mono" fill="url(#gg)" stroke="#a8741f" stroke-width=".25" paint-order="stroke"/></g>'
+  box.innerHTML = '<svg viewBox="0 0 300 200" aria-label="' + esc(t) + '"><defs><linearGradient id="gg'+bi+'" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f3d88e"/><stop offset=".4" stop-color="#c99a43"/><stop offset=".7" stop-color="#9a6a1c"/><stop offset="1" stop-color="#d9b15c"/></linearGradient>'
+    + '<g id="mono'+bi+'" font-family="Ephesis, cursive">' + letters + '</g></defs>'
+    + '<g id="monoW'+bi+'"><use href="#mono'+bi+'" x="1.2" y="1.8" fill="#8a5a12" fill-opacity=".35" style="filter:blur(.8px)"/><use href="#mono'+bi+'" x="-.8" y="-1" fill="#fff8e6" fill-opacity=".95"/><use href="#mono'+bi+'" fill="url(#gg'+bi+')" stroke="#a8741f" stroke-width=".25" paint-order="stroke"/></g>'
     + '<image href="' + SEP + 'sep2.png" x="82" y="10" width="136" height="24.3" opacity=".95"/><image href="' + SEP + 'sep2.png" x="82" y="170" width="136" height="24.3" opacity=".95" transform="rotate(180 150 182.15)"/></svg>';
   try{
-    const g = box.querySelector('#mono'), bb = g.getBBox();
+    const g = box.querySelector('#mono'+bi), bb = g.getBBox();
     if(bb.width){ const s = Math.min(1, 236 / bb.width); const cx = bb.x + bb.width/2;
-      box.querySelector('#monoW').setAttribute('transform', 'translate(150 100) scale(' + s + ') translate(' + (-cx) + ' -100)'); }
+      box.querySelector('#monoW'+bi).setAttribute('transform', 'translate(150 100) scale(' + s + ') translate(' + (-cx) + ' -100)'); }
   }catch(_){}
 }
 
@@ -1205,19 +1216,23 @@ function buildPages(inv){
 
 // ---- défilement : les tableaux se fondent l'un dans l'autre ----
 let TABS = [], DOTS = [];
-const track = document.getElementById('track'), dotsEl = document.getElementById('dots'), hintEl = document.getElementById('hint'), tabsEl = document.getElementById('tabs');
+const track = document.getElementById('track'), dotsEl = document.getElementById('dots'), hintEl = document.getElementById('hint'), tabsEl = document.getElementById('tabs'), tabs0El = document.getElementById('tabs0'), s0El = document.getElementById('s0'), s1El = document.getElementById('s1'), stageEl = document.getElementById('stage');
 const reduce = matchMedia('(prefers-reduced-motion:reduce)').matches;
 const ease = x => x*x*(3-2*x);
 function draw(){
   const p = track.scrollTop / Math.max(1, track.clientHeight);
   TABS.forEach((t,i)=>{
-    const d = Math.abs(p-i), v = ease(Math.max(0, Math.min(1, 1-d*1.7)));
+    const d = Math.abs(p-i); let v = ease(Math.max(0, Math.min(1, 1-d*1.7)));
+    if(i===0 || (i===1 && p<=1)) v = 1;
     t.style.opacity = v;
-    if(!reduce){ t.style.transform = 'translateY(' + ((i-p)*38) + 'px) scale(' + (.965+.035*v) + ')'; t.style.filter = v < .995 ? 'blur(' + ((1-v)*9).toFixed(1) + 'px)' : 'none'; }
-    t.classList.toggle('on', v > .6);
+    if(i===0 || (i===1 && p<=1)){ t.style.transform = 'none'; t.style.filter = 'none'; }
+    else if(!reduce){ t.style.transform = 'translateY(' + ((i-p)*38) + 'px) scale(' + (.965+.035*v) + ')'; t.style.filter = v < .995 ? 'blur(' + ((1-v)*9).toFixed(1) + 'px)' : 'none'; }
+    t.classList.toggle('on', i===0 ? p < .5 : (i===1 ? (p >= .5 && v > .6) : v > .6));
   });
   DOTS.forEach((b,i)=> b.classList.toggle('on', Math.round(p) === i));
-  { const k = Math.max(0, Math.min(1, p)), e = ease(k); const b1 = document.getElementById('bg1'), b2 = document.getElementById('bg2'); if(b1) b1.style.opacity = 1 - e; if(b2) b2.style.opacity = e; }
+  { const k = Math.max(0, Math.min(1, p)), H = stageEl.clientHeight;
+    s0El.style.transform = 'translate3d(0,' + (-k*H) + 'px,0)'; s0El.style.visibility = k >= 1 ? 'hidden' : 'visible';
+    s1El.style.transform = 'translate3d(0,' + ((1-k)*H) + 'px,0)'; }
   hintEl.style.opacity = Math.max(0, Math.min(1, (TABS.length - 1) - p)); hintEl.style.display = TABS.length > 1 ? '' : 'none';
 }
 track.addEventListener('scroll', ()=>requestAnimationFrame(draw), {passive:true});
@@ -1256,10 +1271,10 @@ function mount(inv){
   _lastInv = inv;
   const c = deriveCard(inv);
   drawMono(c.monogram);
-  tabsEl.innerHTML = ''; dotsEl.innerHTML = ''; track.innerHTML = '';
+  tabsEl.innerHTML = ''; tabs0El.innerHTML = ''; dotsEl.innerHTML = ''; track.innerHTML = '';
   TABS = buildPages(inv);
   TABS.forEach((t,i)=>{
-    tabsEl.appendChild(t);
+    (i===0 ? tabs0El : tabsEl).appendChild(t);
     const bt = document.createElement('button'); bt.type = 'button'; bt.setAttribute('aria-label', 'Section ' + (i+1));
     bt.onclick = ()=> track.scrollTo({top:i*track.clientHeight, behavior:'smooth'}); dotsEl.appendChild(bt);
     track.appendChild(document.createElement('i'));
@@ -1289,12 +1304,12 @@ async function loadInfos(){
       if(!res.ok) throw new Error('HTTP '+res.status);
       const one = await res.json(); data = one ? [one] : [];
     }
-    if(!data.length){ tabsEl.innerHTML = '<section class="tab on"><div class="body"><div class="status">Invitation introuvable.</div></div></section>'; TABS = [tabsEl.firstChild]; draw(); return; }
+    if(!data.length){ tabs0El.innerHTML = '<section class="tab on"><div class="body"><div class="status">Invitation introuvable.</div></div></section>'; TABS = [tabs0El.firstChild]; draw(); return; }
     const inv = data[0];
     mount(inv);
     if(inv.music_tracks && inv.music_tracks.url) window.onMusicReady(inv.music_tracks.url);
   }catch(e){
-    tabsEl.innerHTML = '<section class="tab on"><div class="body"><div class="status">Impossible de charger les informations pour le moment.</div></div></section>';
+    tabs0El.innerHTML = '<section class="tab on"><div class="body"><div class="status">Impossible de charger les informations pour le moment.</div></div></section>';
   }
 }
 loadInfos();
