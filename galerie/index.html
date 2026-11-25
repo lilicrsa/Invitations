@@ -677,7 +677,10 @@
       }
       box.textContent = '';
       if(!data.length){ box.appendChild(el('div','status','Invitation introuvable.')); return; }
-      const inv = data[0];
+      let inv = data[0];
+      if(inv.is_demo && !PREVIEW && !LIVE){ /* démo : lieu d'exemple */
+        inv = Object.assign({}, inv, { venue_name:'Villa Ephrussi de Rothschild', address:'1 avenue Ephrussi de Rothschild, 06230 Saint-Jean-Cap-Ferrat', maps_url:'https://www.google.com/maps/search/?api=1&query=Villa+Ephrussi+de+Rothschild+Saint-Jean-Cap-Ferrat', card_text: Object.assign({}, inv.card_text || {}, { venue:'Villa Ephrussi de Rothschild', venue2:'Saint-Jean-Cap-Ferrat' }) });
+      }
       _lastInv = inv; renderCard(inv); renderFrames(inv);
       if(inv.music_tracks && inv.music_tracks.url) window.onMusicReady(inv.music_tracks.url);
 
