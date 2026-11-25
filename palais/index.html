@@ -319,6 +319,9 @@ body{ font-family:'Jost',system-ui,sans-serif; color:var(--encre); background:#1
 .t-rsvp .confirm-recap,.t-rsvp .confirm-when{ font:500 1.05rem/1.4 'Cormorant Garamond',serif; margin-top:.4rem }
 .t-rsvp .confirm-fun{ font:italic 600 1.1rem 'Cormorant Garamond',serif; color:var(--or); margin-top:.7rem }
 .t-rsvp .confirm-edit{ margin-top:.9rem; background:none; border:0; font:500 .85rem 'Jost',sans-serif; color:var(--or); text-decoration:underline; cursor:pointer }
+.telbig{ color:var(--encre); text-decoration:none; font:600 1.5rem 'Cormorant Garamond',serif; letter-spacing:.04em }
+.telbtn{ display:inline-block; font:600 .85rem 'Jost',sans-serif; letter-spacing:.06em; color:#fffaf0; border-radius:999px; padding:.7rem 2.2rem; background:linear-gradient(180deg,#d9b15c,#b8862f); box-shadow:0 6px 16px rgba(160,110,30,.35); text-decoration:none }
+.t-dress .body,.t-contact .body{ justify-content:center!important; gap:1rem }
 /* merci : compte à rebours */
 .t-merci .cd-after{ margin-top:.1rem }
 /* photos */
@@ -831,13 +834,22 @@ function buildPages(inv){
     h += '<p class="big">' + esc(vn || ad) + '</p>';
     if(vn && ad) h += '<p class="lead addr">' + esc(ad).replace(/,\s*/, '<br>') + '</p>';
     const ex = [];
-    if(inv.dress_code) ex.push('Dress code : ' + esc(inv.dress_code));
-    if(inv.contact_name || inv.contact_phone) ex.push('Contact : ' + esc(inv.contact_name||'') + (inv.contact_name && inv.contact_phone ? ' — ' : '') + (inv.contact_phone ? '<a href="tel:' + esc(inv.contact_phone.replace(/\s/g,'')) + '">' + esc(inv.contact_phone) + '</a>' : ''));
-    if(ex.length) h += '<p class="extras">' + ex.join('<br>') + '</p>';
     const s = sec('t-lieu', 'Où nous retrouver', 'Le lieu', h);
     if(ex.length) s.classList.add('compact');
     s.querySelector('.body').appendChild(buildNavLinks(inv, [vn, ad].filter(Boolean).join(' — ')));
     tabs.push(s);
+  }
+  // 3b. dress code
+  if(inv.dress_code){
+    tabs.push(sec('t-dress', 'Pour nous faire plaisir', 'Dress code', flo('sep2') + '<p class="big">' + esc(inv.dress_code) + '</p>' + flo('sep3') + '<p class="lead">Nous avons hâte de vous voir dans vos plus beaux atours.</p>'));
+  }
+  // 3c. contact
+  if(inv.contact_name || inv.contact_phone){
+    const tel = (inv.contact_phone||'').replace(/\s/g,'');
+    let h = flo('sep2') + '<p class="sm">Une question ? Un imprévu ?</p>';
+    if(inv.contact_name) h += '<p class="big">' + esc(inv.contact_name) + '</p>';
+    if(inv.contact_phone) h += '<p class="lead"><a class="telbig" href="tel:' + esc(tel) + '">' + esc(inv.contact_phone) + '</a></p><a class="btn telbtn" href="tel:' + esc(tel) + '">Appeler</a>';
+    tabs.push(sec('t-contact', 'Besoin de nous joindre', 'Contact', h));
   }
   // 4. réponse
   if(inv.rsvp_enabled){
