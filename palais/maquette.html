@@ -111,13 +111,19 @@ html,body{height:100%;background:#120c07;color:var(--encre);font-family:'Jost',s
       <div><label>Allergies · petit mot</label><div class="in">Facultatif</div></div></div>
       <div class="btns"><a class="btn pl" style="padding:.75rem 2.2rem;font-size:.9rem">Envoyer ma réponse</a></div></div></section>
 
-  <section class="tab" data-i="4"><div class="ttl"><span class="a">Avec toute notre joie</span><span class="n">Merci</span><svg viewBox="0 0 120 10" aria-hidden="true"><path d="M2 5h46M72 5h46" stroke="#c4963f" stroke-width=".8" fill="none"/><path d="M60 1l4 4-4 4-4-4z" fill="#c4963f"/></svg></div><div class="body"><p class="sm">Dans</p><p class="big" style="font-size:2.4rem;font-weight:500">199 jours</p><p class="sm">avant le grand jour</p><svg class="flo" viewBox="0 0 220 24" aria-hidden="true"><g fill="none" stroke="#c4963f" stroke-width="1" stroke-linecap="round"><path d="M10 12h78M132 12h78"/><path d="M96 12c6-9 14-9 14 0s-8 9-14 0zM124 12c-6-9-14-9-14 0s8 9 14 0z" fill="#e2bf6e" stroke="none"/><circle cx="110" cy="12" r="2.2" fill="#c4963f" stroke="none"/></g></svg>
+  <section class="tab" data-i="4"><div class="ttl"><span class="a">Partagez vos souvenirs</span><span class="n">Vos photos</span><svg viewBox="0 0 120 10" aria-hidden="true"><path d="M2 5h46M72 5h46" stroke="#c4963f" stroke-width=".8" fill="none"/><path d="M60 1l4 4-4 4-4-4z" fill="#c4963f"/></svg></div>
+<div class="body"><p class="lead">Offrez aux mariés<br>vos plus beaux souvenirs de la fête.</p>
+<div class="drop"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l1.6-2.2h6.8L17 8h3v11H4z"/><circle cx="12" cy="13" r="3.6"/></svg><span>Glissez vos photos ici</span></div>
+<button class="btn pl" id="upl" type="button" style="padding:.8rem 2.2rem;font-size:.9rem;cursor:pointer">Charger des photos</button>
+<p class="note" id="note" role="status"></p><input type="file" id="file" accept="image/*" multiple hidden></div></section>
+
+<section class="tab" data-i="5"><div class="ttl"><span class="a">Avec toute notre joie</span><span class="n">Merci</span><svg viewBox="0 0 120 10" aria-hidden="true"><path d="M2 5h46M72 5h46" stroke="#c4963f" stroke-width=".8" fill="none"/><path d="M60 1l4 4-4 4-4-4z" fill="#c4963f"/></svg></div><div class="body"><p class="sm">Dans</p><div class="cd" id="cd"><div><b id="cdd">--</b><span>jours</span></div><div><b id="cdh">--</b><span>heures</span></div><div><b id="cdm">--</b><span>minutes</span></div><div><b id="cds">--</b><span>secondes</span></div></div><p class="sm">avant le grand jour</p><svg class="flo" viewBox="0 0 220 24" aria-hidden="true"><g fill="none" stroke="#c4963f" stroke-width="1" stroke-linecap="round"><path d="M10 12h78M132 12h78"/><path d="M96 12c6-9 14-9 14 0s-8 9-14 0zM124 12c-6-9-14-9-14 0s8 9 14 0z" fill="#e2bf6e" stroke="none"/><circle cx="110" cy="12" r="2.2" fill="#c4963f" stroke="none"/></g></svg>
       <p class="lead">Nous avons hâte de partager ce moment avec vous.</p>
       <p class="sm" style="opacity:.7;font-size:.58rem;margin-top:.6rem">Invitation créée par Maison Opaline</p></div></section>
 
   <div class="hint" id="hint">Faites glisser<b>⌄</b></div>
   <nav class="dots" id="dots" aria-label="Sections"></nav>
-  <div id="track"><i></i><i></i><i></i><i></i><i></i></div>
+  <div id="track"><i></i><i></i><i></i><i></i><i></i><i></i></div>
 
   <div id="intro"><video id="v" muted playsinline preload="auto" poster="maquette/lieu.jpg"><source src="video.webm" type="video/webm"><source src="video.mp4" type="video/mp4"></video>
     <div id="tap"><button id="go" type="button">Toucher pour entrer</button></div></div>
@@ -182,4 +188,34 @@ html,body{height:100%;background:#120c07;color:var(--encre);font-family:'Jost',s
 .ttl{gap:.95rem!important}
 .ttl .n{padding-top:.35rem;line-height:1.15!important}
 .ttl svg{margin-top:.1rem}
+</style><style>
+.drop{width:72%;aspect-ratio:1/.95;border:1.5px dashed var(--or);border-radius:999px 999px 18px 18px;background:rgba(255,250,238,.55);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.7rem;color:var(--or)}
+.drop svg{width:3rem;height:3rem}.drop span{font:italic 500 1rem 'Cormorant Garamond',serif;color:#7a5a37}
+.note{min-height:3.2rem;max-width:17rem;font:italic 500 .98rem/1.4 'Cormorant Garamond',serif;color:#8a5a22;opacity:0;transform:translateY(6px);transition:all .6s;border:1px solid var(--or2);border-radius:14px;padding:.6rem .9rem;background:rgba(255,250,238,.85)}
+.note.on{opacity:1;transform:none}
+.cd{display:grid;grid-template-columns:repeat(4,1fr);gap:.5rem;width:100%}
+.cd div{display:flex;flex-direction:column;align-items:center;gap:.2rem;padding:.7rem 0 .55rem;border:1px solid var(--or2);border-radius:999px 999px 10px 10px;background:rgba(255,250,238,.7)}
+.cd b{font:500 clamp(1.5rem,7.6cqw,2.1rem)/1 'Cormorant Garamond',serif;color:var(--encre);font-variant-numeric:tabular-nums}
+.cd span{font:600 .5rem 'Jost',sans-serif;letter-spacing:.16em;text-transform:uppercase;color:var(--or)}
+</style>
+<script>
+(function(){
+  var EV=new Date('2027-06-26T15:00:00+02:00').getTime();
+  function p(n){return n<10?'0'+n:''+n}
+  function tick(){var d=Math.max(0,EV-Date.now()),s=Math.floor(d/1000);
+    document.getElementById('cdd').textContent=Math.floor(s/86400);document.getElementById('cdh').textContent=p(Math.floor(s%86400/3600));
+    document.getElementById('cdm').textContent=p(Math.floor(s%3600/60));document.getElementById('cds').textContent=p(s%60);}
+  tick();setInterval(tick,1000);
+  var note=document.getElementById('note'),f=document.getElementById('file'),t;
+  document.getElementById('upl').onclick=function(){
+    var open=Date.now()>=EV||/[?&]ouvert=1/.test(location.search);
+    if(!open){note.textContent="L\u2019envoi des photos sera disponible le jour de l\u2019\u00e9v\u00e9nement, le 26 juin 2027.";note.classList.add('on');clearTimeout(t);t=setTimeout(function(){note.classList.remove('on')},6000);return;}
+    f.click();};
+  f.onchange=function(){note.textContent=f.files.length+" photo(s) s\u00e9lectionn\u00e9e(s). Merci !";note.classList.add('on');};
+})();
+</script><style>
+.tab[data-i="4"] .lead{font-size:1.02rem!important;line-height:1.45!important}
+.tab[data-i="4"] .drop{width:58%;aspect-ratio:1/.8}
+.tab[data-i="4"] .note{min-height:0}
+.tab[data-i="4"] .body{gap:.6rem}
 </style>
