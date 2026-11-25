@@ -201,6 +201,33 @@
   .steps > div{ padding:1.6rem 1.6rem 0 0; } .steps > div + div{ padding-left:1.6rem; border-left:1px solid var(--trait); }
   .steps .n{ font:400 3rem/1 'Italiana',serif; color:var(--champ2); }
   .steps h3{ font-size:1.5rem; margin:.6rem 0 .3rem; } .steps p{ margin:0; color:var(--brume); }
+  /* suivi des réponses */
+  .rsvp{ margin:3.4rem auto 0; max-width:60rem; text-align:center; }
+  .rsvp .rt{ font:400 clamp(1.7rem,4.6vw,2.4rem)/1.12 'Italiana',serif; color:var(--champ); margin:0; }
+  .rsvp .lead{ margin-inline:auto; color:var(--brume); }
+  .rsvp-grid{ display:grid; grid-template-columns:1.05fr 1fr; gap:2.2rem; align-items:center; margin-top:2rem; text-align:left; }
+  .dash{ position:relative; background:linear-gradient(180deg,var(--nuit2),#0c1022); border:1px solid rgba(231,213,168,.35); border-radius:22px; padding:1.2rem 1.1rem 1.3rem; box-shadow:0 22px 50px rgba(0,0,0,.45), 0 -26px 70px -34px var(--tint,rgba(231,213,168,.4)); }
+  .dash .dh{ text-align:center; display:flex; flex-direction:column; gap:.15rem; margin-bottom:1rem; }
+  .dash .dk{ font:600 .62rem 'Manrope',sans-serif; letter-spacing:.22em; text-transform:uppercase; color:var(--champ2); }
+  .dash .dh b{ font:400 1.6rem 'Italiana',serif; color:var(--champ); } .dash .dd{ color:var(--brume); font-size:.8rem; }
+  .dstats{ display:grid; grid-template-columns:repeat(3,1fr); gap:.5rem; margin-bottom:.9rem; }
+  .dstats > div{ background:rgba(255,255,255,.04); border:1px solid rgba(231,213,168,.18); border-radius:14px; padding:.7rem .3rem; text-align:center; }
+  .dstats b{ display:block; font:400 1.8rem/1 'Italiana',serif; } .dstats span{ font-size:.7rem; color:var(--brume); }
+  .dstats .ok{ color:#9fd8ae; } .dstats .mb{ color:#e7a3a3; } .dstats .wt{ color:var(--champ); }
+  .dlist{ background:rgba(255,255,255,.03); border:1px solid rgba(231,213,168,.15); border-radius:14px; overflow:hidden; }
+  .dr{ display:grid; grid-template-columns:1.4rem 1fr auto; grid-template-areas:'i nm nb' '. nt nt'; gap:.1rem .6rem; align-items:center; padding:.6rem .8rem; font-size:.86rem; }
+  .dr + .dr{ border-top:1px solid rgba(231,213,168,.12); }
+  .dr i{ grid-area:i; font-style:normal; width:1.3rem; height:1.3rem; border-radius:50%; display:grid; place-items:center; font-size:.7rem; }
+  .dr i.yes{ background:rgba(159,216,174,.18); color:#9fd8ae; } .dr i.no{ background:rgba(231,163,163,.18); color:#e7a3a3; }
+  .dr .nm{ grid-area:nm; color:var(--ivoire,#f4ecd8); font-weight:500; } .dr .nb{ grid-area:nb; color:var(--brume); font-size:.78rem; } .dr .nt{ grid-area:nt; color:var(--brume); font-size:.78rem; }
+  .dchip{ position:absolute; top:-12px; right:14px; background:var(--champ); color:#0A0E1D; font:700 .72rem 'Manrope',sans-serif; padding:.4rem .75rem; border-radius:999px; box-shadow:0 6px 18px rgba(0,0,0,.4); }
+  .rside h4{ font:400 1.5rem 'Italiana',serif; color:var(--champ); margin:0 0 .3rem; font-style:italic; } .rside h4 + p{ color:var(--brume); margin:0 0 .8rem; font-size:.95rem; }
+  .rside .chips{ display:flex; flex-wrap:wrap; gap:.45rem; margin-bottom:1.6rem; }
+  .rside .chips span{ border:1px solid rgba(231,213,168,.4); border-radius:999px; padding:.35rem .8rem; font-size:.8rem; color:var(--champ); }
+  .ticks{ list-style:none; padding:0; margin:.5rem 0 1rem; display:grid; gap:.55rem; color:var(--brume); font-size:.93rem; }
+  .ticks li{ padding-left:1.5rem; position:relative; } .ticks li::before{ content:'✓'; position:absolute; left:0; color:var(--champ2); }
+  .rnote{ color:var(--brume); font-size:.8rem; opacity:.85; margin:0; }
+  @media (max-width:760px){ .rsvp-grid{ grid-template-columns:1fr; gap:2rem; } }
   .incl{ display:grid; grid-template-columns:repeat(2,1fr); gap:.6rem 2rem; margin-top:2.6rem; color:var(--brume); }
   .incl b{ color:var(--champ); font-weight:600; }
   @media (max-width:760px){ .steps{ grid-template-columns:1fr; } .steps > div,.steps > div + div{ padding:1.4rem 0 0; border-left:0; } .incl{ grid-template-columns:1fr; } }
@@ -328,9 +355,36 @@
       <div class="vf frame tap"><video playsinline preload="none" poster="video/comment-ca-marche.jpg?v=11" aria-label="Vidéo : comment fonctionne l'invitation"><source src="video/comment-ca-marche.mp4?v=9" type="video/mp4"></video></div>
       <p class="vcap">Touchez pour lancer, avec le son.</p>
     </div>
-    <div class="incl">
-      <div><b>Ce que vos invités voient.</b> Une vidéo d'ouverture, la carte à votre date, puis l'heure, le lieu, l'itinéraire et un compte à rebours.</div>
-      <div><b>Ce que vous suivez.</b> Qui vient, avec combien de personnes et quelles remarques, sur une page qui reprend le décor de votre invitation.</div>
+    <div class="rsvp" id="suivi">
+      <p class="eyebrow">Vos invités répondent, vous suivez</p>
+      <h3 class="rt">Les réponses, toutes au même endroit</h3>
+      <p class="lead">Fini les messages éparpillés : chaque réponse arrive d’elle-même sur une page à votre décor, claire et à jour.</p>
+      <div class="rsvp-grid">
+        <div class="dash" aria-label="Exemple de page de suivi des réponses, avec des données fictives">
+          <div class="dh"><span class="dk">Suivi des réponses</span><b>Votre événement</b><span class="dd">14 juin 2027</span></div>
+          <div class="dstats"><div><b class="ok">24</b><span>Présents</span></div><div><b class="mb">3</b><span>Absents</span></div><div><b class="wt">11</b><span>En attente</span></div></div>
+          <div class="dlist">
+            <div class="dr"><i class="yes">✓</i><span class="nm">Camille Laurent</span><span class="nb">2 pers.</span><span class="nt">Sans gluten</span></div>
+            <div class="dr"><i class="yes">✓</i><span class="nm">Famille Morel</span><span class="nb">4 pers.</span><span class="nt">Menu enfant</span></div>
+            <div class="dr"><i class="no">✕</i><span class="nm">Julien Aubert</span><span class="nb">·</span><span class="nt">« Désolé, on pense bien à vous »</span></div>
+            <div class="dr"><i class="yes">✓</i><span class="nm">Inès &amp; Paul</span><span class="nb">2 pers.</span><span class="nt">Végétarien</span></div>
+          </div>
+          <span class="dchip">+3 réponses aujourd’hui</span>
+        </div>
+        <div class="rside">
+          <h4>Pour vos invités</h4>
+          <p>Une réponse en quelques secondes, depuis leur téléphone.</p>
+          <div class="chips"><span>Présence</span><span>Nombre de personnes</span><span>Allergies ou régime</span><span>Un petit mot pour vous</span></div>
+          <h4>Pour vous</h4>
+          <ul class="ticks">
+            <li>Les réponses arrivent au fur et à mesure, sans rien faire</li>
+            <li>Présents et absents triés, avec leurs remarques</li>
+            <li>Export en un clic vers Excel (CSV)</li>
+            <li>Une page à votre décor, consultable depuis votre téléphone</li>
+          </ul>
+          <p class="rnote">Inclus avec les formules Signature et Prestige. Exemple avec des données fictives.</p>
+        </div>
+      </div>
     </div>
   </div></section>
 
