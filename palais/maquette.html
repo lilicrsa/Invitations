@@ -96,7 +96,7 @@ html,body{height:100%;background:#120c07;color:var(--encre);font-family:'Jost',s
   <div class="dust" id="dust"></div>
   <div class="plate"><span class="in">A</span><span class="and">&amp;</span><span class="in">Y</span></div>
 
-  <section class="tab" data-i="0"><div class="ttl"><span class="a">Vous êtes invités</span><span class="n">Le mariage</span><svg viewBox="0 0 120 10" aria-hidden="true"><path d="M2 5h46M72 5h46" stroke="#c4963f" stroke-width=".8" fill="none"/><path d="M60 1l4 4-4 4-4-4z" fill="#c4963f"/></svg></div><div class="body"><p class="nm">Amel <em>&amp;</em> Yassine</p><p class="sm">Vous invitent à célébrer leur mariage</p><svg class="flo" viewBox="0 0 220 24" aria-hidden="true"><g fill="none" stroke="#c4963f" stroke-width="1" stroke-linecap="round"><path d="M10 12h78M132 12h78"/><path d="M96 12c6-9 14-9 14 0s-8 9-14 0zM124 12c-6-9-14-9-14 0s8 9 14 0z" fill="#e2bf6e" stroke="none"/><circle cx="110" cy="12" r="2.2" fill="#c4963f" stroke="none"/></g></svg>
+  <section class="tab" data-i="0"><div class="ttl"><span class="a">Vous êtes invités au mariage de</span><span class="n">Amel &amp; Yassine</span><svg viewBox="0 0 120 10" aria-hidden="true"><path d="M2 5h46M72 5h46" stroke="#c4963f" stroke-width=".8" fill="none"/><path d="M60 1l4 4-4 4-4-4z" fill="#c4963f"/></svg></div><div class="body"><p class="sm">Vous invitent à célébrer leur mariage</p><svg class="flo" viewBox="0 0 220 24" aria-hidden="true"><g fill="none" stroke="#c4963f" stroke-width="1" stroke-linecap="round"><path d="M10 12h78M132 12h78"/><path d="M96 12c6-9 14-9 14 0s-8 9-14 0zM124 12c-6-9-14-9-14 0s8 9 14 0z" fill="#e2bf6e" stroke="none"/><circle cx="110" cy="12" r="2.2" fill="#c4963f" stroke="none"/></g></svg>
       <p class="big">Samedi 26 juin 2027</p><p class="lead">à 15 heures, au Domaine des Oliviers<br>Aix-en-Provence</p><svg class="flo" viewBox="0 0 220 24" aria-hidden="true"><g fill="none" stroke="#c4963f" stroke-width="1" stroke-linecap="round"><path d="M10 12h78M132 12h78"/><path d="M96 12c6-9 14-9 14 0s-8 9-14 0zM124 12c-6-9-14-9-14 0s8 9 14 0z" fill="#e2bf6e" stroke="none"/><circle cx="110" cy="12" r="2.2" fill="#c4963f" stroke="none"/></g></svg>
       <p class="lead" style="font-size:.95rem;opacity:.85">« Votre présence sera notre plus beau cadeau. »</p></div></section>
 
@@ -150,4 +150,10 @@ html,body{height:100%;background:#120c07;color:var(--encre);font-family:'Jost',s
     v.play().catch(open); v.addEventListener('timeupdate',function(){ if(v.duration&&v.currentTime>v.duration-1.6) open(); }); v.addEventListener('ended',open);
   };
 })();
-</script></body></html>
+</script></body></html><style>
+.ttl{bottom:auto!important;top:calc(min(100vw,100svh*.5) * .52);gap:.25rem}
+.ttl .a{font-size:.58rem}
+.ttl .n{font-size:clamp(2.3rem,12cqw,3.4rem)!important;line-height:1.05}
+.ttl svg{width:7rem;margin-top:.15rem}
+.tab{padding-bottom:calc(var(--bot) + 1.6rem)!important;padding-top:calc(var(--top) + 3.4rem)!important}
+</style>
