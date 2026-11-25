@@ -120,15 +120,16 @@ html,body{height:100%;background:#120c07;color:var(--encre);font-family:'Jost',s
       <div><label>Allergies · petit mot</label><div class="in">Facultatif</div></div></div>
       <div class="btns"><a class="btn pl" style="padding:.75rem 2.2rem;font-size:.9rem">Envoyer ma réponse</a></div></div></section>
 
-  <section class="tab" data-i="5"><div class="ttl"><span class="a">Partagez vos souvenirs</span><span class="n">Vos photos</span><img class="sp" src="maquette/sep1.png" alt=""></div>
-<div class="body"><p class="lead">Offrez aux mariés<br>vos plus beaux souvenirs de la fête.</p>
-<div class="drop"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l1.6-2.2h6.8L17 8h3v11H4z"/><circle cx="12" cy="13" r="3.6"/></svg><span>Glissez vos photos ici</span></div>
-<button class="btn pl" id="upl" type="button" style="padding:.8rem 2.2rem;font-size:.9rem;cursor:pointer">Charger des photos</button>
-<p class="note" id="note" role="status"></p><input type="file" id="file" accept="image/*" multiple hidden></div></section>
+  
 
 <section class="tab" data-i="4"><div class="ttl"><span class="a">Avec toute notre joie</span><span class="n">Merci</span><img class="sp" src="maquette/sep1.png" alt=""></div><div class="body"><p class="sm">Dans</p><div class="cd" id="cd"><div class="dy"><b id="cdd">--</b><span>jours</span></div><div class="sub"><div><b id="cdh">--</b><span>heures</span></div><i></i><div><b id="cdm">--</b><span>minutes</span></div><i></i><div><b id="cds">--</b><span>secondes</span></div></div></div><p class="sm">avant le grand jour</p><img class="flo" src="maquette/sep2.png" alt="">
       <p class="lead">Nous avons hâte de partager ce moment avec vous.</p>
       <p class="sm" style="opacity:.7;font-size:.58rem;margin-top:.6rem">Invitation créée par Maison Opaline</p></div></section>
+<section class="tab" data-i="5"><div class="ttl"><span class="a">Partagez vos souvenirs</span><span class="n">Vos photos</span><img class="sp" src="maquette/sep1.png" alt=""></div>
+<div class="body"><p class="lead">Offrez aux mariés<br>vos plus beaux souvenirs de la fête.</p>
+<div class="drop"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l1.6-2.2h6.8L17 8h3v11H4z"/><circle cx="12" cy="13" r="3.6"/></svg><span>Glissez vos photos ici</span></div>
+<button class="btn pl" id="upl" type="button" style="padding:.8rem 2.2rem;font-size:.9rem;cursor:pointer">Charger des photos</button>
+<p class="note" id="note" role="status"></p><input type="file" id="file" accept="image/*" multiple hidden></div></section>
 
   <div class="hint" id="hint">Faites glisser<b>⌄</b></div>
   <nav class="dots" id="dots" aria-label="Sections"></nav>
@@ -294,4 +295,30 @@ html,body{height:100%;background:#120c07;color:var(--encre);font-family:'Jost',s
 <style>.plate::before,.plate::after{display:none!important}.plate .in{font-size:clamp(1.9rem,9.8cqw,2.9rem)!important}
 .plate .in:first-child{top:-5%!important}.plate .in:last-child{bottom:-4%!important}</style>
 <style>.plate{display:block!important;width:31%!important;height:auto!important;top:calc(var(--w)*.34 - var(--w)*.31*.5*.667)!important;margin:0!important}
-.plate svg{width:100%;height:auto;display:block;overflow:visible}.plate::before,.plate::after{display:none!important}</style>
+.plate svg{width:100%;height:auto;display:block;overflow:visible}.plate::before,.plate::after{display:none!important}</style><style>
+.tab[data-i="1"] .prog{gap:clamp(.9rem,3.6svh,2.1rem)!important}
+.tab[data-i="1"] .pr{grid-template-columns:23% 3.1rem 1fr!important;gap:.9rem!important}
+.tab[data-i="1"] .prog::before{left:calc(23% + 1.55rem + .45rem)!important}
+.tab[data-i="1"] .pr .ic{width:3.1rem!important;height:3.7rem!important;border-radius:1.55rem 1.55rem .5rem .5rem!important}
+.tab[data-i="1"] .pr .ic svg{width:1.95rem!important;height:1.95rem!important}
+.tab[data-i="1"] .pr .t{font-size:.92rem!important;letter-spacing:.08em!important}
+.tab[data-i="1"] .pr .d b{font-size:clamp(1.2rem,5.9cqw,1.55rem)!important}
+.tab[data-i="1"] .pr .d i{font-size:clamp(.95rem,4.2cqw,1.1rem)!important}
+</style><style>
+.tab[data-i="1"]{padding-left:6%!important;padding-right:6%!important}
+.tab[data-i="1"] .prog{gap:min(2.7svh,6.2cqw)!important}
+.tab[data-i="1"] .pr{grid-template-columns:19% 11.5cqw 1fr!important;gap:3cqw!important}
+.tab[data-i="1"] .prog::before{left:calc(19% + 3cqw + 5.75cqw)!important}
+.tab[data-i="1"] .pr .ic{width:11.5cqw!important;height:13.8cqw!important;border-radius:6cqw 6cqw 2cqw 2cqw!important}
+.tab[data-i="1"] .pr .ic svg{width:6.6cqw!important;height:6.6cqw!important}
+.tab[data-i="1"] .pr .t{font-size:3.7cqw!important;letter-spacing:.06em!important}
+.tab[data-i="1"] .pr .d b{font-size:5.3cqw!important}
+.tab[data-i="1"] .pr .d i{font-size:3.9cqw!important}
+</style><style>
+.tab[data-i="1"] .prog{gap:min(1.5svh,3.6cqw)!important}
+.tab[data-i="1"] .pr .ic{width:10.6cqw!important;height:12.6cqw!important}
+.tab[data-i="1"] .pr{grid-template-columns:19% 10.6cqw 1fr!important}
+.tab[data-i="1"] .prog::before{left:calc(19% + 3cqw + 5.3cqw)!important}
+.tab[data-i="1"] .pr .d b{font-size:5cqw!important}.tab[data-i="1"] .pr .d i{font-size:3.7cqw!important}
+.tab[data-i="1"] .pr .ic svg{width:6cqw!important;height:6cqw!important}
+</style>
