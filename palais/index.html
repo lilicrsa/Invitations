@@ -947,7 +947,7 @@ function draw(){
     t.classList.toggle('on', v > .6);
   });
   DOTS.forEach((b,i)=> b.classList.toggle('on', Math.round(p) === i));
-  hintEl.style.opacity = Math.max(0, 1 - p*3);
+  hintEl.style.opacity = Math.max(0, Math.min(1, (TABS.length - 1) - p)); hintEl.style.display = TABS.length > 1 ? '' : 'none';
 }
 track.addEventListener('scroll', ()=>requestAnimationFrame(draw), {passive:true});
 
