@@ -18,7 +18,7 @@
     box.style.cssText = 'position:fixed;inset:0;z-index:2147483600;display:flex;align-items:center;justify-content:center;background:rgba(5,7,16,.82);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);opacity:0;transition:opacity .25s ease';
     var frame = document.createElement('div');
     frame.style.cssText = 'position:relative;height:' + h + ';aspect-ratio:9/16;max-width:94vw;border-radius:30px;overflow:hidden;background:#000;box-shadow:0 0 0 1px rgba(230,213,171,.55),0 0 0 8px rgba(14,18,38,.9),0 0 0 9px rgba(230,213,171,.35),0 30px 80px rgba(0,0,0,.7)';
-    var f = document.createElement('iframe'); f.src = url + (url.indexOf('?') > -1 ? '&' : '?') + 'popup=1'; f.title = 'Démonstration'; f.setAttribute('allow', 'autoplay; fullscreen');
+    var f = document.createElement('iframe'); f.src = url + (url.indexOf('?') > -1 ? '&' : '?') + 'popup=1&_=' + Date.now(); f.title = 'Démonstration'; f.setAttribute('allow', 'autoplay; fullscreen');
     f.style.cssText = 'width:100%;height:100%;border:0;display:block;background:#000';
     frame.appendChild(f);
     var x = document.createElement('button'); x.type = 'button'; x.setAttribute('aria-label', 'Fermer la démonstration'); x.textContent = '✕';
