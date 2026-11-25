@@ -31,10 +31,12 @@
       var framed = false; try{ framed = window.self !== window.top; }catch(_){ framed = true; }
       if(framed){ /* démo ouverte dans la fenêtre du site : « fermer » referme la fenêtre, « Créer la mienne » quitte la fenêtre */
         bar.style.maxWidth = 'calc(100% - 80px)';
-        bar.innerHTML = '<a href="#" data-close="1" style="' + css + 'background:rgba(10,14,29,.88);color:#E6D5AB;border:1px solid rgba(230,213,171,.5)">✕ Fermer</a><a href="../commande.html?t=' + th + '" target="_top" style="' + css + 'background:#E6D5AB;color:#0A0E1D">Créer la mienne</a>';
+        bar.innerHTML = '<a href="#" data-close="1" style="' + css + 'background:rgba(10,14,29,.88);color:#E6D5AB;border:1px solid rgba(230,213,171,.5)">✕ Quitter la démo</a><a href="../commande.html?t=' + th + '" target="_top" style="' + css + 'background:#E6D5AB;color:#0A0E1D">Créer la mienne</a>';
         bar.querySelector('[data-close]').addEventListener('click', function(e){ e.preventDefault(); try{ window.parent.postMessage({ moDemo:'close' }, location.origin); }catch(_){} });
       } else {
         bar.innerHTML = '<a href="../index.html#modeles" style="' + css + 'background:rgba(10,14,29,.88);color:#E6D5AB;border:1px solid rgba(230,213,171,.5)">← Quitter la démo</a><a href="../commande.html?t=' + th + '" style="' + css + 'background:#E6D5AB;color:#0A0E1D">Créer la mienne</a>';
+        /* « Quitter la démo » ramène exactement là où l'on était (même onglet) */
+        var q = bar.firstChild; q.addEventListener('click', function(e){ try{ if(history.length > 1 && document.referrer && new URL(document.referrer).origin === location.origin){ e.preventDefault(); history.back(); } }catch(_){} });
       }
       document.addEventListener('DOMContentLoaded', function(){ document.body.appendChild(bar); });
       setInterval(function(){ if(!bar.isConnected && document.body) document.body.appendChild(bar); }, 1500);
