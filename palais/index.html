@@ -1011,7 +1011,7 @@ function buildPages(inv){
   if(inv.venue_name || inv.address){
     const vn = (inv.venue_name||'').trim(), ad = (inv.address||'').trim();
     const addrLines = (vn && ad && ad.toLowerCase().indexOf(vn.toLowerCase()) === 0) ? [ad] : [ad];
-    let h = '<div class="arch"><div></div></div>';
+    let h = '<div class="arch"><div' + (inv.is_demo ? ' style="background-image:url(maquette/villa.jpg)"' : '') + '></div></div>';
     h += '<p class="big">' + esc(vn || ad) + '</p>';
     let ad2 = ad; if(vn && ad.toLowerCase().indexOf(vn.toLowerCase()) === 0) ad2 = ad.slice(vn.length).replace(/^[\s,;:\u2013\u2014-]+/, '');
     if(ad2) h += '<p class="lead addr">' + esc(ad2).replace(/,\s*/, '<br>') + '</p>';
@@ -1121,7 +1121,13 @@ function fitAll(){
 let _fz; try{ new MutationObserver(()=>{ clearTimeout(_fz); _fz = setTimeout(fitAll, 60); }).observe(document.getElementById('tabs'), {childList:true, subtree:true}); }catch(_){}
 let _rz; window.addEventListener('resize', ()=>{ clearTimeout(_rz); _rz = setTimeout(()=>{ fitAll(); draw(); }, 120); });
 
+function demoVenue(inv){
+  if(!inv.is_demo || PREVIEW || LIVE) return inv;
+  const ct = Object.assign({}, inv.card_text || {}, { venue:'Villa Ephrussi de Rothschild', venue2:'Saint-Jean-Cap-Ferrat' });
+  return Object.assign({}, inv, { venue_name:'Villa Ephrussi de Rothschild', address:'1 avenue Ephrussi de Rothschild, 06230 Saint-Jean-Cap-Ferrat', maps_url:'https://www.google.com/maps/search/?api=1&query=Villa+Ephrussi+de+Rothschild+Saint-Jean-Cap-Ferrat', card_text: ct });
+}
 function mount(inv){
+  inv = demoVenue(inv);
   _lastInv = inv;
   const c = deriveCard(inv);
   drawMono(c.monogram);
