@@ -282,7 +282,7 @@ body{ font-family:'Jost',system-ui,sans-serif; color:var(--encre); background:#1
 .nm{display:none}
 /* lieu : boutons de navigation */
 .t-lieu .nav-links{ display:flex; gap:.5rem; flex-wrap:wrap; justify-content:center; margin-top:.2rem }
-.t-lieu .nav-links a{ font:600 .78rem 'Jost',sans-serif; letter-spacing:.06em; color:var(--or); border:1px solid var(--or); border-radius:999px; padding:.55rem 1rem; background:rgba(255,250,238,.6); text-decoration:none }
+.t-lieu .nav-links a{ font:600 .72rem 'Jost',sans-serif; letter-spacing:.05em; color:var(--or); border:1px solid var(--or); border-radius:999px; padding:.5rem .85rem; background:rgba(255,250,238,.6); text-decoration:none }
 .t-lieu .nav-links a:first-child{ background:linear-gradient(180deg,#d9b15c,#b8862f); color:#fffaf0; border-color:transparent; box-shadow:0 6px 16px rgba(160,110,30,.35) }
 .t-lieu .extras{ font:italic 500 .95rem/1.4 'Cormorant Garamond',serif; color:#7a5a37 }
 .t-lieu .extras a{ color:inherit }
@@ -368,6 +368,17 @@ body{ font-family:'Jost',system-ui,sans-serif; color:var(--encre); background:#1
 .vn-a{ font:500 .62rem 'Jost',sans-serif; letter-spacing:.3em; text-transform:uppercase; color:#a9834a; margin-right:-.3em }
 .cl{ font:italic 400 1.12rem/1.5 'Cormorant Garamond',serif; color:#8a6b47; max-width:82%; text-wrap:balance }
 @media (max-height:760px){ .dt-d{ font-size:3.2rem } .dt-w{ font-size:.6rem } .vn-n{ font-size:1.35rem } .cl{ font-size:1rem } .t-card .flo{ margin:.1rem 0 } }
+/* RACINE : tailles proportionnelles à la largeur du téléphone (insensible au réglage de police Android) */
+html{ font-size:clamp(12px,min(4.44vw,2.22svh),18px)!important; -webkit-text-size-adjust:100%; text-size-adjust:100% }
+html.fr{ font-size:clamp(12px,4.44vw,18px)!important }
+@media (max-height:900px){
+ .t-rsvp .rsvp label{ margin:.28rem 0 .1rem; font-size:.54rem }
+ .t-rsvp .rsvp input[type=text],.t-rsvp .rsvp input[type=number],.t-rsvp .rsvp textarea{ padding:.28rem .7rem; min-height:1.85rem; font-size:.88rem; border-radius:10px }
+ .t-rsvp .rsvp textarea{ height:1.85rem }
+ .t-rsvp .choice label{ padding:.3rem .2rem; font-size:.8rem }
+ .t-rsvp .rsvp button[type=submit]{ margin-top:.45rem; padding:.6rem 1rem; font-size:.9rem }
+ .t-rsvp .rsvp .note{ margin-top:.3rem; font-size:.85rem }
+}
 /* mode démo (cadre téléphone) : remplir toute la largeur */
 html.fr #stage{ width:100vw!important; --w:100vw!important; --top:calc(100vw*.59)!important; --bot:calc(100vw*.15)!important }
 html.fr body{ background:var(--creme) }
@@ -868,7 +879,8 @@ function buildPages(inv){
     const addrLines = (vn && ad && ad.toLowerCase().indexOf(vn.toLowerCase()) === 0) ? [ad] : [ad];
     let h = '<div class="arch"><div></div></div>';
     h += '<p class="big">' + esc(vn || ad) + '</p>';
-    if(vn && ad) h += '<p class="lead addr">' + esc(ad).replace(/,\s*/, '<br>') + '</p>';
+    let ad2 = ad; if(vn && ad.toLowerCase().indexOf(vn.toLowerCase()) === 0) ad2 = ad.slice(vn.length).replace(/^[\s,;:\u2013\u2014-]+/, '');
+    if(ad2) h += '<p class="lead addr">' + esc(ad2).replace(/,\s*/, '<br>') + '</p>';
     const ex = [];
     const s = sec('t-lieu', 'Où nous retrouver', 'Le lieu', h);
     if(ex.length) s.classList.add('compact');
@@ -962,18 +974,17 @@ function fitAll(){
     while(n.getBoundingClientRect().width > W*0.74 && fs > 26 && guard--){ fs -= 1.5; n.style.fontSize = fs + 'px'; }
     if(n.getBoundingClientRect().width > W*0.74){ n.style.whiteSpace = 'normal'; n.style.textAlign = 'center'; n.style.lineHeight = '1.05'; }
   });
-  // programme : réduction proportionnelle si la liste dépasse
-  const pr = document.querySelector('.t-prog .prog');
-  if(pr){
-    pr.style.transform = '';
-    const tab = pr.closest('.tab'), st = stage.getBoundingClientRect();
-    const maxBottom = st.bottom - W*0.17;
-    const r = pr.getBoundingClientRect(), tabOp = tab.style.opacity;
-    const natural = pr.offsetHeight, top = pr.getBoundingClientRect().top;
-    const avail = maxBottom - top;
-    if(natural > avail && avail > 80){ pr.style.transform = 'scale(' + Math.max(.55, avail/natural).toFixed(3) + ')'; }
-  }
+  // chaque page : si le contenu dépasse la hauteur disponible, on le réduit pour que tout reste visible
+  document.querySelectorAll('.tab .body').forEach(bd=>{
+    bd.style.transform = ''; bd.style.width = ''; bd.style.transformOrigin = '';
+    const ch = bd.clientHeight, sh = bd.scrollHeight;
+    if(ch > 40 && sh > ch + 2){
+      const k = Math.max(.55, ch / sh);
+      bd.style.transformOrigin = 'top center'; bd.style.width = (100 / k) + '%'; bd.style.transform = 'scale(' + k.toFixed(3) + ')';
+    }
+  });
 }
+let _fz; try{ new MutationObserver(()=>{ clearTimeout(_fz); _fz = setTimeout(fitAll, 60); }).observe(document.getElementById('tabs'), {childList:true, subtree:true}); }catch(_){}
 let _rz; window.addEventListener('resize', ()=>{ clearTimeout(_rz); _rz = setTimeout(()=>{ fitAll(); draw(); }, 120); });
 
 function mount(inv){
