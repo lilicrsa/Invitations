@@ -111,13 +111,13 @@ html,body{height:100%;background:#120c07;color:var(--encre);font-family:'Jost',s
       <div><label>Allergies · petit mot</label><div class="in">Facultatif</div></div></div>
       <div class="btns"><a class="btn pl" style="padding:.75rem 2.2rem;font-size:.9rem">Envoyer ma réponse</a></div></div></section>
 
-  <section class="tab" data-i="4"><div class="ttl"><span class="a">Partagez vos souvenirs</span><span class="n">Vos photos</span><svg viewBox="0 0 120 10" aria-hidden="true"><path d="M2 5h46M72 5h46" stroke="#c4963f" stroke-width=".8" fill="none"/><path d="M60 1l4 4-4 4-4-4z" fill="#c4963f"/></svg></div>
+  <section class="tab" data-i="5"><div class="ttl"><span class="a">Partagez vos souvenirs</span><span class="n">Vos photos</span><svg viewBox="0 0 120 10" aria-hidden="true"><path d="M2 5h46M72 5h46" stroke="#c4963f" stroke-width=".8" fill="none"/><path d="M60 1l4 4-4 4-4-4z" fill="#c4963f"/></svg></div>
 <div class="body"><p class="lead">Offrez aux mariés<br>vos plus beaux souvenirs de la fête.</p>
 <div class="drop"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l1.6-2.2h6.8L17 8h3v11H4z"/><circle cx="12" cy="13" r="3.6"/></svg><span>Glissez vos photos ici</span></div>
 <button class="btn pl" id="upl" type="button" style="padding:.8rem 2.2rem;font-size:.9rem;cursor:pointer">Charger des photos</button>
 <p class="note" id="note" role="status"></p><input type="file" id="file" accept="image/*" multiple hidden></div></section>
 
-<section class="tab" data-i="5"><div class="ttl"><span class="a">Avec toute notre joie</span><span class="n">Merci</span><svg viewBox="0 0 120 10" aria-hidden="true"><path d="M2 5h46M72 5h46" stroke="#c4963f" stroke-width=".8" fill="none"/><path d="M60 1l4 4-4 4-4-4z" fill="#c4963f"/></svg></div><div class="body"><p class="sm">Dans</p><div class="cd" id="cd"><div><b id="cdd">--</b><span>jours</span></div><div><b id="cdh">--</b><span>heures</span></div><div><b id="cdm">--</b><span>minutes</span></div><div><b id="cds">--</b><span>secondes</span></div></div><p class="sm">avant le grand jour</p><svg class="flo" viewBox="0 0 220 24" aria-hidden="true"><g fill="none" stroke="#c4963f" stroke-width="1" stroke-linecap="round"><path d="M10 12h78M132 12h78"/><path d="M96 12c6-9 14-9 14 0s-8 9-14 0zM124 12c-6-9-14-9-14 0s8 9 14 0z" fill="#e2bf6e" stroke="none"/><circle cx="110" cy="12" r="2.2" fill="#c4963f" stroke="none"/></g></svg>
+<section class="tab" data-i="4"><div class="ttl"><span class="a">Avec toute notre joie</span><span class="n">Merci</span><svg viewBox="0 0 120 10" aria-hidden="true"><path d="M2 5h46M72 5h46" stroke="#c4963f" stroke-width=".8" fill="none"/><path d="M60 1l4 4-4 4-4-4z" fill="#c4963f"/></svg></div><div class="body"><p class="sm">Dans</p><div class="cd" id="cd"><div class="dy"><b id="cdd">--</b><span>jours</span></div><div class="sub"><div><b id="cdh">--</b><span>heures</span></div><i></i><div><b id="cdm">--</b><span>minutes</span></div><i></i><div><b id="cds">--</b><span>secondes</span></div></div></div><p class="sm">avant le grand jour</p><svg class="flo" viewBox="0 0 220 24" aria-hidden="true"><g fill="none" stroke="#c4963f" stroke-width="1" stroke-linecap="round"><path d="M10 12h78M132 12h78"/><path d="M96 12c6-9 14-9 14 0s-8 9-14 0zM124 12c-6-9-14-9-14 0s8 9 14 0z" fill="#e2bf6e" stroke="none"/><circle cx="110" cy="12" r="2.2" fill="#c4963f" stroke="none"/></g></svg>
       <p class="lead">Nous avons hâte de partager ce moment avec vous.</p>
       <p class="sm" style="opacity:.7;font-size:.58rem;margin-top:.6rem">Invitation créée par Maison Opaline</p></div></section>
 
@@ -214,8 +214,19 @@ html,body{height:100%;background:#120c07;color:var(--encre);font-family:'Jost',s
   f.onchange=function(){note.textContent=f.files.length+" photo(s) s\u00e9lectionn\u00e9e(s). Merci !";note.classList.add('on');};
 })();
 </script><style>
-.tab[data-i="4"] .lead{font-size:1.02rem!important;line-height:1.45!important}
-.tab[data-i="4"] .drop{width:58%;aspect-ratio:1/.8}
-.tab[data-i="4"] .note{min-height:0}
-.tab[data-i="4"] .body{gap:.6rem}
-</style>
+.tab[data-i="5"] .lead{font-size:1.02rem!important;line-height:1.45!important}
+.tab[data-i="5"] .drop{width:58%;aspect-ratio:1/.8}
+.tab[data-i="5"] .note{min-height:0}
+.tab[data-i="5"] .body{gap:.6rem}
+</style><style>
+.cd{display:flex!important;flex-direction:column;align-items:center;gap:1.1rem;width:100%}
+.cd div{border:0!important;background:none!important;padding:0!important;border-radius:0!important}
+.cd .dy{display:flex;flex-direction:column;align-items:center;gap:.3rem}
+.cd .dy b{font:500 clamp(4rem,22cqw,5.6rem)/1 'Cormorant Garamond',serif;font-variant-numeric:lining-nums tabular-nums;background:linear-gradient(180deg,#d9b15c,#a8741f);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:none}
+.cd .dy span{font:600 .62rem 'Jost',sans-serif;letter-spacing:.38em;text-transform:uppercase;color:var(--or);padding-left:.38em}
+.cd .sub{display:flex;align-items:center;justify-content:center;gap:1.1rem}
+.cd .sub>div{display:flex;flex-direction:column;align-items:center;gap:.25rem;min-width:3.6rem}
+.cd .sub b{font:500 1.7rem/1 'Cormorant Garamond',serif;font-variant-numeric:lining-nums tabular-nums;color:var(--encre)}
+.cd .sub span{font:600 .5rem 'Jost',sans-serif;letter-spacing:.2em;text-transform:uppercase;color:var(--or)}
+.cd .sub i{width:1px;height:2.2rem;background:linear-gradient(transparent,var(--or2),transparent)}
+</style><style>.cd .sub{flex-direction:row!important;gap:1.2rem!important}.cd .sub>div{flex-direction:column!important}</style>
