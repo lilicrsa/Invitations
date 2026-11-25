@@ -226,6 +226,8 @@
   .rside .chips span{ border:1px solid rgba(231,213,168,.4); border-radius:999px; padding:.35rem .8rem; font-size:.8rem; color:var(--champ); }
   .ticks{ list-style:none; padding:0; margin:.5rem 0 1rem; display:grid; gap:.55rem; color:var(--brume); font-size:.93rem; }
   .ticks li{ padding-left:1.5rem; position:relative; } .ticks li::before{ content:'✓'; position:absolute; left:0; color:var(--champ2); }
+  .rside .chips span.pr{ border-color:var(--champ); background:rgba(231,213,168,.1); }
+  .ticks li.pr{ color:var(--champ); } .ticks li.pr b{ font-weight:600; } .ticks li.pr::before{ content:'✦'; }
   .rnote{ color:var(--brume); font-size:.8rem; opacity:.85; margin:0; }
   @media (max-width:760px){ .rsvp-grid{ grid-template-columns:1fr; gap:2rem; } }
   .incl{ display:grid; grid-template-columns:repeat(2,1fr); gap:.6rem 2rem; margin-top:2.6rem; color:var(--brume); }
@@ -374,15 +376,16 @@
         <div class="rside">
           <h4>Pour vos invités</h4>
           <p>Une réponse en quelques secondes, depuis leur téléphone.</p>
-          <div class="chips"><span>Présence</span><span>Nombre de personnes</span><span>Allergies ou régime</span><span>Un petit mot pour vous</span></div>
+          <div class="chips"><span>Présence</span><span>Nombre de personnes</span><span>Allergies ou régime</span><span>Un petit mot pour vous</span><span class="pr">✦ Leurs photos, avec Prestige</span></div>
           <h4>Pour vous</h4>
           <ul class="ticks">
             <li>Les réponses arrivent au fur et à mesure, sans rien faire</li>
             <li>Présents et absents triés, avec leurs remarques</li>
             <li>Export en un clic vers Excel (CSV)</li>
             <li>Une page à votre décor, consultable depuis votre téléphone</li>
+            <li class="pr"><b>Avec Prestige :</b> vos invités envoient leurs photos depuis leur lien, et vous les téléchargez toutes d’un coup, en un seul dossier (ZIP)</li>
           </ul>
-          <p class="rnote">Inclus avec les formules Signature et Prestige. Exemple avec des données fictives.</p>
+          <p class="rnote">Suivi des réponses inclus avec Signature et Prestige ; le téléchargement des photos est propre à Prestige. Exemple avec des données fictives.</p>
         </div>
       </div>
     </div>
