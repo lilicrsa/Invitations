@@ -354,6 +354,20 @@ body{ font-family:'Jost',system-ui,sans-serif; color:var(--encre); background:#1
 .ttl .n{ padding:0 .2em .08em; margin-right:-.1em }
 /* carte : « Invitation » remonté au-dessus des prénoms */
 .t-card .ttl .a{ display:none }
+/* carte : date et lieu, version fine */
+.t-card .body{ gap:.2rem }
+.dt{ display:flex; flex-direction:column; align-items:center; line-height:1 }
+.dt-w{ font:500 .66rem 'Jost',sans-serif; letter-spacing:.42em; text-transform:uppercase; color:#a9834a; margin-right:-.42em }
+.dt-d{ font:300 clamp(3.6rem,19cqw,4.8rem)/1 'Cormorant Garamond',serif; color:#5b4029; margin:.15rem 0 .2rem; letter-spacing:.02em }
+.dt-m{ display:flex; align-items:center; gap:.7rem; font:500 .7rem 'Jost',sans-serif; letter-spacing:.38em; text-transform:uppercase; color:#a9834a; margin-right:-.38em }
+.dt-m s{ width:1.6rem; height:1px; background:linear-gradient(90deg,transparent,rgba(196,150,63,.8),transparent) }
+.dt-plain{ font:italic 400 1.5rem 'Cormorant Garamond',serif; color:#5b4029 }
+.vn{ display:flex; flex-direction:column; align-items:center; gap:.35rem }
+.vn-t{ font:italic 400 1.15rem 'Cormorant Garamond',serif; color:#8a6b47; letter-spacing:.04em }
+.vn-n{ font:400 1.5rem/1.2 'Cormorant Garamond',serif; color:#5b4029; letter-spacing:.03em }
+.vn-a{ font:500 .62rem 'Jost',sans-serif; letter-spacing:.3em; text-transform:uppercase; color:#a9834a; margin-right:-.3em }
+.cl{ font:italic 400 1.12rem/1.5 'Cormorant Garamond',serif; color:#8a6b47; max-width:82%; text-wrap:balance }
+@media (max-height:760px){ .dt-d{ font-size:3.2rem } .dt-w{ font-size:.6rem } .vn-n{ font-size:1.35rem } .cl{ font-size:1rem } .t-card .flo{ margin:.1rem 0 } }
 /* mode démo (cadre téléphone) : remplir toute la largeur */
 html.fr #stage{ width:100vw!important; --w:100vw!important; --top:calc(100vw*.59)!important; --bot:calc(100vw*.15)!important }
 html.fr body{ background:var(--creme) }
@@ -832,10 +846,15 @@ function buildPages(inv){
   const dateTxt = (c.date && inv.card_text && inv.card_text.date != null) ? String(c.date).replace(/\n/g,' ') : longDate(inv);
   let b = '';
   if(c.intro) b += '<p class="sm">' + esc(c.intro) + '</p>' + flo('sep2');
-  if(dateTxt) b += '<p class="big">' + esc(dateTxt) + '</p>';
-  const lines = [c.time, c.venue, c.venue2].filter(Boolean);
-  if(lines.length) b += '<p class="lead">' + lines.map(esc).join('<br>') + '</p>';
-  if(c.closing){ b += flo('sep3') + '<p class="lead quote">' + esc(c.closing) + '</p>'; }
+  if(dateTxt){
+    const m = String(dateTxt).trim().match(/^(\S+)\s+(\d{1,2})(?:er)?\s+(\S+)\s+(\d{4})$/);
+    if(m) b += '<div class="dt"><span class="dt-w">' + esc(m[1]) + '</span><span class="dt-d">' + esc(m[2]) + '</span><span class="dt-m">' + esc(m[3]) + '<s></s>' + esc(m[4]) + '</span></div>';
+    else b += '<p class="dt-plain">' + esc(dateTxt) + '</p>';
+  }
+  if(c.time || c.venue || c.venue2){
+    b += '<div class="vn">' + (c.time ? '<span class="vn-t">' + esc(c.time) + '</span>' : '') + (c.venue ? '<span class="vn-n">' + esc(c.venue) + '</span>' : '') + (c.venue2 ? '<span class="vn-a">' + esc(c.venue2) + '</span>' : '') + '</div>';
+  }
+  if(c.closing){ b += flo('sep3') + '<p class="cl">' + esc(c.closing) + '</p>'; }
   const s0 = sec('t-card', '', c.names || inv.title || '', b); tabs.push(s0);
   // 2. programme
   const prog = (inv.invitation_programme||[]).slice().sort((a,b)=>a.position-b.position);
@@ -883,7 +902,7 @@ function buildPages(inv){
       for(let i=0;i<n;i++) list.push({name:nm[i]||'', role:'', phone:ph[i]||''});
     }
     list = list.filter(c=>c.name||c.phone);
-    if(!list.length && inv.is_demo) list = [{name:'Sarah',role:'Témoin de la mariée',phone:'06 12 34 56 78'},{name:'Karim',role:'Témoin du marié',phone:'06 98 76 54 32'},{name:'Nadia',role:'Mère de la mariée',phone:'07 11 22 33 44'}];
+    if(inv.is_demo && list.length < 3){ [{name:'Sarah',role:'Témoin de la mariée',phone:'06 12 34 56 78'},{name:'Karim',role:'Témoin du marié',phone:'06 98 76 54 32'},{name:'Nadia',role:'Mère de la mariée',phone:'07 11 22 33 44'}].forEach(x=>{ if(list.length < 3 && !list.some(c=>c.name===x.name)) list.push(x); }); }
     if(list.length){
       const tel = p => String(p).replace(/[^\d+]/g,'');
       const ico = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h3.2l1.6 4-2 1.3a11 11 0 005.9 5.9L15 13.2l4 1.6V18a2 2 0 01-2 2A13 13 0 013 6a2 2 0 012-2z"/></svg>';
