@@ -436,7 +436,7 @@ const video = document.getElementById('intro-video');
   let started = false;
   function startWithSound(){
     if(started) return;
-    started = true; try{ if(matchMedia('(pointer:coarse)').matches){ var de=document.documentElement; (de.requestFullscreen||de.webkitRequestFullscreen||function(){}).call(de); } }catch(_){}
+    started = true;
     document.getElementById('intro-overlay').style.display = 'none';
     bgm.play().catch(()=>{});          // silent unlock inside the tap (needed by phones)
     video.muted = !!musicUrl;          // custom music replaces the video's own sound
