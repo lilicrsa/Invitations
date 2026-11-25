@@ -201,35 +201,41 @@
   .steps > div{ padding:1.6rem 1.6rem 0 0; } .steps > div + div{ padding-left:1.6rem; border-left:1px solid var(--trait); }
   .steps .n{ font:400 3rem/1 'Italiana',serif; color:var(--champ2); }
   .steps h3{ font-size:1.5rem; margin:.6rem 0 .3rem; } .steps p{ margin:0; color:var(--brume); }
-  /* suivi des réponses */
-  .rsvp{ margin:3.4rem auto 0; max-width:60rem; text-align:center; }
+  /* voyage d'une réponse */
+  .rsvp{ margin:3.6rem auto 0; max-width:62rem; text-align:center; }
   .rsvp .rt{ font:400 clamp(1.7rem,4.6vw,2.4rem)/1.12 'Italiana',serif; color:var(--champ); margin:0; }
   .rsvp .lead{ margin-inline:auto; color:var(--brume); }
-  .rsvp-grid{ display:grid; grid-template-columns:1.05fr 1fr; gap:2.2rem; align-items:center; margin-top:2rem; text-align:left; }
-  .dash{ position:relative; background:linear-gradient(180deg,var(--nuit2),#0c1022); border:1px solid rgba(231,213,168,.35); border-radius:22px; padding:1.2rem 1.1rem 1.3rem; box-shadow:0 22px 50px rgba(0,0,0,.45), 0 -26px 70px -34px var(--tint,rgba(231,213,168,.4)); }
-  .dash .dh{ text-align:center; display:flex; flex-direction:column; gap:.15rem; margin-bottom:1rem; }
-  .dash .dk{ font:600 .62rem 'Manrope',sans-serif; letter-spacing:.22em; text-transform:uppercase; color:var(--champ2); }
-  .dash .dh b{ font:400 1.6rem 'Italiana',serif; color:var(--champ); } .dash .dd{ color:var(--brume); font-size:.8rem; }
-  .dstats{ display:grid; grid-template-columns:repeat(3,1fr); gap:.5rem; margin-bottom:.9rem; }
-  .dstats > div{ background:rgba(255,255,255,.04); border:1px solid rgba(231,213,168,.18); border-radius:14px; padding:.7rem .3rem; text-align:center; }
-  .dstats b{ display:block; font:400 1.8rem/1 'Italiana',serif; } .dstats span{ font-size:.7rem; color:var(--brume); }
-  .dstats .ok{ color:#9fd8ae; } .dstats .mb{ color:#e7a3a3; } .dstats .wt{ color:var(--champ); }
-  .dlist{ background:rgba(255,255,255,.03); border:1px solid rgba(231,213,168,.15); border-radius:14px; overflow:hidden; }
-  .dr{ display:grid; grid-template-columns:1.4rem 1fr auto; grid-template-areas:'i nm nb' '. nt nt'; gap:.1rem .6rem; align-items:center; padding:.6rem .8rem; font-size:.86rem; }
-  .dr + .dr{ border-top:1px solid rgba(231,213,168,.12); }
-  .dr i{ grid-area:i; font-style:normal; width:1.3rem; height:1.3rem; border-radius:50%; display:grid; place-items:center; font-size:.7rem; }
-  .dr i.yes{ background:rgba(159,216,174,.18); color:#9fd8ae; } .dr i.no{ background:rgba(231,163,163,.18); color:#e7a3a3; }
-  .dr .nm{ grid-area:nm; color:var(--ivoire,#f4ecd8); font-weight:500; } .dr .nb{ grid-area:nb; color:var(--brume); font-size:.78rem; } .dr .nt{ grid-area:nt; color:var(--brume); font-size:.78rem; }
-  .dchip{ position:absolute; top:-12px; right:14px; background:var(--champ); color:#0A0E1D; font:700 .72rem 'Manrope',sans-serif; padding:.4rem .75rem; border-radius:999px; box-shadow:0 6px 18px rgba(0,0,0,.4); }
-  .rside h4{ font:400 1.5rem 'Italiana',serif; color:var(--champ); margin:0 0 .3rem; font-style:italic; } .rside h4 + p{ color:var(--brume); margin:0 0 .8rem; font-size:.95rem; }
-  .rside .chips{ display:flex; flex-wrap:wrap; gap:.45rem; margin-bottom:1.6rem; }
-  .rside .chips span{ border:1px solid rgba(231,213,168,.4); border-radius:999px; padding:.35rem .8rem; font-size:.8rem; color:var(--champ); }
-  .ticks{ list-style:none; padding:0; margin:.5rem 0 1rem; display:grid; gap:.55rem; color:var(--brume); font-size:.93rem; }
-  .ticks li{ padding-left:1.5rem; position:relative; } .ticks li::before{ content:'✓'; position:absolute; left:0; color:var(--champ2); }
-  .rside .chips span.pr{ border-color:var(--champ); background:rgba(231,213,168,.1); }
-  .ticks li.pr{ color:var(--champ); } .ticks li.pr b{ font-weight:600; } .ticks li.pr::before{ content:'✦'; }
-  .rnote{ color:var(--brume); font-size:.8rem; opacity:.85; margin:0; }
-  @media (max-width:760px){ .rsvp-grid{ grid-template-columns:1fr; gap:2rem; } }
+  .flow{ display:grid; grid-template-columns:1fr auto 1fr auto 1fr; gap:.6rem; align-items:start; margin-top:2.4rem; }
+  .fa{ align-self:center; color:var(--champ2); font-size:1.6rem; opacity:.8; margin-top:-5rem; }
+  .fs{ display:flex; flex-direction:column; align-items:center; text-align:center; }
+  .fv{ position:relative; width:min(100%,15.5rem); height:19.8rem; border:1px solid var(--champ2); border-radius:120px 120px 14px 14px; background:linear-gradient(180deg,var(--nuit2),#0c1022); box-shadow:0 18px 40px rgba(0,0,0,.45), 0 -22px 60px -30px rgba(231,213,168,.4); overflow:hidden; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; gap:.5rem; padding:0 1rem 1.2rem; }
+  .fs .rn{ font:400 .8rem 'Italiana',serif; letter-spacing:.3em; color:var(--champ2); margin:1.1rem 0 .1rem; } .fs .rn em{ font-style:normal; font:600 .62rem 'Manrope',sans-serif; letter-spacing:.2em; text-transform:uppercase; color:#0A0E1D; background:var(--champ); border-radius:999px; padding:.2rem .5rem; margin-left:.4rem; vertical-align:middle; }
+  .fs h4{ font:400 1.55rem 'Italiana',serif; color:var(--champ); margin:0 0 .35rem; }
+  .fs p{ color:var(--brume); font-size:.92rem; margin:0; max-width:17rem; }
+  /* I : la réponse d'un invité */
+  .fv1 small{ font:italic 400 .95rem 'Italiana',serif; color:var(--champ); margin-bottom:.4rem; letter-spacing:.02em; }
+  .fv1 .bt{ width:100%; border:1px solid var(--champ2); border-radius:999px; padding:.45rem .3rem; font-size:.74rem; color:var(--champ); }
+  .fv1 .bt.on{ background:var(--champ); color:#0A0E1D; font-weight:600; }
+  .fv1 .cnt{ font-size:.75rem; color:var(--brume); } .fv1 .cnt b{ display:inline-block; margin-left:.4rem; padding:.1rem .6rem; border:1px solid var(--trait); border-radius:8px; color:var(--champ); }
+  .fv1 .word{ width:100%; border:1px dashed var(--trait); border-radius:10px; padding:.5rem; font-size:.7rem; color:var(--brume); opacity:.8; }
+  /* II : le carnet */
+  .fv2{ justify-content:flex-start; padding-top:1.9rem; }
+  .fv2 .rib{ position:absolute; top:3rem; left:50%; transform:translateX(-50%); font:600 .56rem 'Manrope',sans-serif; letter-spacing:.12em; text-transform:uppercase; color:var(--champ2); white-space:nowrap; }
+  .rc{ position:absolute; left:50%; width:80%; padding:.55rem .7rem; text-align:left; background:#f3e8cf; color:#2c2418; border-radius:8px; box-shadow:0 8px 16px rgba(0,0,0,.4); display:flex; flex-direction:column; gap:.05rem; }
+  .rc b{ font:400 .98rem 'Italiana',serif; } .rc span{ font-size:.66rem; } .rc em{ font-size:.64rem; font-style:italic; color:#6d5d43; }
+  .rc i{ position:absolute; top:.45rem; right:.5rem; width:1.15rem; height:1.15rem; border-radius:50%; background:#8a1c38; color:#f3e8cf; font-size:.6rem; font-style:normal; display:grid; place-items:center; }
+  .rc.c1{ top:4.9rem; transform:translateX(-50%) rotate(-3deg); } .rc.c2{ top:9.1rem; transform:translateX(-50%) rotate(2.5deg); } .rc.c3{ top:13.3rem; transform:translateX(-50%) rotate(-1.5deg); }
+  /* III : l'album */
+  .fv3{ justify-content:flex-end; }
+  .pl{ position:absolute; width:5.2rem; height:6rem; background:#f6efe0; padding:.35rem .35rem 1.1rem; border-radius:3px; box-shadow:0 8px 16px rgba(0,0,0,.45); }
+  .pl::before{ content:''; display:block; width:100%; height:100%; border-radius:2px; }
+  .pl.p1{ left:12%; top:1.6rem; transform:rotate(-8deg); } .pl.p1::before{ background:linear-gradient(135deg,#e8b9a0,#c98a76); }
+  .pl.p2{ right:10%; top:2.4rem; transform:rotate(6deg); } .pl.p2::before{ background:linear-gradient(135deg,#bcd2c0,#7fa58b); }
+  .pl.p3{ left:20%; top:6.4rem; transform:rotate(4deg); } .pl.p3::before{ background:linear-gradient(135deg,#d9c58f,#b79a52); }
+  .pl.p4{ right:16%; top:7rem; transform:rotate(-5deg); } .pl.p4::before{ background:linear-gradient(135deg,#c9b8e0,#8e78b4); }
+  .zip{ position:relative; z-index:1; font:600 .66rem 'Manrope',sans-serif; letter-spacing:.08em; background:var(--champ); color:#0A0E1D; padding:.45rem .8rem; border-radius:999px; box-shadow:0 6px 16px rgba(0,0,0,.4); }
+  .rnote{ color:var(--brume); font-size:.8rem; opacity:.85; margin:2.2rem auto 0; max-width:36rem; }
+  @media (max-width:820px){ .flow{ grid-template-columns:1fr; gap:1.4rem; } .fa{ margin:0; transform:rotate(90deg); } }
   .incl{ display:grid; grid-template-columns:repeat(2,1fr); gap:.6rem 2rem; margin-top:2.6rem; color:var(--brume); }
   .incl b{ color:var(--champ); font-weight:600; }
   @media (max-width:760px){ .steps{ grid-template-columns:1fr; } .steps > div,.steps > div + div{ padding:1.4rem 0 0; border-left:0; } .incl{ grid-template-columns:1fr; } }
@@ -358,36 +364,43 @@
       <p class="vcap">Touchez pour lancer, avec le son.</p>
     </div>
     <div class="rsvp" id="suivi">
-      <p class="eyebrow">Vos invités répondent, vous suivez</p>
-      <h3 class="rt">Les réponses, toutes au même endroit</h3>
-      <p class="lead">Fini les messages éparpillés : chaque réponse arrive d’elle-même sur une page à votre décor, claire et à jour.</p>
-      <div class="rsvp-grid">
-        <div class="dash" aria-label="Exemple de page de suivi des réponses, avec des données fictives">
-          <div class="dh"><span class="dk">Suivi des réponses</span><b>Votre événement</b><span class="dd">14 juin 2027</span></div>
-          <div class="dstats"><div><b class="ok">24</b><span>Présents</span></div><div><b class="mb">3</b><span>Absents</span></div><div><b class="wt">11</b><span>En attente</span></div></div>
-          <div class="dlist">
-            <div class="dr"><i class="yes">✓</i><span class="nm">Camille Laurent</span><span class="nb">2 pers.</span><span class="nt">Sans gluten</span></div>
-            <div class="dr"><i class="yes">✓</i><span class="nm">Famille Morel</span><span class="nb">4 pers.</span><span class="nt">Menu enfant</span></div>
-            <div class="dr"><i class="no">✕</i><span class="nm">Julien Aubert</span><span class="nb">·</span><span class="nt">« Désolé, on pense bien à vous »</span></div>
-            <div class="dr"><i class="yes">✓</i><span class="nm">Inès &amp; Paul</span><span class="nb">2 pers.</span><span class="nt">Végétarien</span></div>
+      <p class="eyebrow">Après l’envoi</p>
+      <h3 class="rt">Le voyage d’une réponse</h3>
+      <p class="lead">De la main de vos invités jusqu’à votre carnet : tout se range tout seul, sans que vous ayez à relancer.</p>
+      <div class="flow">
+        <article class="fs">
+          <div class="fv fv1" aria-hidden="true">
+            <small>Léa &amp; Karim vous attendent</small>
+            <span class="bt on">Je serai là avec joie</span>
+            <span class="bt">Je ne pourrai pas venir</span>
+            <span class="cnt">Nous serons <b>2</b></span>
+            <span class="word">Un petit mot pour les mariés…</span>
           </div>
-          <span class="dchip">+3 réponses aujourd’hui</span>
-        </div>
-        <div class="rside">
-          <h4>Pour vos invités</h4>
-          <p>Une réponse en quelques secondes, depuis leur téléphone.</p>
-          <div class="chips"><span>Présence</span><span>Nombre de personnes</span><span>Allergies ou régime</span><span>Un petit mot pour vous</span><span class="pr">✦ Leurs photos, avec Prestige</span></div>
-          <h4>Pour vous</h4>
-          <ul class="ticks">
-            <li>Les réponses arrivent au fur et à mesure, sans rien faire</li>
-            <li>Présents et absents triés, avec leurs remarques</li>
-            <li>Export en un clic vers Excel (CSV)</li>
-            <li>Une page à votre décor, consultable depuis votre téléphone</li>
-            <li class="pr"><b>Avec Prestige :</b> vos invités envoient leurs photos depuis leur lien, et vous les téléchargez toutes d’un coup, en un seul dossier (ZIP)</li>
-          </ul>
-          <p class="rnote">Suivi des réponses inclus avec Signature et Prestige ; le téléchargement des photos est propre à Prestige. Exemple avec des données fictives.</p>
-        </div>
+          <span class="rn">I</span><h4>Ils répondent</h4>
+          <p>Un lien, trois gestes : présence, nombre de personnes, un petit mot. Rien à installer.</p>
+        </article>
+        <span class="fa" aria-hidden="true">→</span>
+        <article class="fs">
+          <div class="fv fv2" aria-hidden="true">
+            <span class="rib">24 réponses · 11 attendues</span>
+            <div class="rc c1"><b>Camille Laurent</b><span>Présente · 2 pers.</span><em>Sans gluten</em><i>✓</i></div>
+            <div class="rc c2"><b>Julien Aubert</b><span>Ne pourra pas venir</span><em>« Pensées pour vous ! »</em><i>✕</i></div>
+            <div class="rc c3"><b>Famille Morel</b><span>Présents · 4 pers.</span><em>Menu enfant</em><i>✓</i></div>
+          </div>
+          <span class="rn">II</span><h4>Vous lisez</h4>
+          <p>Chaque réponse se range dans votre carnet, avec les remarques utiles : allergies, régimes. Export vers Excel en un clic.</p>
+        </article>
+        <span class="fa" aria-hidden="true">→</span>
+        <article class="fs pre">
+          <div class="fv fv3" aria-hidden="true">
+            <div class="pl p1"></div><div class="pl p2"></div><div class="pl p3"></div><div class="pl p4"></div>
+            <span class="zip">Tout l’album · un seul dossier</span>
+          </div>
+          <span class="rn">III <em>Prestige</em></span><h4>Vous gardez</h4>
+          <p>Vos invités déposent leurs photos depuis leur lien. Vous retrouvez tout l’album, d’un seul téléchargement (ZIP).</p>
+        </article>
       </div>
+      <p class="rnote">Le suivi des réponses est inclus avec Signature et Prestige ; l’album photos des invités est propre à Prestige. Exemples fictifs.</p>
     </div>
   </div></section>
 
