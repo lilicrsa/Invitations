@@ -445,6 +445,8 @@ html.fr{ font-size:clamp(12px,4.44vw,18px)!important }
 .dv8 .g{ display:grid; grid-template-columns:repeat(3,auto); align-items:center }
 .dv8 .g b{ font:300 clamp(2.6rem,13.5cqw,3.6rem)/1 'Cormorant Garamond',serif; color:#5b4029; padding:0 clamp(.9rem,5cqw,1.4rem); position:relative; letter-spacing:.03em; font-variant-numeric:lining-nums }
 .dv8 .g b + b::before{ content:''; position:absolute; left:0; top:10%; bottom:10%; width:1px; background:linear-gradient(180deg,transparent,rgba(196,150,63,.9),transparent) }
+.bz{ position:absolute; left:0; right:0; top:0; aspect-ratio:780/460; background:url(maquette/top.jpg) center/100% 100% no-repeat; pointer-events:none; -webkit-mask-image:radial-gradient(ellipse 22% 31% at 50% 57.6%,#000 70%,transparent 100%); mask-image:radial-gradient(ellipse 22% 31% at 50% 57.6%,#000 70%,transparent 100%) }
+.bg2{ position:absolute; inset:0; background:url(maquette/fond.jpg) center/cover no-repeat; opacity:0; pointer-events:none }
 /* mode démo (cadre téléphone) : remplir toute la largeur */
 html.fr #stage{ width:100vw!important; --w:100vw!important; --top:calc(100vw*.59)!important; --bot:calc(100vw*.15)!important }
 html.fr body{ background:var(--creme) }
@@ -473,7 +475,9 @@ html.fr body{ background:var(--creme) }
 
 <div id="app">
  <div id="stage">
-  <div class="bg"><div class="mid"></div><div class="top"></div><div class="bot"></div></div>
+  <div class="bg" id="bg1"><div class="mid"></div><div class="top"></div><div class="bot"></div></div>
+  <div class="bg2" id="bg2"></div>
+  <div class="bz"></div>
   <div class="dust" id="dust"></div>
   <div class="plate" id="plate"></div>
   <div id="tabs"></div>
@@ -1213,6 +1217,7 @@ function draw(){
     t.classList.toggle('on', v > .6);
   });
   DOTS.forEach((b,i)=> b.classList.toggle('on', Math.round(p) === i));
+  { const k = Math.max(0, Math.min(1, p)), e = ease(k); const b1 = document.getElementById('bg1'), b2 = document.getElementById('bg2'); if(b1) b1.style.opacity = 1 - e; if(b2) b2.style.opacity = e; }
   hintEl.style.opacity = Math.max(0, Math.min(1, (TABS.length - 1) - p)); hintEl.style.display = TABS.length > 1 ? '' : 'none';
 }
 track.addEventListener('scroll', ()=>requestAnimationFrame(draw), {passive:true});
