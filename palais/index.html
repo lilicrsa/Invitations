@@ -423,7 +423,7 @@ html.fr{ font-size:clamp(12px,4.44vw,18px)!important }
 @keyframes glowpulse{ 0%,100%{opacity:.55} 50%{opacity:1} }
 .dv5,.dv6,.dv7,.dv8{ display:flex; flex-direction:column; align-items:center }
 .dv5 .w{ font:italic 400 1.2rem 'Cormorant Garamond',serif; color:#8a6b47; letter-spacing:.06em }
-.dv5 .n{ font:400 clamp(4.6rem,25cqw,6.4rem)/1.05 'Ephesis',cursive; padding:.05em .25em .12em; margin:-.05em 0 -.1em; background:linear-gradient(100deg,#7C4D0E 0%,#B27C20 35%,#D2A24A 52%,#A8701A 72%,#7C4D0E 100%); -webkit-background-clip:text; background-clip:text; color:transparent; -webkit-text-fill-color:transparent; filter:drop-shadow(0 1px 0 rgba(255,248,230,.9)) }
+.dv5 .n{ font:400 clamp(3.2rem,17cqw,4.4rem)/1.05 'Ephesis',cursive; padding:.05em .25em .12em; margin:-.05em 0 -.1em; background:linear-gradient(100deg,#7C4D0E 0%,#B27C20 35%,#D2A24A 52%,#A8701A 72%,#7C4D0E 100%); -webkit-background-clip:text; background-clip:text; color:transparent; -webkit-text-fill-color:transparent; filter:drop-shadow(0 1px 0 rgba(255,248,230,.9)) }
 .dv5 .m{ font:500 .7rem 'Jost',sans-serif; letter-spacing:.4em; text-transform:uppercase; color:#a9834a; margin-right:-.4em }
 .dv5 .h,.dv6 .h,.dv8 .h{ margin:.9rem 0 0; font:italic 400 1.35rem 'Cormorant Garamond',serif; color:#5b4029; letter-spacing:.05em }
 .dv6 .box{ position:relative; width:42cqw; aspect-ratio:100/124 }
@@ -1041,7 +1041,7 @@ function fitCardNames(){
 }
 
 // ---- date et heure : 4 présentations (?dv=1..4 pour comparer) ----
-const DV = Math.max(1, Math.min(8, +new URLSearchParams(location.search).get('dv') || 1));
+const DV = Math.max(1, Math.min(8, +new URLSearchParams(location.search).get('dv') || 5));
 const U20 = ['zéro','un','deux','trois','quatre','cinq','six','sept','huit','neuf','dix','onze','douze','treize','quatorze','quinze','seize','dix-sept','dix-huit','dix-neuf'];
 function nw(n){
   if(n < 20) return U20[n];
