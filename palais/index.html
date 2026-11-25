@@ -363,10 +363,14 @@ body{ font-family:'Jost',system-ui,sans-serif; color:var(--encre); background:#1
 .dt-m s{ width:1.6rem; height:1px; background:linear-gradient(90deg,transparent,rgba(196,150,63,.8),transparent) }
 .dt-plain{ font:italic 400 1.5rem 'Cormorant Garamond',serif; color:#5b4029 }
 .vn{ display:flex; flex-direction:column; align-items:center; gap:.35rem }
+.tm{ margin:.7rem 0 .55rem; display:flex; align-items:center; justify-content:center; gap:.9rem; width:70%; font:500 .8rem 'Jost',sans-serif; letter-spacing:.34em; text-transform:uppercase; color:#8a6b47 }
+.tm span{ margin-right:-.34em }
+.tm s{ flex:1; height:1px; background:linear-gradient(90deg,transparent,rgba(196,150,63,.75)) }
+.tm s:last-child{ transform:scaleX(-1) }
 .vn-t{ font:italic 400 1.15rem 'Cormorant Garamond',serif; color:#8a6b47; letter-spacing:.04em }
 .vn-n{ font:400 1.5rem/1.2 'Cormorant Garamond',serif; color:#5b4029; letter-spacing:.03em }
 .vn-a{ font:500 .62rem 'Jost',sans-serif; letter-spacing:.3em; text-transform:uppercase; color:#a9834a; margin-right:-.3em }
-.cl{ font:italic 400 1.12rem/1.5 'Cormorant Garamond',serif; color:#8a6b47; max-width:82%; text-wrap:balance }
+.cl{ margin-top:.5rem; font:italic 400 1.12rem/1.5 'Cormorant Garamond',serif; color:#8a6b47; max-width:82%; text-wrap:balance }
 @media (max-height:760px){ .dt-d{ font-size:3.2rem } .dt-w{ font-size:.6rem } .vn-n{ font-size:1.35rem } .cl{ font-size:1rem } .t-card .flo{ margin:.1rem 0 } }
 /* RACINE : tailles proportionnelles à la largeur du téléphone (insensible au réglage de police Android) */
 html{ font-size:clamp(12px,min(4.44vw,2.22svh),18px)!important; -webkit-text-size-adjust:100%; text-size-adjust:100% }
@@ -863,9 +867,10 @@ function buildPages(inv){
     else b += '<p class="dt-plain">' + esc(dateTxt) + '</p>';
   }
   if(c.time || c.venue || c.venue2){
-    b += '<div class="vn">' + (c.time ? '<span class="vn-t">' + esc(c.time) + '</span>' : '') + (c.venue ? '<span class="vn-n">' + esc(c.venue) + '</span>' : '') + (c.venue2 ? '<span class="vn-a">' + esc(c.venue2) + '</span>' : '') + '</div>';
+    if(c.time) b += '<p class="tm"><s></s><span>' + esc(c.time) + '</span><s></s></p>';
+    b += '<div class="vn">' + (c.venue ? '<span class="vn-n">' + esc(c.venue) + '</span>' : '') + (c.venue2 ? '<span class="vn-a">' + esc(c.venue2) + '</span>' : '') + '</div>';
   }
-  if(c.closing){ b += flo('sep3') + '<p class="cl">' + esc(c.closing) + '</p>'; }
+  if(c.closing){ b += '<p class="cl">' + esc(c.closing) + '</p>'; }
   const s0 = sec('t-card', '', c.names || inv.title || '', b); tabs.push(s0);
   // 2. programme
   const prog = (inv.invitation_programme||[]).slice().sort((a,b)=>a.position-b.position);
