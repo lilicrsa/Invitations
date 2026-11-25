@@ -883,6 +883,7 @@ function buildPages(inv){
       for(let i=0;i<n;i++) list.push({name:nm[i]||'', role:'', phone:ph[i]||''});
     }
     list = list.filter(c=>c.name||c.phone);
+    if(!list.length && inv.is_demo) list = [{name:'Sarah',role:'Témoin de la mariée',phone:'06 12 34 56 78'},{name:'Karim',role:'Témoin du marié',phone:'06 98 76 54 32'},{name:'Nadia',role:'Mère de la mariée',phone:'07 11 22 33 44'}];
     if(list.length){
       const tel = p => String(p).replace(/[^\d+]/g,'');
       const ico = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h3.2l1.6 4-2 1.3a11 11 0 005.9 5.9L15 13.2l4 1.6V18a2 2 0 01-2 2A13 13 0 013 6a2 2 0 012-2z"/></svg>';
