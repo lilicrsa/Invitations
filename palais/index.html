@@ -1047,7 +1047,7 @@ function buildDateBlock(inv, c){
   const cal = CARD_ICONS[0], clk = CARD_ICONS[1];
   if(DV === 2){ // colonnes avec icônes (disposition de la vraie carte)
     return '<div class="dv2"><div class="c"><div class="ico">' + cal + '</div><b>' + esc(p.wd) + '</b><span>' + p.day + ' ' + esc(p.month) + ' ' + p.year + '</span></div>'
-      + (p.hh ? '<div class="c"><div class="ico">' + clk + '</div><b>' + esc(p.hh) + '</b><span>heure d’arrivée</span></div>' : '') + '</div>';
+      + (p.hh ? '<div class="c"><div class="ico">' + clk + '</div><b>' + esc(p.hh) + '</b></div>' : '') + '</div>';
   }
   if(DV === 3){ // en toutes lettres
     return '<div class="dv3"><p class="a">' + esc(p.wd) + '</p><p class="b">' + (p.day === 1 ? 'premier' : nw(p.day)) + ' ' + esc(p.month) + '</p><p class="c">' + yearW(p.year) + '</p>'
