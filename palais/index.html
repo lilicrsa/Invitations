@@ -332,6 +332,8 @@ body{ font-family:'Jost',system-ui,sans-serif; color:var(--encre); background:#1
 .t-photo .gp-st{ min-height:2.6rem; max-width:17rem; font:italic 500 .95rem/1.4 'Cormorant Garamond',serif; color:#7a5a37; text-align:center }
 .t-photo .gp-st.gp-lock{ color:#8a5a22; border:1px solid var(--or2); border-radius:14px; padding:.5rem .8rem; background:rgba(255,250,238,.9) }
 .t-photo .gp-st.gp-err{ color:#b3261e }
+/* titres : ne pas rogner les fioritures */
+.ttl .n{ padding:0 .2em .08em; margin-right:-.1em }
 /* mode démo (cadre téléphone) : remplir toute la largeur */
 html.fr #stage{ width:100vw!important; --w:100vw!important; --top:calc(100vw*.59)!important; --bot:calc(100vw*.15)!important }
 html.fr body{ background:var(--creme) }
@@ -885,8 +887,8 @@ function fitAll(){
     n.style.fontSize = ''; n.style.whiteSpace = 'nowrap';
     let fs = parseFloat(getComputedStyle(n).fontSize);
     let guard = 60;
-    while(n.getBoundingClientRect().width > W*0.82 && fs > 26 && guard--){ fs -= 1.5; n.style.fontSize = fs + 'px'; }
-    if(n.getBoundingClientRect().width > W*0.82){ n.style.whiteSpace = 'normal'; n.style.textAlign = 'center'; n.style.lineHeight = '1.05'; }
+    while(n.getBoundingClientRect().width > W*0.74 && fs > 26 && guard--){ fs -= 1.5; n.style.fontSize = fs + 'px'; }
+    if(n.getBoundingClientRect().width > W*0.74){ n.style.whiteSpace = 'normal'; n.style.textAlign = 'center'; n.style.lineHeight = '1.05'; }
   });
   // programme : réduction proportionnelle si la liste dépasse
   const pr = document.querySelector('.t-prog .prog');
