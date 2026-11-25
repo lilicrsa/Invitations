@@ -320,22 +320,23 @@ body{ font-family:'Jost',system-ui,sans-serif; color:var(--encre); background:#1
 .t-rsvp .confirm-fun{ font:italic 600 1.1rem 'Cormorant Garamond',serif; color:var(--or); margin-top:.7rem }
 .t-rsvp .confirm-edit{ margin-top:.9rem; background:none; border:0; font:500 .85rem 'Jost',sans-serif; color:var(--or); text-decoration:underline; cursor:pointer }
 .t-dress .body,.t-contact .body{ justify-content:center!important; gap:.9rem }
-.dc-frame{ width:100%; padding:1.4rem 1.1rem; border:1px solid rgba(196,150,63,.55); border-radius:22px; background:linear-gradient(180deg,rgba(255,252,245,.78),rgba(255,247,232,.6)); box-shadow:0 0 0 4px rgba(255,250,238,.5), 0 10px 26px rgba(160,110,30,.12); display:flex; flex-direction:column; align-items:center; gap:1.1rem }
-.dc-head{ font:italic 600 clamp(1.35rem,6.3cqw,1.7rem)/1.3 'Cormorant Garamond',serif; color:var(--encre); text-wrap:balance }
-.dc-sw{ display:flex; flex-wrap:wrap; justify-content:center; gap:.7rem .9rem }
-.dc-sw span{ display:flex; flex-direction:column; align-items:center; gap:.3rem; min-width:3.6rem }
-.dc-sw i{ width:2.3rem; height:2.3rem; border-radius:50%; box-shadow:inset 0 0 0 1px rgba(120,80,20,.25), 0 3px 8px rgba(120,80,20,.2) }
-.dc-sw em{ font:600 .56rem 'Jost',sans-serif; letter-spacing:.14em; text-transform:uppercase; color:var(--or); font-style:normal }
-.dc-rest{ font:500 .98rem/1.5 'Jost',sans-serif; color:#7a5a37; text-wrap:balance; border-top:1px solid rgba(196,150,63,.35); padding-top:.9rem; width:85% }
-.cts{ width:100%; display:flex; flex-direction:column; gap:.6rem }
-.ct{ display:flex; align-items:center; justify-content:space-between; gap:.8rem; text-align:left; border:1px solid rgba(196,150,63,.5); border-radius:18px; background:rgba(255,252,245,.72); padding:.65rem .6rem .65rem 1rem; box-shadow:0 6px 16px rgba(160,110,30,.1) }
-.ct-t{ display:flex; flex-direction:column; gap:.12rem; min-width:0 }
-.ct-t b{ font:600 1.25rem/1.15 'Cormorant Garamond',serif; color:var(--encre) }
-.ct-t i{ font:600 .56rem 'Jost',sans-serif; letter-spacing:.16em; text-transform:uppercase; color:var(--or); font-style:normal }
-.ct-t span{ font:500 .92rem 'Jost',sans-serif; color:#7a5a37; letter-spacing:.03em }
-.ct-b{ flex:none; width:2.7rem; height:2.7rem; border-radius:50%; display:grid; place-items:center; color:#fffaf0; background:linear-gradient(180deg,#d9b15c,#b8862f); box-shadow:0 5px 12px rgba(160,110,30,.35) }
-.ct-b svg{ width:1.25rem; height:1.25rem }
-.cts.n4 .ct,.cts.n5 .ct{ padding:.45rem .5rem .45rem .9rem } .cts.n4 .ct-t b,.cts.n5 .ct-t b{ font-size:1.1rem } .cts.n4,.cts.n5{ gap:.45rem } .cts.n5 .ct-b{ width:2.3rem; height:2.3rem }
+.dc-frame{ width:100%; padding:0 .4rem; display:flex; flex-direction:column; align-items:center; gap:1.5rem }
+.dc-head{ font:italic 400 clamp(1.4rem,6.4cqw,1.75rem)/1.5 'Cormorant Garamond',serif; color:#5b4029; letter-spacing:.01em; text-wrap:balance }
+.dc-sw{ display:flex; flex-wrap:wrap; justify-content:center; gap:.9rem 1.2rem }
+.dc-sw span{ display:flex; flex-direction:column; align-items:center; gap:.45rem; min-width:3.4rem }
+.dc-sw i{ width:1.9rem; height:1.9rem; border-radius:50%; box-shadow:0 0 0 3px rgba(255,251,242,.9), 0 0 0 4px rgba(196,150,63,.45) }
+.dc-sw em{ font:400 .52rem 'Jost',sans-serif; letter-spacing:.22em; text-transform:uppercase; color:#a9834a; font-style:normal }
+.dc-rest{ font:italic 400 1.1rem/1.55 'Cormorant Garamond',serif; color:#8a6b47; text-wrap:balance; position:relative; padding-top:1.5rem; width:80% }
+.dc-rest::before{ content:''; position:absolute; top:0; left:25%; right:25%; height:1px; background:linear-gradient(90deg,transparent,rgba(196,150,63,.7),transparent) }
+.cts{ width:100%; display:flex; flex-direction:column; align-items:center; gap:0; margin-top:.6rem }
+.ct{ width:78%; display:flex; flex-direction:column; align-items:center; text-align:center; gap:.3rem; padding:1rem 0; position:relative }
+.ct+.ct::before{ content:''; position:absolute; top:0; left:15%; right:15%; height:1px; background:linear-gradient(90deg,transparent,rgba(196,150,63,.6),transparent) }
+.ct b{ font:italic 400 1.6rem/1.15 'Cormorant Garamond',serif; color:#5b4029 }
+.ct i{ font:400 .52rem 'Jost',sans-serif; letter-spacing:.24em; text-transform:uppercase; color:#a9834a; font-style:normal }
+.ct-p{ display:inline-flex; align-items:center; gap:.55rem; font:400 .9rem 'Jost',sans-serif; color:#8a6b47; letter-spacing:.16em; text-decoration:none }
+.ct-p svg{ width:.95rem; height:.95rem; color:#b8862f }
+.cts.n3 .ct{ padding:.8rem 0 } .cts.n4 .ct,.cts.n5 .ct{ padding:.55rem 0; gap:.2rem } .cts.n3 .ct b{ font-size:1.5rem } .cts.n4 .ct b,.cts.n5 .ct b{ font-size:1.3rem }
+.t-contact .sm{ margin-bottom:.2rem }
 /* merci : compte à rebours */
 .t-merci .cd-after{ margin-top:.1rem }
 /* photos */
@@ -884,7 +885,8 @@ function buildPages(inv){
     list = list.filter(c=>c.name||c.phone);
     if(list.length){
       const tel = p => String(p).replace(/[^\d+]/g,'');
-      const rows = list.map(c=>'<div class="ct"><div class="ct-t"><b>' + esc(c.name) + '</b>' + (c.role ? '<i>' + esc(c.role) + '</i>' : '') + (c.phone ? '<span>' + esc(c.phone) + '</span>' : '') + '</div>' + (c.phone ? '<a class="ct-b" href="tel:' + esc(tel(c.phone)) + '" aria-label="Appeler ' + esc(c.name) + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h3.2l1.6 4-2 1.3a11 11 0 005.9 5.9L15 13.2l4 1.6V18a2 2 0 01-2 2A13 13 0 013 6a2 2 0 012-2z"/></svg></a>' : '') + '</div>').join('');
+      const ico = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h3.2l1.6 4-2 1.3a11 11 0 005.9 5.9L15 13.2l4 1.6V18a2 2 0 01-2 2A13 13 0 013 6a2 2 0 012-2z"/></svg>';
+      const rows = list.map(c=>'<div class="ct">' + (c.name ? '<b>' + esc(c.name) + '</b>' : '') + (c.role ? '<i>' + esc(c.role) + '</i>' : '') + (c.phone ? '<a class="ct-p" href="tel:' + esc(tel(c.phone)) + '">' + ico + esc(c.phone) + '</a>' : '') + '</div>').join('');
       const s = sec('t-contact', 'Besoin de nous joindre', 'Contact', '<p class="sm">Une question ? Un imprévu ?</p><div class="cts n' + Math.min(list.length,5) + '">' + rows + '</div>');
       tabs.push(s);
     }
