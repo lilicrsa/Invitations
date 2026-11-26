@@ -916,26 +916,35 @@ function drawMono(txt){
 }
 function drawMonoIn(box,txt,bi){
   const t = String(txt||'').trim(); if(!t){ box.innerHTML = ''; return; }
-  let a, b;
-  let mm = t.match(/^(\S)\s*[&+]\s*(\S)$/) || (t.length === 2 ? [t, t[0], t[1]] : null);
-  let letters;
+  const cv = document.createElement('canvas').getContext('2d');
+  const ink = (s, font) => { cv.font = font; const m = cv.measureText(s); return { l:m.actualBoundingBoxLeft, r:m.actualBoundingBoxRight, a:m.actualBoundingBoxAscent, d:m.actualBoundingBoxDescent }; };
+  const mm = t.match(/^(\S)\s*[&+]\s*(\S)$/) || (t.length === 2 ? [t, t[0], t[1]] : null);
+  let letters, inkW;
+  const GAP = 10;
   if(mm){
-    letters = '<text x="75" y="110" font-size="98" text-anchor="middle">' + esc(mm[1]) + '</text>'
-      + '<text x="144" y="103" font-size="28" text-anchor="middle" font-family="Cormorant Garamond, serif" font-style="italic" font-weight="500">&amp;</text>'
-      + '<text x="200" y="118" font-size="98" text-anchor="middle">' + esc(mm[2]) + '</text>';
+    const fL = '98px Ephesis', fA = "italic 500 28px 'Cormorant Garamond'";
+    const A = ink(mm[1], fL), S = ink('&', fA), B = ink(mm[2], fL);
+    const wA = A.l + A.r, wS = S.l + S.r, wB = B.l + B.r;
+    inkW = wA + wS + wB + 2*GAP;
+    let x = 150 - inkW/2;
+    const cyL = ((A.a - A.d)/2 + (B.a - B.d)/2) / 2;
+    const yL = 100 + cyL, yS = 100 + (S.a - S.d)/2;
+    letters = '<text x="' + (x + A.l).toFixed(1) + '" y="' + yL.toFixed(1) + '" font-size="98">' + esc(mm[1]) + '</text>';
+    x += wA + GAP;
+    letters += '<text x="' + (x + S.l).toFixed(1) + '" y="' + yS.toFixed(1) + '" font-size="28" font-family="Cormorant Garamond, serif" font-style="italic" font-weight="500">&amp;</text>';
+    x += wS + GAP;
+    letters += '<text x="' + (x + B.l).toFixed(1) + '" y="' + yL.toFixed(1) + '" font-size="98">' + esc(mm[2]) + '</text>';
   } else {
-    const fs = Math.max(40, Math.min(110, 300 / Math.max(1, t.length) * 1.25));
-    letters = '<text x="150" y="' + (100 + fs * 0.3) + '" font-size="' + fs.toFixed(0) + '" text-anchor="middle">' + esc(t) + '</text>';
+    let fs = Math.max(40, Math.min(110, 300 / Math.max(1, t.length) * 1.25));
+    const M = ink(t, fs + 'px Ephesis');
+    inkW = M.l + M.r;
+    letters = '<text x="' + (150 - inkW/2 + M.l).toFixed(1) + '" y="' + (100 + (M.a - M.d)/2).toFixed(1) + '" font-size="' + fs.toFixed(0) + '">' + esc(t) + '</text>';
   }
+  const sc = Math.min(1, 236 / Math.max(1, inkW));
   box.innerHTML = '<svg viewBox="0 0 300 200" aria-label="' + esc(t) + '"><defs><linearGradient id="gg'+bi+'" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f3d88e"/><stop offset=".4" stop-color="#c99a43"/><stop offset=".7" stop-color="#9a6a1c"/><stop offset="1" stop-color="#d9b15c"/></linearGradient>'
     + '<g id="mono'+bi+'" font-family="Ephesis, cursive">' + letters + '</g></defs>'
-    + '<g id="monoW'+bi+'"><use href="#mono'+bi+'" x="1.2" y="1.8" fill="#8a5a12" fill-opacity=".35" style="filter:blur(.8px)"/><use href="#mono'+bi+'" x="-.8" y="-1" fill="#fff8e6" fill-opacity=".95"/><use href="#mono'+bi+'" fill="url(#gg'+bi+')" stroke="#a8741f" stroke-width=".25" paint-order="stroke"/></g>'
+    + '<g id="monoW'+bi+'" transform="translate(150 100) scale(' + sc.toFixed(3) + ') translate(-150 -100)"><use href="#mono'+bi+'" x="1.2" y="1.8" fill="#8a5a12" fill-opacity=".35" style="filter:blur(.8px)"/><use href="#mono'+bi+'" x="-.8" y="-1" fill="#fff8e6" fill-opacity=".95"/><use href="#mono'+bi+'" fill="url(#gg'+bi+')" stroke="#a8741f" stroke-width=".25" paint-order="stroke"/></g>'
     + '</svg>';
-  try{
-    const g = box.querySelector('#mono'+bi), bb = g.getBBox();
-    if(bb.width){ const s = Math.min(1, 236 / bb.width); const cx = bb.x + bb.width/2;
-      box.querySelector('#monoW'+bi).setAttribute('transform', 'translate(150 100) scale(' + s + ') translate(' + (-cx) + ' -100)'); }
-  }catch(_){}
 }
 
 // ---- pages ----
