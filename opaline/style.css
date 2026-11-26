@@ -34,7 +34,7 @@
 @media(max-width:800px){.couple-names{font-size:clamp(42px,14vw,60px);letter-spacing:-1.4px}.hero-copy{padding-top:12px}}
 @media(prefers-reduced-motion:reduce){.motion-ready .venue-card.reveal{clip-path:none;opacity:1;transform:none}.motion-ready .wedding-date.reveal{transform:none}}
 
-/* ---- ajouts intégration Moments of Opale ---- */
+/* ---- ajouts intégration Maison Opaline ---- */
 .small-line{font-size:11px;line-height:1.7;color:#6b5a48;margin-top:14px}.small-line b{display:block;font-weight:500;font-size:8px;letter-spacing:2px;text-transform:uppercase;color:#947649;margin-bottom:2px}.small-line a{color:#947649;border-bottom:1px solid var(--line)}
 .rsvp-section.solo{grid-template-columns:1fr;min-height:0}.rsvp-section.solo .rsvp-side{padding:100px 24px}.rsvp-section.solo .rsvp-side{justify-items:center}
 .closing.solo{grid-template-columns:1fr}.closing.solo .closing-copy{padding:90px 30px}

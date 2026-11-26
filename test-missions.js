@@ -19,7 +19,7 @@ window.MO_MISSIONS = [
   { id:'t12', ph:'Commande', type:'task', q:'Choisissez le modèle de votre invitation.', auto:{ ev:'step', w:{ n:2 } }, rate:true },
   { id:'t13', ph:'Commande', type:'task', q:'Remplissez vos informations (inventez-les) jusqu’à ouvrir l’aperçu de votre invitation.', auto:{ ev:'step', w:{ n:3 } }, rate:true },
   { id:'t14', ph:'Commande', type:'scale', q:'L’aperçu vous donne-t-il envie de commander ?', min:1, max:5, lo:'Pas du tout', hi:'Beaucoup' },
-  { id:'t15', ph:'Commande', type:'choice', q:'Le filigrane « Moments of Opale » sur l’aperçu : comprenez-vous pourquoi il est là ?', opts:['Oui, c’est clair','Non, je ne sais pas pourquoi','Oui, mais il me gêne'] },
+  { id:'t15', ph:'Commande', type:'choice', q:'Le filigrane « Maison Opaline » sur l’aperçu : comprenez-vous pourquoi il est là ?', opts:['Oui, c’est clair','Non, je ne sais pas pourquoi','Oui, mais il me gêne'] },
   { id:'t16', ph:'Commande', type:'task', q:'Passez à l’étape de commande.', auto:{ ev:'step', w:{ n:4 } }, rate:true },
   { id:'t17', ph:'Commande', type:'task', q:'Choisissez la formule qui vous convient.', auto:{ ev:'formula_pick' }, rate:true },
   { id:'t18', ph:'Commande', type:'choice', q:'Avant de cliquer sur « Envoyer ma demande » : que va-t-il se passer, selon vous ?', opts:['Je paie tout de suite et je reçois mon lien','Ma demande est examinée, puis je reçois un lien de paiement','Mon invitation est publiée sans paiement','Je ne sais pas'], correct:'Je paie tout de suite et je reçois mon lien' },
@@ -28,7 +28,7 @@ window.MO_MISSIONS = [
   { id:'t21', ph:'Paiement', type:'task', q:'Imaginez que votre demande est validée et que vous recevez l’e-mail. Touchez le bouton ci-dessous pour voir la page de paiement, puis réglez (simulation, aucun paiement réel).', action:{ label:'Voir la page de paiement', fn:'moTestShowValidated' }, auto:{ ev:'pay_sim' }, rate:true },
   /* ---- Aide et conclusion ---- */
   { id:'t22', ph:'Aide', type:'task', q:'Vous avez une question avant de commander. Où iriez-vous la poser ?', auto:{ ev:'pageview', w:{ page:['contact','devis'] } }, rate:true },
-  { id:'t23', ph:'Bilan', type:'scale', q:'Recommanderiez-vous Moments of Opale à un proche ?', min:0, max:10, lo:'Pas du tout', hi:'Absolument' },
+  { id:'t23', ph:'Bilan', type:'scale', q:'Recommanderiez-vous Maison Opaline à un proche ?', min:0, max:10, lo:'Pas du tout', hi:'Absolument' },
   { id:'t24', ph:'Bilan', type:'text', q:'Qu’est-ce qui vous a le plus gêné ou surpris pendant ce test ?' },
   { id:'t25', ph:'Bilan', type:'text', q:'Qu’est-ce que vous avez préféré ?' }
 ];

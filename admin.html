@@ -3,7 +3,7 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
 <link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png">
-<title>Administration · Moments of Opale</title>
+<title>Administration · Maison Opaline</title>
 <link href="https://fonts.googleapis.com/css2?family=Italiana&family=Manrope:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 :root{ --nuit:#0A0E1D; --nuit2:#121831; --champ:#E7D5A8; --champ2:#CDB882; --brume:#A2A9C4; --trait:rgba(231,213,168,.25); --err:#ff9aa8; --ok:#9fe3b4; }
@@ -41,7 +41,7 @@ dialog label{ display:block; font-size:.75rem; text-transform:uppercase; letter-
   <button id="lgo">Se connecter</button>
 </div>
 <div class="wrap" id="app" style="display:none">
-  <header><h1>Moments of Opale · Administration</h1><div><button class="g" id="refresh">Actualiser</button> <button class="g" id="out">Déconnexion</button></div></header>
+  <header><h1>Maison Opaline · Administration</h1><div><button class="g" id="refresh">Actualiser</button> <button class="g" id="out">Déconnexion</button></div></header>
   <nav id="tabs"></nav>
   <div id="list"></div>
 </div>
@@ -253,9 +253,9 @@ async function act(a,id,btn){
       const last=mailsOf(k==='q'?'quote_id':'contact_id',rid).filter(x=>x.direction==='in').pop();
       return act('mreply',last?last.id:('new:'+k+':'+rid),btn); }
     if(a==='mreply'){ let m=DATA.mails.find(x=>x.id===id);
-      if(!m&&id.startsWith('new:')){ const [,k,rid]=id.split(':'); const src=k==='q'?DATA.quotes.find(x=>x.id===rid):DATA.msgs.find(x=>x.id===rid); m={id:null,from_addr:src.email,subject:k==='q'?'Votre demande de devis — Moments of Opale':(src.subject||'Votre message'),alias:(k==='q'?'devis':'contact')+'@maisonopaline-invitations.fr',message_id:null,draft_code:null}; } const subj=/^re\s*:/i.test(m.subject||'')?m.subject:'Re: '+(m.subject||'');
+      if(!m&&id.startsWith('new:')){ const [,k,rid]=id.split(':'); const src=k==='q'?DATA.quotes.find(x=>x.id===rid):DATA.msgs.find(x=>x.id===rid); m={id:null,from_addr:src.email,subject:k==='q'?'Votre demande de devis — Maison Opaline':(src.subject||'Votre message'),alias:(k==='q'?'devis':'contact')+'@maisonopaline-invitations.fr',message_id:null,draft_code:null}; } const subj=/^re\s*:/i.test(m.subject||'')?m.subject:'Re: '+(m.subject||'');
       const AL=['contact','commande','devis','paiement','support','presse']; const cur=(m.alias||'').split('@')[0]; 
-      return dialog(`<h1 style="font-size:1.4rem">Répondre à ${esc(m.from_addr)}</h1><label>Envoyer depuis</label><select id="mr-a">${AL.map(x=>`<option ${x===cur?'selected':''} value="${x}">${x}@maisonopaline-invitations.fr</option>`).join('')}</select><label>Objet</label><input id="mr-s" value="${esc(subj)}"><label>Message</label><textarea id="mr-t" rows="9" placeholder="Bonjour,\n\n…\n\nBien cordialement,\nMoments of Opale"></textarea><div class="acts"><button value="ok">Envoyer</button><button class="g" value="cancel">Annuler</button></div>`,async()=>{
+      return dialog(`<h1 style="font-size:1.4rem">Répondre à ${esc(m.from_addr)}</h1><label>Envoyer depuis</label><select id="mr-a">${AL.map(x=>`<option ${x===cur?'selected':''} value="${x}">${x}@maisonopaline-invitations.fr</option>`).join('')}</select><label>Objet</label><input id="mr-s" value="${esc(subj)}"><label>Message</label><textarea id="mr-t" rows="9" placeholder="Bonjour,\n\n…\n\nBien cordialement,\nMaison Opaline"></textarea><div class="acts"><button value="ok">Envoyer</button><button class="g" value="cancel">Annuler</button></div>`,async()=>{
         const body={to:m.from_addr,subject:$('mr-s').value,text:$('mr-t').value,alias:$('mr-a').value,in_reply_to:m.message_id,draft_code:m.draft_code};
         const r=await fetch(SB+'/functions/v1/mail-send',{method:'POST',headers:{apikey:KEY,Authorization:'Bearer '+TOKEN,'Content-Type':'application/json'},body:JSON.stringify(body)}); const j=await r.json().catch(()=>({}));
         if(!r.ok||!j.ok) return toast('Échec de l’envoi : '+(j.detail||j.error||r.status)); if(m.id) await api('/rest/v1/mail_messages?id=eq.'+id,{method:'PATCH',body:JSON.stringify({status:'done'})}); toast('Réponse envoyée ✓'); load(); }); }

@@ -23,7 +23,7 @@ Deno.serve(async (req) => {
   const key = Deno.env.get("RESEND_API_KEY");
   if (!key) return json({ error: "resend_not_configured" }, 400);
 
-  const from = `Moments of Opale <${local}@${DOMAIN}>`;
+  const from = `Maison Opaline <${local}@${DOMAIN}>`;
   const headers: Record<string, string> = {};
   if (b.in_reply_to) { headers["In-Reply-To"] = String(b.in_reply_to); headers["References"] = String(b.in_reply_to); }
   const html = `<div style="font:15px/1.6 Arial,sans-serif;color:#2a2230;white-space:pre-wrap">${esc(text)}</div>`;
@@ -37,7 +37,7 @@ Deno.serve(async (req) => {
   const db = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
   await db.from("mail_messages").insert({
     message_id: `<out-${j.id}@resend>`, in_reply_to: b.in_reply_to ?? null, direction: "out", alias: `${local}@${DOMAIN}`,
-    from_addr: `${local}@${DOMAIN}`, from_name: "Moments of Opale", to_addr: to, subject, body_text: text, status: "done",
+    from_addr: `${local}@${DOMAIN}`, from_name: "Maison Opaline", to_addr: to, subject, body_text: text, status: "done",
     category: local, draft_code: b.draft_code ?? null,
   });
   return json({ ok: true });
