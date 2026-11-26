@@ -18,14 +18,14 @@ async function sendMail(to: string, links: { inv: string; rep?: string; claim?: 
   const key = Deno.env.get("RESEND_API_KEY"), from = Deno.env.get("MAIL_FROM");
   if (!key || !from) return false;
   const html = `<div style="font-family:Arial,sans-serif;max-width:520px;margin:auto;color:#222"><h2>Votre invitation est en ligne ✨</h2>
-<p>Merci pour votre commande chez Maison Opaline.</p>
+<p>Merci pour votre commande chez Moments of Opale.</p>
 <p><b>Lien de votre invitation</b> (à envoyer à vos invités) :<br><a href="${links.inv}">${links.inv}</a></p>
 ${links.rep ? `<p><b>Lien de suivi des réponses</b> (à garder pour vous) :<br><a href="${links.rep}">${links.rep}</a></p>` : ""}
 <p>Conservez cet e-mail. Commande <b>${links.ref ?? ""}</b>.</p>
 <p>Une question, une correction ou une réclamation ? <a href="${links.claim}">Écrivez-nous depuis ce lien</a> : votre commande sera associée à votre message. Merci de ne pas répondre directement à cet e-mail, cette adresse n'est pas consultée.</p></div>`;
   const r = await fetch("https://api.resend.com/emails", {
     method: "POST", headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
-    body: JSON.stringify({ from, to, subject: "Votre invitation Maison Opaline est en ligne", html }),
+    body: JSON.stringify({ from, to, subject: "Votre invitation Moments of Opale est en ligne", html }),
   });
   if (!r.ok) console.error("resend", r.status, await r.text());
   return r.ok;

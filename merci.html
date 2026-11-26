@@ -3,7 +3,7 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
 <link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png">
-<title>Votre invitation · Maison Opaline</title>
+<title>Votre invitation · Moments of Opale</title>
 <link href="https://fonts.googleapis.com/css2?family=Italiana&family=Manrope:wght@400;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="legal.css?v=1">
 <style>
@@ -76,7 +76,7 @@ $('pdf-btn').onclick=()=>{
   const d=new window.jspdf.jsPDF({unit:'mm',format:'a4'}); let y=24;
   const T=(t,sz,b)=>{ d.setFont('helvetica',b?'bold':'normal'); d.setFontSize(sz); d.splitTextToSize(t,170).forEach(l=>{ d.text(l,20,y); y+=sz*0.5; }); y+=2; };
   const LK=(u)=>{ d.setTextColor(30,90,180); d.setFont('helvetica','normal'); d.setFontSize(10); d.splitTextToSize(u,170).forEach(l=>{ d.textWithLink(l,20,y,{url:u}); y+=5; }); d.setTextColor(0,0,0); y+=4; };
-  T('Maison Opaline',22,true); T('Votre invitation est en ligne',14,false); y+=4;
+  T('Moments of Opale',22,true); T('Votre invitation est en ligne',14,false); y+=4;
   T('Lien de votre invitation (à envoyer à vos invités)',11,true); LK(L.inv);
   if(L.rep){ T('Lien de suivi des réponses (à garder pour vous)',11,true); LK(L.rep); }
   if(L.ref){ T('Numéro de commande : '+L.ref,10,false); }

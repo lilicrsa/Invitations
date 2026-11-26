@@ -41,7 +41,7 @@ Deno.serve(async (req) => {
     mode: "payment", locale: "fr", customer_email: email,
     "line_items[0][quantity]": "1", "line_items[0][price_data][currency]": "eur",
     "line_items[0][price_data][unit_amount]": String(p.amount_cents),
-    "line_items[0][price_data][product_data][name]": `Maison Opaline — invitation ${NAMES[formula]}`,
+    "line_items[0][price_data][product_data][name]": `Moments of Opale — invitation ${NAMES[formula]}`,
     success_url: `${SITE}merci.html?s={CHECKOUT_SESSION_ID}`, cancel_url: `${SITE}commande.html?d=${code}`,
     "metadata[draft_code]": code, "metadata[formula]": formula,
   });

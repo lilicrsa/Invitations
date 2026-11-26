@@ -14,7 +14,7 @@ const NAMES: Record<string, string> = { ess: "Essentiel", sig: "Signature", pre:
 
 function layout(inner: string) {
   return `<div style="background:#f6f1e7;padding:24px 0"><div style="font-family:Georgia,serif;max-width:540px;margin:auto;background:#fff;border-radius:14px;overflow:hidden;color:#2a2230">
-<div style="background:#0a0e1c;color:#ecd9ae;text-align:center;padding:18px;font-size:22px;letter-spacing:.06em">Maison Opaline</div>
+<div style="background:#0a0e1c;color:#ecd9ae;text-align:center;padding:18px;font-size:22px;letter-spacing:.06em">Moments of Opale</div>
 <div style="padding:22px 26px;font:15px/1.6 Arial,sans-serif">${inner}</div></div></div>`;
 }
 async function mail(to: string, subject: string, html: string): Promise<boolean> {
@@ -53,12 +53,12 @@ Deno.serve(async (req) => {
     html = layout(`<p>Bonjour,</p><p>Bonne nouvelle : votre demande pour l’invitation <b>« ${esc(title)} »</b> est <b>validée</b> 🎉</p>
 <p>Il ne reste qu’à régler pour la publier : formule <b>${NAMES[d.formula] ?? ""}</b>${price ? ` · <b>${price}</b>` : ""}.</p>
 <p style="text-align:center;margin:22px 0"><a href="${link}" style="background:#c8963a;color:#fff;text-decoration:none;padding:12px 26px;border-radius:999px;font-weight:bold">Payer et publier mon invitation</a></p>
-<p>Lien valable 30 jours. Dès le paiement, votre lien d’invitation vous est envoyé${d.formula === "ess" ? "" : " et vous accédez au suivi des réponses"}.</p><p>À très vite,<br><i>Maison Opaline</i></p>`);
-    text = `Bonjour,\n\nBonne nouvelle : votre demande pour l'invitation « ${title} » est validée.\nIl ne reste qu'à régler pour la publier (formule ${NAMES[d.formula] ?? ""}${price ? ", " + price : ""}) :\n${link}\n\nLien valable 30 jours.\n\nÀ très vite,\nMaison Opaline`;
+<p>Lien valable 30 jours. Dès le paiement, votre lien d’invitation vous est envoyé${d.formula === "ess" ? "" : " et vous accédez au suivi des réponses"}.</p><p>À très vite,<br><i>Moments of Opale</i></p>`);
+    text = `Bonjour,\n\nBonne nouvelle : votre demande pour l'invitation « ${title} » est validée.\nIl ne reste qu'à régler pour la publier (formule ${NAMES[d.formula] ?? ""}${price ? ", " + price : ""}) :\n${link}\n\nLien valable 30 jours.\n\nÀ très vite,\nMoments of Opale`;
   } else {
-    subject = "À propos de votre demande — Maison Opaline";
-    html = layout(`<p>Bonjour,</p><p>Nous avons bien étudié votre demande pour l’invitation <b>« ${esc(title)} »</b>, mais nous ne pouvons pas la publier en l’état.</p>${note ? `<p>${esc(note)}</p>` : ""}<p>Aucun paiement n’a été pris. Vous pouvez nous répondre à cet e-mail pour en discuter.</p><p><i>Maison Opaline</i></p>`);
-    text = `Bonjour,\n\nNous avons bien étudié votre demande pour l'invitation « ${title} », mais nous ne pouvons pas la publier en l'état.\n${note ? "\n" + note + "\n" : ""}\nAucun paiement n'a été pris. Répondez à cet e-mail pour en discuter.\n\nMaison Opaline`;
+    subject = "À propos de votre demande — Moments of Opale";
+    html = layout(`<p>Bonjour,</p><p>Nous avons bien étudié votre demande pour l’invitation <b>« ${esc(title)} »</b>, mais nous ne pouvons pas la publier en l’état.</p>${note ? `<p>${esc(note)}</p>` : ""}<p>Aucun paiement n’a été pris. Vous pouvez nous répondre à cet e-mail pour en discuter.</p><p><i>Moments of Opale</i></p>`);
+    text = `Bonjour,\n\nNous avons bien étudié votre demande pour l'invitation « ${title} », mais nous ne pouvons pas la publier en l'état.\n${note ? "\n" + note + "\n" : ""}\nAucun paiement n'a été pris. Répondez à cet e-mail pour en discuter.\n\nMoments of Opale`;
   }
   const sent = await mail(d.email, subject, html);
   return json({ ok: true, sent, to: d.email, subject, text, link: action === "validate" ? link : null });

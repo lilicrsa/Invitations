@@ -456,8 +456,8 @@ html.fr{ font-size:clamp(12px,4.44vw,18px)!important }
 .cardbg{ position:absolute; inset:0; background:url(maquette/carte.jpg) center/cover no-repeat }
 .bg2{ position:absolute; inset:0; background:url(maquette/fond.jpg) center/cover no-repeat; pointer-events:none }
 .bg2::after{ content:''; position:absolute; inset:0; background:linear-gradient(180deg,rgba(255,246,230,.40),rgba(255,246,230,.62) 40%,rgba(255,246,230,.62)) }
-.bz{ position:absolute; inset:0; background:url(maquette/carte.jpg) center/cover no-repeat; pointer-events:none; -webkit-mask-image:radial-gradient(ellipse 31% 11.5% at 50% 17.3%,#000 62%,transparent 100%); mask-image:radial-gradient(ellipse 31% 11.5% at 50% 17.3%,#000 62%,transparent 100%) }
-.plate{ position:absolute!important; left:50%!important; top:calc(var(--h)*.173)!important; width:calc(var(--h)*.2)!important; height:auto!important; margin:0!important; transform:translate(-50%,-50%)!important; display:block!important }
+.bz{ position:absolute; inset:0; background:url(maquette/carte.jpg) center/cover no-repeat; pointer-events:none; -webkit-mask-image:radial-gradient(ellipse 31% 11.5% at 50.3% 17%,#000 62%,transparent 100%); mask-image:radial-gradient(ellipse 31% 11.5% at 50.3% 17%,#000 62%,transparent 100%) }
+.plate{ position:absolute!important; left:calc(50% + var(--h)*.0024)!important; top:calc(var(--h)*.170)!important; width:calc(var(--h)*.2)!important; height:auto!important; margin:0!important; transform:translate(-50%,-50%)!important; display:block!important }
 .tab{ padding-top:calc(var(--h)*.285)!important; padding-bottom:calc(var(--h)*.075)!important }
 .dust{ display:block }
 /* page 1 (carte) : positions calées sur les ornements de la carte */
@@ -927,7 +927,7 @@ function drawMonoIn(box,txt,bi){
     const wA = A.l + A.r, wS = S.l + S.r, wB = B.l + B.r;
     inkW = wA + wS + wB + 2*GAP;
     let x = 150 - inkW/2;
-    const cyL = ((A.a - A.d)/2 + (B.a - B.d)/2) / 2;
+    const cyL = (Math.max(A.a, B.a) - Math.max(A.d, B.d)) / 2;
     const yL = 100 + cyL, yS = 100 + (S.a - S.d)/2;
     letters = '<text x="' + (x + A.l).toFixed(1) + '" y="' + yL.toFixed(1) + '" font-size="98">' + esc(mm[1]) + '</text>';
     x += wA + GAP;
@@ -940,7 +940,7 @@ function drawMonoIn(box,txt,bi){
     inkW = M.l + M.r;
     letters = '<text x="' + (150 - inkW/2 + M.l).toFixed(1) + '" y="' + (100 + (M.a - M.d)/2).toFixed(1) + '" font-size="' + fs.toFixed(0) + '">' + esc(t) + '</text>';
   }
-  const sc = Math.min(1, 236 / Math.max(1, inkW));
+  const sc = Math.min(1, 212 / Math.max(1, inkW));
   box.innerHTML = '<svg viewBox="0 0 300 200" aria-label="' + esc(t) + '"><defs><linearGradient id="gg'+bi+'" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f3d88e"/><stop offset=".4" stop-color="#c99a43"/><stop offset=".7" stop-color="#9a6a1c"/><stop offset="1" stop-color="#d9b15c"/></linearGradient>'
     + '<g id="mono'+bi+'" font-family="Ephesis, cursive">' + letters + '</g></defs>'
     + '<g id="monoW'+bi+'" transform="translate(150 100) scale(' + sc.toFixed(3) + ') translate(-150 -100)"><use href="#mono'+bi+'" x="1.2" y="1.8" fill="#8a5a12" fill-opacity=".35" style="filter:blur(.8px)"/><use href="#mono'+bi+'" x="-.8" y="-1" fill="#fff8e6" fill-opacity=".95"/><use href="#mono'+bi+'" fill="url(#gg'+bi+')" stroke="#a8741f" stroke-width=".25" paint-order="stroke"/></g>'

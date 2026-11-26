@@ -175,7 +175,7 @@ function downloadIcs(inv){
   const f = x => x.toISOString().replace(/[-:]/g,'').replace(/\.\d+/,'');
   const nm = splitNames(inv); const title = 'Mariage '+(nm[1]?nm[0]+' & '+nm[1]:nm[0]);
   const esc = t => String(t||'').replace(/([,;])/g,'\\$1').replace(/\n/g,'\\n');
-  const ics = ['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Maison Opaline//FR','BEGIN:VEVENT','UID:'+(inv.id||slug)+'@maisonopaline-invitations.fr','DTSTAMP:'+f(new Date()),'DTSTART:'+f(s),'DTEND:'+f(e),'SUMMARY:'+esc(title),'LOCATION:'+esc([inv.venue_name,inv.address].filter(Boolean).join(', ')),'END:VEVENT','END:VCALENDAR'].join('\r\n');
+  const ics = ['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Moments of Opale//FR','BEGIN:VEVENT','UID:'+(inv.id||slug)+'@maisonopaline-invitations.fr','DTSTAMP:'+f(new Date()),'DTSTART:'+f(s),'DTEND:'+f(e),'SUMMARY:'+esc(title),'LOCATION:'+esc([inv.venue_name,inv.address].filter(Boolean).join(', ')),'END:VEVENT','END:VCALENDAR'].join('\r\n');
   const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([ics],{type:'text/calendar'})); a.download = 'mariage.ics'; document.body.appendChild(a); a.click(); setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); },500);
 }
 

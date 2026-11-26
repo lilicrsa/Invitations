@@ -13,7 +13,7 @@ const NAMES: Record<string, string> = { ess: "Essentiel", sig: "Signature", pre:
 
 function layout(inner: string) {
   return `<div style="background:#f6f1e7;padding:24px 0"><div style="font-family:Georgia,serif;max-width:540px;margin:auto;background:#fff;border-radius:14px;overflow:hidden;color:#2a2230">
-<div style="background:#0a0e1c;color:#ecd9ae;text-align:center;padding:18px;font-size:22px;letter-spacing:.06em">Maison Opaline</div>
+<div style="background:#0a0e1c;color:#ecd9ae;text-align:center;padding:18px;font-size:22px;letter-spacing:.06em">Moments of Opale</div>
 <div style="padding:22px 26px;font:15px/1.6 Arial,sans-serif">${inner}</div></div></div>`;
 }
 async function mail(to: string, subject: string, html: string, replyTo?: string): Promise<boolean> {
@@ -48,7 +48,7 @@ Deno.serve(async (req) => {
 
   const title = data?.title || data?.host || "votre invitation";
   const preview = `${SITE}commande.html?d=${code}`;
-  await mail(email, "Votre demande est bien enregistrée — Maison Opaline", layout(
+  await mail(email, "Votre demande est bien enregistrée — Moments of Opale", layout(
     `<p>Bonjour,</p><p>Merci ! Votre demande pour l’invitation <b>« ${esc(title)} »</b> (formule ${NAMES[formula]}) est bien enregistrée.</p>
 <p>Elle est dans notre file d’attente : nous la vérifions, puis <b>vous recevez un e-mail sous quelques jours</b> pour valider votre demande et passer au paiement. Aucun paiement n’a été demandé pour le moment.</p>
 <p>Votre code de suivi : <b>${esc(code)}</b><br><a href="${preview}">Revoir ma demande</a></p><p style="color:#6a5f55;font-size:13px">Vous pouvez répondre à cet e-mail pour toute question.</p>`),
