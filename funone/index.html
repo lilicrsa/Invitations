@@ -1232,6 +1232,11 @@ async function loadInfos(){
       if(!res.ok) throw new Error('HTTP '+res.status);
       const one = await res.json(); data = one ? [one] : [];
     }
+    if(!data.length && slug === 'funone-demo' && !PREVIEW && !LIVE){   // démo intégrée tant que la fiche n'est pas en base
+        data = [{ id:'demo-funone', slug:'funone-demo', title:'Le 1er anniversaire de Léo', host_names:'Léo', event_date:'2027-03-20', event_time:'15h00', venue_name:'Chez Mamie, Paris', address:'12 rue des Lilas, Paris', maps_url:'https://www.google.com/maps',
+          message:'Venez fêter ça avec nous !', dress_code:'Tenue pastel et bonne humeur', contact_name:'Julie', contact_phone:'06 12 34 56 78', rsvp_enabled:true, invitation_programme:[{position:1,time:'15h00',title:'Accueil',description:'Les invités arrivent'},{position:2,time:'15h30',title:'Cocktail',description:'Bulles et petites bouchées'},{position:3,time:'16h30',title:'Goûter',description:'Un repas pour tous les goûts'},{position:4,time:'18h00',title:'Jeux et gâteau',description:'Musique et danse jusqu\'au bout de la nuit'}],
+          card_text:{}, music_tracks:{ url:'musique-funone.mp3', title:'Fun to be One' } }];
+      }
     if(!data.length){ tabs0El.innerHTML = '<section class="tab on"><div class="body"><div class="status">Invitation introuvable.</div></div></section>'; TABS = [tabs0El.firstChild]; draw(); return; }
     const inv = data[0];
     mount(inv);
