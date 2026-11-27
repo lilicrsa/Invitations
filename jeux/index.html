@@ -465,17 +465,19 @@ html.fr{ font-size:clamp(12px,4.44vw,18px)!important }
 #stage{ --h:100svh }
 :root{ --or:#B8862B; --or2:#E8CB83; --encre:#4A1520; --creme:#fbf6ea }
 .bg{ background:#fbf6ea }
-.cardbg{ position:absolute; inset:0; background:url(maquette/fond.jpg) center/cover no-repeat }
 .bg2{ position:absolute; inset:0; overflow:hidden; pointer-events:none }
 .bg2::before{ content:''; position:absolute; inset:0; background:url(maquette/fond.jpg) center/cover no-repeat }
-.bg2::after{ content:''; position:absolute; inset:0; background:linear-gradient(180deg,rgba(251,246,234,.45),rgba(251,243,230,.68) 35%,rgba(251,243,230,.74)) }
+.bg2::after{ content:''; position:absolute; inset:0; background:transparent }
 .dust{ display:block }
-.card{ position:absolute!important; left:0!important; top:50%!important; transform:translateY(-50%)!important; width:100%!important; max-width:none!important; margin:0!important; border-radius:0!important; box-shadow:none!important }
+.card{ position:absolute!important; left:50%!important; top:50%!important; transform:translate(-50%,-50%)!important; width:max(100cqw, calc(var(--h)*0.5631))!important; max-width:none!important; aspect-ratio:0.5631!important; margin:0!important; border-radius:0!important; box-shadow:none!important }
+.card > img{ position:absolute!important; inset:0!important; width:100%!important; height:100%!important }
+.zone{ top:50.7%!important; height:3.5%!important }
+#c-kick{display:none!important}#c-title{left:19%!important;width:62%!important;top:29.8%!important;height:5.6%!important}#c-sub{left:22%!important;width:56%!important;top:36.6%!important;height:3.9%!important}#c-title{font-family:"Great Vibes",cursive;font-weight:400;line-height:1;color:#fff3dc;text-shadow:0 1px 2px rgba(60,0,15,.8),0 0 8px rgba(255,214,120,.35)}#c-title .ln{padding:0 .1em}#c-sub{font-family:"Great Vibes",cursive;color:#6b1530;font-weight:400;line-height:1}#c-date,#c-time,#c-venue{font-family:"Cormorant Garamond",serif!important;font-style:italic!important;font-weight:600!important;letter-spacing:.02em;color:#5e1428!important;font-synthesis:style}#c-venue .sm{font-family:"Cormorant Garamond",serif!important;text-transform:none!important;letter-spacing:.03em;font-style:italic!important;color:#a8741f!important;font-size:.9em}#c-date{left:41.5%!important;width:40.5%!important;top:41.2%!important;height:4.7%!important}#c-time{left:41.5%!important;width:40.5%!important;top:48.4%!important;height:4.7%!important}#c-venue{left:18.4%!important;width:63%!important;top:58.8%!important;height:8.0%!important}
 .t-card{ visibility:hidden }
-.ttl{ top:calc(var(--h)*.075)!important; height:calc(var(--h)*.15)!important }
-.tab{ padding-top:calc(var(--h)*.245)!important; padding-bottom:calc(var(--h)*.075)!important }
+.ttl{ top:calc(var(--h)*0.17)!important; height:calc(var(--h)*0.08)!important }
+.tab{ padding-top:calc(var(--h)*0.27)!important; padding-bottom:calc(var(--h)*0.27)!important }
 .t-frames .body{ justify-content:center!important }
-.t-frames{ padding-top:calc(var(--h)*.285)!important }
+.t-frames{ padding-top:calc(var(--h)*0.24000000000000002)!important }
 .hint{ bottom:calc(var(--h)*.014)!important; text-shadow:0 0 8px rgba(255,251,242,.9) }
 
 /* mode démo (cadre téléphone) : remplir toute la largeur */
@@ -511,9 +513,12 @@ html.fr body{ background:var(--creme) }
    <div id="tabs"></div>
   </div>
   <div class="scr" id="s0">
-   <div class="bg" id="bg1"><div class="cardbg"></div></div>
+   <div class="bg" id="bg1"></div>
 <div class="card" id="card">
         <img src="maquette/carte.jpg" alt="Carte d'invitation">
+        <div class="zone" id="c-kick"><div class="in"></div></div>
+        <div class="zone" id="c-title"><div class="in"></div></div>
+        <div class="zone" id="c-sub"><div class="in"></div></div>
         <div class="zone" id="c-date"><div class="in"></div></div>
         <div class="zone" id="c-time"><div class="in"></div></div>
         <div class="zone" id="c-venue"><div class="in"></div></div>
@@ -864,6 +869,7 @@ function buildPhotos(inv){
       }
     }
     out.venue2 = v2 || '';
+    out.date = String(out.date).replace(/\n/g,' '); out.date = out.date.replace(/\b(lundi|mardi|mercredi|jeudi|vendredi|samedi|dimanche)\b/i,m=>m.slice(0,3)+'.').replace(/\b(janvier|février|mars|avril|mai|juin|juillet|août|septembre|octobre|novembre|décembre)\b/i,m=>m.length>4?(m.slice(0,m.startsWith('juil')?4:3)+'.'):m); out.kick = t.kicker != null ? t.kicker : 'Soirée'; out.title = t.title != null ? t.title : 'Jeux de Société'; out.subtitle = t.subtitle != null ? t.subtitle : 'entre filles';
     return out;
   }
   
@@ -997,14 +1003,17 @@ const CARD_ICONS = [];
     const dz = $c('c-date'), di = dz.firstChild; di.textContent = '';
     const lines = String(c.date).split('\n').map(x=>x.trim()).filter(Boolean);
     lines.forEach((l,i)=> di.appendChild(mk(lines.length===3 ? (i===1?'em':'') : (i===lines.length-1?'em':''), l)));
-    dz.style.display = lines.length ? '' : 'none'; if(lines.length) fit(dz, 2.5, 1.3);
+    dz.style.display = lines.length ? '' : 'none'; if(lines.length) fit(dz, 4.8, 1.3);
     // heure
     const tz = $c('c-time'), ti = tz.firstChild; ti.textContent = ''; if(c.time) ti.appendChild(mk('em', c.time));
-    tz.style.display = c.time ? '' : 'none'; if(c.time) fit(tz, 2.8, 1.4);
+    tz.style.display = c.time ? '' : 'none'; if(c.time) fit(tz, 4.8, 1.4);
     // lieu
     const vz = $c('c-venue'), vi = vz.firstChild; vi.textContent = '';
     if(c.venue) vi.appendChild(mk('', c.venue)); if(c.venue2) vi.appendChild(mk('sm', c.venue2));
-    vz.style.display = (c.venue || c.venue2) ? '' : 'none'; if(c.venue || c.venue2) fit(vz, 2.3, 1.2);
+    vz.style.display = (c.venue || c.venue2) ? '' : 'none'; if(c.venue || c.venue2) fit(vz, 4.6, 1.2);
+    const kz2=$c('c-kick'), ki2=kz2.firstChild; ki2.textContent=''; if(c.kick) ki2.appendChild(mk('',c.kick)); kz2.style.display=c.kick?'':'none'; if(c.kick) fit(kz2,26,6);
+    const tz2=$c('c-title'), ti2=tz2.firstChild; ti2.textContent=''; if(c.title) ti2.appendChild(mk('',c.title)); tz2.style.display=c.title?'':'none'; if(c.title) fit(tz2,11,3);
+    const sz2=$c('c-sub'), si2=sz2.firstChild; si2.textContent=''; if(c.subtitle) si2.appendChild(mk('',c.subtitle)); sz2.style.display=c.subtitle?'':'none'; if(c.subtitle) fit(sz2,12,3);
     document.querySelectorAll('#card .zone').forEach(z=>z.classList.add('ready'));
   }
 

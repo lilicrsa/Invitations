@@ -465,17 +465,19 @@ html.fr{ font-size:clamp(12px,4.44vw,18px)!important }
 #stage{ --h:100svh }
 :root{ --or:#D9A94A; --or2:#F0D589; --encre:#F6EBD0; --creme:#0b0806 }
 .bg{ background:#0b0806 }
-.cardbg{ position:absolute; inset:0; background:url(maquette/fond.jpg) center/cover no-repeat }
 .bg2{ position:absolute; inset:0; overflow:hidden; pointer-events:none }
 .bg2::before{ content:''; position:absolute; inset:0; background:url(maquette/fond.jpg) center/cover no-repeat }
-.bg2::after{ content:''; position:absolute; inset:0; background:linear-gradient(180deg,rgba(8,6,4,.70),rgba(8,6,4,.82) 35%,rgba(8,6,4,.86)) }
+.bg2::after{ content:''; position:absolute; inset:0; background:transparent }
 .dust{ display:block }
-.card{ position:absolute!important; left:0!important; top:50%!important; transform:translateY(-50%)!important; width:100%!important; max-width:none!important; margin:0!important; border-radius:0!important; box-shadow:none!important }
+.card{ position:absolute!important; left:50%!important; top:50%!important; transform:translate(-50%,-50%)!important; width:max(100cqw, calc(var(--h)*0.4734))!important; max-width:none!important; aspect-ratio:0.4734!important; margin:0!important; border-radius:0!important; box-shadow:none!important }
+.card > img{ position:absolute!important; inset:0!important; width:100%!important; height:100%!important }
+.zone{  }
+#c-age{left:26.9%!important;width:44%!important;top:27.5%!important;height:18%!important}#c-slogan{left:26.4%!important;width:47.7%!important;top:49.8%!important;height:5.2%!important}
 .t-card{ visibility:hidden }
-.ttl{ top:calc(var(--h)*.075)!important; height:calc(var(--h)*.15)!important }
-.tab{ padding-top:calc(var(--h)*.245)!important; padding-bottom:calc(var(--h)*.075)!important }
+.ttl{ top:calc(var(--h)*0.075)!important; height:calc(var(--h)*0.075)!important }
+.tab{ padding-top:calc(var(--h)*0.165)!important; padding-bottom:calc(var(--h)*0.25)!important }
 .t-frames .body{ justify-content:center!important }
-.t-frames{ padding-top:calc(var(--h)*.285)!important }
+.t-frames{ padding-top:calc(var(--h)*0.135)!important }
 .hint{ bottom:calc(var(--h)*.014)!important; text-shadow:0 0 8px rgba(30,22,12,.9) }
 
 /* mode démo (cadre téléphone) : remplir toute la largeur */
@@ -512,7 +514,7 @@ html.fr body{ background:var(--creme) }
    <div id="tabs"></div>
   </div>
   <div class="scr" id="s0">
-   <div class="bg" id="bg1"><div class="cardbg"></div></div>
+   <div class="bg" id="bg1"></div>
 <div class="card" id="card">
         <img src="maquette/carte.jpg" alt="Carte d'invitation">
         <div class="zone" id="c-age"><span class="gold num"></span><span class="gold unit"></span></div>
