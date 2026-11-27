@@ -488,7 +488,7 @@ html.fr{ font-size:clamp(12px,4.44vw,18px)!important }
 .t-rsvp .rsvp{ background:none; padding:0 .3rem }
 .t-rsvp .rsvp label{ font-size:.78rem!important; margin:.5rem 0 .22rem!important; text-shadow:0 0 6px rgba(255,250,252,1),0 0 3px rgba(255,250,252,1),0 0 10px rgba(255,250,252,.9) }
 .t-rsvp .rsvp input[type=text],.t-rsvp .rsvp input[type=number],.t-rsvp .rsvp textarea{ font-size:1.05rem!important; padding:.7rem .8rem!important }
-.t-rsvp .rsvp textarea{ height:3rem!important }
+.t-rsvp .rsvp textarea{ height:4.6rem!important }
 .t-rsvp .rsvp input[type=text],.t-rsvp .rsvp input[type=number],.t-rsvp .rsvp textarea{ background:rgba(255,250,252,.95)!important; border-width:1.5px!important }
 .t-rsvp .choice label{ background:rgba(255,250,252,.95)!important }
 .t-rsvp .choice label{ font-size:.98rem!important; padding:.7rem .3rem!important }
@@ -676,10 +676,8 @@ const video = document.getElementById('intro-video');
         <label for="r-count">Nombre de personnes</label>
         <input type="number" id="r-count" min="1" max="20" inputmode="numeric" required placeholder="Ex. 2">
       </div>
-      <label for="r-all">Allergies / remarques (facultatif)</label>
-      <input type="text" id="r-all" maxlength="300">
-      <label for="r-msg">Petit mot (facultatif)</label>
-      <textarea id="r-msg" maxlength="500"></textarea>
+      <label for="r-msg">Petit mot / allergies (facultatif)</label>
+      <textarea id="r-msg" maxlength="800"></textarea>
       <button type="submit">Envoyer ma réponse</button>
       <div class="note">Vivement la fête avec vous ! 🎉</div>`;
     wrap.appendChild(f);
@@ -689,7 +687,7 @@ const video = document.getElementById('intro-video');
       f.querySelector('#r-count').value = saved.attending ? saved.count : '';
       f.querySelector('#r-count-wrap').style.display = saved.attending ? '' : 'none';
       f.querySelector('#r-count').required = !!saved.attending;
-      f.querySelector('#r-all').value = saved.allergies || '';
+      
       f.querySelector('#r-msg').value = saved.message || '';
       f.querySelector('button[type=submit]').textContent = 'Mettre à jour ma réponse';
       wrap.querySelector('h3').textContent = 'Votre réponse';
@@ -726,7 +724,7 @@ const video = document.getElementById('intro-video');
       }
       const btn = f.querySelector('button[type=submit]');
       const data = { name: nameVal, attending: yes, count: yes ? countVal : 0,
-        allergies: f.querySelector('#r-all').value.trim() || null, message: f.querySelector('#r-msg').value.trim() || null };
+        allergies: null, message: f.querySelector('#r-msg').value.trim() || null };
       f.querySelectorAll('.dupe').forEach(x=>x.remove());
 
       async function call(mode, matchId){
