@@ -483,6 +483,7 @@ html.fr{ font-size:clamp(12px,4.44vw,18px)!important }
 /* mode démo (cadre téléphone) : remplir toute la largeur */
 html.fr #stage{ width:100vw!important; --w:100vw!important; --top:calc(100vw*.59)!important; --bot:calc(100vw*.15)!important }
 html.fr body{ background:var(--creme) }
+.zone{transition:opacity 1.6s ease .9s!important}
 </style>
 <script src="../protect.js?v=4"></script>
 <script>try{if(window.self!==window.top||/[?&]popup=1/.test(location.search))document.documentElement.classList.add('fr')}catch(e){document.documentElement.classList.add('fr')}</script>
@@ -544,9 +545,9 @@ const video = document.getElementById('intro-video');
     g.style.transition = 'opacity 1.5s cubic-bezier(.4,0,.2,1)'; g.style.opacity = 1;
     setTimeout(()=>{
       introEl.style.transition = 'none'; introEl.classList.add('hidden');
-      appEl.style.transition = 'none'; appEl.classList.add('show');
+      appEl.style.transition = 'opacity 1.8s cubic-bezier(.3,0,.2,1)'; appEl.classList.add('show');
       requestAnimationFrame(()=>requestAnimationFrame(()=>{
-        g.style.transition = 'opacity 2.2s cubic-bezier(.3,0,.2,1)'; g.style.opacity = 0;
+        g.style.transition = 'opacity 3s cubic-bezier(.3,0,.2,1)'; g.style.opacity = 0;
       }));
     }, 1850);
   }
