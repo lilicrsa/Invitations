@@ -538,8 +538,8 @@ html.fr{ font-size:clamp(12px,4.44vw,18px)!important }
 
 .tab .ttl .a{ display:none!important }
 #c-names{left:11%!important;width:78%!important;top:38.6%!important;height:9%!important}
-#c-msg1{left:15%!important;width:70%!important;top:50.8%!important;height:8.6%!important}
-#c-msg2{left:14%!important;width:72%!important;top:62.6%!important;height:11.6%!important}
+#c-msg1{left:19%!important;width:62%!important;top:50.8%!important;height:8.6%!important}
+#c-msg2{left:17%!important;width:66%!important;top:62.6%!important;height:11.6%!important}
 .zone.msg{font-weight:700!important;color:#4a2418!important}
 .zone.msg .acc{font-weight:700!important}
 .tab{ padding-top:calc(var(--h)*0.385)!important; padding-bottom:calc(var(--h)*0.13)!important }
@@ -579,6 +579,37 @@ html.fr{ font-size:clamp(12px,4.44vw,18px)!important }
 .t-invit .dv5 .m{ font-size:.95rem!important; font-weight:700!important }
 .t-invit .dv5 .h{ font-size:1.7rem!important; font-weight:600!important; margin-top:.5rem!important }
 .t-rsvp{ padding-top:calc(var(--h)*.395)!important; padding-bottom:calc(var(--h)*.045)!important }
+
+
+/*GALV3*/
+.tab{ padding-top:calc(var(--h)*0.372)!important; padding-bottom:calc(var(--h)*0.17)!important }
+.t-rsvp{ padding-top:calc(var(--h)*0.372)!important; padding-bottom:calc(var(--h)*0.17)!important }
+.tab.t-prog,.t-rsvp{ padding-right:15%!important }
+.tab .ttl .n{ font-size:clamp(1.9rem,9.6cqw,2.5rem)!important }
+.t-lieu .big{ font-size:clamp(1.35rem,6.6cqw,1.7rem)!important }
+.t-lieu .lead{ font-size:clamp(1.05rem,5.2cqw,1.3rem)!important }
+.tab.t-photo .drop{ width:44%!important }
+.tab.t-photo button,.tab.t-photo .btn{ width:56%!important; margin-left:auto!important; margin-right:auto!important; padding:.55rem .8rem!important; font-size:.92rem!important }
+.tab.t-photo .body{ padding-right:0!important }
+
+.tab .body{ gap:.4rem!important; padding-top:.1rem!important }
+.iv-names{ font-size:clamp(2.1rem,10.5cqw,2.9rem)!important }
+.iv-lead{ font-size:clamp(1.15rem,5.6cqw,1.45rem)!important }
+.t-invit .dv5 .n{ font-size:clamp(2.4rem,12cqw,3.2rem)!important }
+.t-invit .dv5 .h{ margin-top:.2rem!important; font-size:1.5rem!important }
+.t-invit .dv5 .w{ font-size:1.3rem!important }
+.t-rsvp .rsvp label{ margin:.28rem 0 .1rem!important }
+.t-rsvp .rsvp input[type=text],.t-rsvp .rsvp input[type=number],.t-rsvp .rsvp textarea{ padding:.36rem .7rem!important }
+.t-rsvp .choice label{ padding:.36rem .3rem!important }
+.t-rsvp .rsvp textarea{ height:2rem!important }
+.t-rsvp .rsvp button[type=submit]{ padding:.6rem 1rem!important; margin-top:.45rem!important }
+.t-contact .cts{ gap:.15rem!important }
+.t-contact .ct b{ font-size:1.25rem!important }
+.t-contact .ct-p{ font-size:1rem!important }
+.t-contact .ct{ padding:.25rem 0!important }
+.tab.t-photo .drop{ width:40%!important; aspect-ratio:1/.4!important }
+.tab.t-photo .drop svg{ width:1.6rem!important; height:1.6rem!important }
+.tab.t-photo .body > *{ margin-top:0!important; margin-bottom:0!important }
 
 /* mode démo (cadre téléphone) : remplir toute la largeur */
 html.fr #stage{ width:100vw!important; --w:100vw!important; --top:calc(100vw*.59)!important; --bot:calc(100vw*.15)!important }
@@ -1136,7 +1167,7 @@ const CARD_ICONS = [];
     const z = $c(id), inn = z.firstChild; inn.textContent = '';
     const lines = String(text||'').split('\n').map(x=>x.trim()).filter(Boolean);
     lines.forEach(l => inn.appendChild(mkRich(l)));
-    z.style.display = lines.length ? '' : 'none'; if(lines.length) fit(z, 3.25, 1.6);
+    z.style.display = lines.length ? '' : 'none'; if(lines.length) fit(z, 5.4, 1.6);
   }
   function renderCard(inv){
     const c = deriveCard(inv);
@@ -1365,13 +1396,13 @@ function fitAll(){
     bd.style.transform = ''; bd.style.width = ''; bd.style.transformOrigin = '';
     const ch = bd.clientHeight, sh = bd.scrollHeight;
     if(ch > 40 && sh > ch + 2){
+      const KMIN = .64; bd.style.transformOrigin = 'top center';
+      const fits = kk => { bd.style.width = (100 / kk) + '%'; bd.style.transform = 'scale(' + kk.toFixed(3) + ')'; return bd.scrollHeight * kk <= ch + 1; };
       let k = 1;
-      bd.style.transformOrigin = 'top center';
-      for(let it = 0; it < 12; it++){
-        bd.style.width = (100 / k) + '%'; bd.style.transform = 'scale(' + k.toFixed(3) + ')';
-        const sh2 = bd.scrollHeight;
-        if(sh2 * k <= ch + 1 || k <= .64) break;
-        k = Math.max(.64, Math.min(k - .015, ch / sh2));
+      if(!fits(1)){
+        let lo = KMIN, hi = 1;
+        for(let it = 0; it < 9; it++){ const mid = (lo + hi) / 2; if(fits(mid)) lo = mid; else hi = mid; }
+        k = lo; fits(k);
       }
       if(k > .985){ bd.style.transform = ''; bd.style.width = ''; bd.style.transformOrigin = ''; }
     }
