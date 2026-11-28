@@ -522,6 +522,19 @@ html.fr{ font-size:clamp(12px,4.44vw,18px)!important }
 html.fr #stage{ width:100vw!important; --w:100vw!important; --top:calc(100vw*.59)!important; --bot:calc(100vw*.15)!important }
 html.fr body{ background:var(--creme) }
 .zone{transition:opacity 1.6s ease .9s!important}
+
+/*JXV2*/
+.tab .ttl .a{ display:none!important }
+.tab{ padding-top:calc(var(--h)*0.235)!important }
+.t-rsvp{ padding-top:calc(var(--h)*0.165)!important }
+.prog.no-t .pr .t{ display:none!important }
+.prog.no-t{ width:88%!important }
+.prog.no-t .pr{ grid-template-columns:3rem 1fr!important; gap:.9rem!important }
+.tab.t-prog .prog.no-t::before{ left:1.5rem!important }
+.t-prog .pr .d b{ font-size:clamp(1.3rem,6cqw,1.55rem)!important }
+.t-prog .pr .d i{ font-size:1.05rem!important }
+.t-lieu .nav-links a{ font-size:.86rem!important; padding:.55rem 1rem!important }
+.tab .lead{ font-weight:600!important }
 </style>
 <script src="../protect.js?v=4"></script>
 <script>try{if(window.self!==window.top||/[?&]popup=1/.test(location.search))document.documentElement.classList.add('fr')}catch(e){document.documentElement.classList.add('fr')}</script>
@@ -1130,7 +1143,7 @@ function buildPages(inv){
   const prog = (inv.invitation_programme||[]).slice().sort((a,b)=>a.position-b.position);
   if(prog.length){
     const rows = prog.map(s => '<li class="pr"><span class="t">' + esc(s.time||'') + '</span><span class="ic">' + svgI(progIcon(s.title)) + '</span><span class="d"><b>' + esc(s.title) + '</b>' + (s.description ? '<i>' + esc(s.description) + '</i>' : '') + '</span></li>').join('');
-    tabs.push(sec('t-prog', 'Au programme', 'Programme', '<ul class="prog">' + rows + '</ul>'));
+    tabs.push(sec('t-prog', 'Au programme', 'Programme', '<ul class="prog' + (prog.some(x=>x.time) ? '' : ' no-t') + '">' + rows + '</ul>'));
   }
   // 3. lieu
   if(inv.venue_name || inv.address){
@@ -1254,7 +1267,8 @@ let _rz; window.addEventListener('resize', ()=>{ clearTimeout(_rz); _rz = setTim
 function demoVenue(inv){
   if(!inv.is_demo || PREVIEW || LIVE) return inv;
   const ct = Object.assign({}, inv.card_text || {}, { venue:'Le Boudoir de Léa', venue2:'de Paris' });
-  return Object.assign({}, inv, { venue_name:'Le Boudoir de Léa', address:'14 rue des Petits-Champs, 75002 Paris', maps_url:'https://www.google.com/maps/search/?api=1&query=14+rue+des+Petits-Champs+75002+Paris', contacts:[{name:'Léa',role:'Organisatrice',phone:'06 12 34 56 78'},{name:'Inès',role:'Co-organisatrice',phone:'06 98 76 54 32'}], message:'Une soirée entre amies, élégante et gourmande : jeux, douceurs et jolies surprises. Hâte de vous y retrouver !', card_text: ct });
+  const _fd = new Date(Date.now() + 150*864e5), _ed = (!inv.event_date || new Date(inv.event_date + 'T23:59:00') < new Date(Date.now() + 30*864e5)) ? _fd.getFullYear() + '-' + String(_fd.getMonth()+1).padStart(2,'0') + '-' + String(_fd.getDate()).padStart(2,'0') : inv.event_date;
+  return Object.assign({}, inv, { event_date:_ed, venue_name:'Le Boudoir de Léa', address:'14 rue des Petits-Champs, 75002 Paris', maps_url:'https://www.google.com/maps/search/?api=1&query=14+rue+des+Petits-Champs+75002+Paris', contacts:[{name:'Léa',role:'Organisatrice',phone:'06 12 34 56 78'},{name:'Inès',role:'Co-organisatrice',phone:'06 98 76 54 32'}], message:'Une soirée entre amies, élégante et gourmande : jeux, douceurs et jolies surprises. Hâte de vous y retrouver !', card_text: ct });
 }
 function demoVenueOld(inv){
   if(!inv.is_demo || PREVIEW || LIVE) return inv;
