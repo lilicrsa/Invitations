@@ -478,9 +478,9 @@ html.fr{ font-size:clamp(12px,4.44vw,18px)!important }
 .tab{ padding-top:calc(var(--h)*0.27)!important; padding-bottom:calc(var(--h)*0.27)!important }
 .t-frames .body{ justify-content:center!important }
 .t-frames{ padding-top:calc(var(--h)*0.24000000000000002)!important }
-.t-rsvp .ttl{ top:calc(var(--h)*0.14)!important }
+.t-rsvp .ttl{ top:calc(var(--h)*0.11000000000000001)!important }
 .t-rsvp .ttl svg,.t-rsvp .ttl .a{ display:none!important }
-.t-rsvp{ padding-top:calc(var(--h)*0.19)!important; padding-bottom:calc(var(--h)*.03)!important }
+.t-rsvp{ padding-top:calc(var(--h)*0.16)!important; padding-bottom:calc(var(--h)*.03)!important }
 .t-rsvp .rsvp{ font-size:1rem; background:none; padding:0 .3rem }
 .t-rsvp .rsvp label{ font-size:.74rem!important; margin:.38rem 0 .15rem!important; text-shadow:0 0 6px rgba(255,251,242,1),0 0 3px rgba(255,251,242,1),0 0 10px rgba(255,251,242,.9) }
 .t-rsvp .rsvp input[type=text],.t-rsvp .rsvp input[type=number],.t-rsvp .rsvp textarea{ font-size:1rem!important; padding:.42rem .75rem!important; background:rgba(255,251,242,.95)!important; border-width:1.5px!important }
@@ -489,7 +489,6 @@ html.fr{ font-size:clamp(12px,4.44vw,18px)!important }
 .t-rsvp .choice{ gap:.4rem }
 .t-rsvp .choice label{ font-size:.86rem!important; padding:.32rem .2rem!important; margin:0!important; white-space:nowrap; background:rgba(255,251,242,.95)!important; text-shadow:none!important }
 .t-rsvp .rsvp button[type=submit]{ font-size:1rem!important; padding:.6rem 1rem!important; margin-top:.6rem!important }
-
 .t-rsvp .rsvp{ background:none; padding:0 .3rem }
 .t-rsvp .rsvp label{ font-size:.78rem!important; margin:.5rem 0 .22rem!important; text-shadow:0 0 6px rgba(255,251,242,1),0 0 3px rgba(255,251,242,1),0 0 10px rgba(255,251,242,.9) }
 .t-rsvp .rsvp input[type=text],.t-rsvp .rsvp input[type=number],.t-rsvp .rsvp textarea{ font-size:1.05rem!important; padding:.7rem .8rem!important }
@@ -498,6 +497,26 @@ html.fr{ font-size:clamp(12px,4.44vw,18px)!important }
 .t-rsvp .choice label{ font-size:.98rem!important; padding:.7rem .3rem!important }
 .t-rsvp .rsvp button[type=submit]{ font-size:1.08rem!important; padding:.95rem 1rem!important; margin-top:.9rem!important }
 .hint{ bottom:calc(var(--h)*.014)!important; text-shadow:0 0 8px rgba(255,251,242,.9) }
+
+
+
+.t-rsvp .rsvp label{ font-size:.66rem!important; margin:.3rem 0 .1rem!important }
+.t-rsvp .rsvp input[type=text],.t-rsvp .rsvp input[type=number],.t-rsvp .rsvp textarea{ font-size:.92rem!important; padding:.3rem .65rem!important }
+.t-rsvp .rsvp textarea{ height:1.9rem!important }
+.t-rsvp .choice label{ font-size:.8rem!important; padding:.22rem .15rem!important }
+.t-rsvp .rsvp button[type=submit]{ font-size:.92rem!important; padding:.5rem 1rem!important; margin-top:.45rem!important }
+.t-rsvp{ padding-bottom:calc(var(--h)*.16)!important }
+
+.t-prog .body{ justify-content:center!important; align-items:center }
+.t-prog .prog{ width:94%!important; margin:0 auto!important; gap:.9rem!important }
+.t-prog .prog::before{ left:calc(24% + 1.55rem)!important }
+.t-prog .pr{ grid-template-columns:24% 3rem 1fr!important; gap:.7rem!important }
+.t-prog .pr .t{ font-size:1rem!important }
+.t-prog .pr .ic{ width:3rem!important; height:3.5rem!important; border-radius:1.5rem 1.5rem .5rem .5rem!important }
+.t-prog .pr .ic svg{ width:1.6rem!important; height:1.6rem!important }
+.t-prog .pr .d b{ font-size:clamp(1.2rem,5.6cqw,1.45rem)!important; font-weight:700!important }
+.t-prog .pr .d i{ font-size:.98rem!important; line-height:1.25!important }
+
 
 /* mode démo (cadre téléphone) : remplir toute la largeur */
 html.fr #stage{ width:100vw!important; --w:100vw!important; --top:calc(100vw*.59)!important; --bot:calc(100vw*.15)!important }
@@ -1153,7 +1172,7 @@ function buildPages(inv){
       for(let i=0;i<n;i++) list.push({name:nm[i]||'', role:'', phone:ph[i]||''});
     }
     list = list.filter(c=>c.name||c.phone);
-    if(inv.is_demo && list.length < 3){ [{name:'Sarah',role:'Témoin de la mariée',phone:'06 12 34 56 78'},{name:'Karim',role:'Témoin du marié',phone:'06 98 76 54 32'},{name:'Nadia',role:'Mère de la mariée',phone:'07 11 22 33 44'}].forEach(x=>{ if(list.length < 3 && !list.some(c=>c.name===x.name)) list.push(x); }); }
+    if(inv.is_demo && list.length < 3){ [{name:'Léa',role:'Organisatrice',phone:'06 12 34 56 78'},{name:'Inès',role:'Co-organisatrice',phone:'06 98 76 54 32'}].forEach(x=>{ if(list.length < 3 && !list.some(c=>c.name===x.name)) list.push(x); }); }
     if(list.length){
       const tel = p => String(p).replace(/[^\d+]/g,'');
       const ico = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h3.2l1.6 4-2 1.3a11 11 0 005.9 5.9L15 13.2l4 1.6V18a2 2 0 01-2 2A13 13 0 013 6a2 2 0 012-2z"/></svg>';
@@ -1233,7 +1252,11 @@ let _fz; try{ new MutationObserver(()=>{ clearTimeout(_fz); _fz = setTimeout(fit
 let _rz; window.addEventListener('resize', ()=>{ clearTimeout(_rz); _rz = setTimeout(()=>{ fitAll(); draw(); }, 120); });
 
 function demoVenue(inv){
-  return inv;
+  if(!inv.is_demo || PREVIEW || LIVE) return inv;
+  const ct = Object.assign({}, inv.card_text || {}, { venue:'Le Boudoir de Léa', venue2:'de Paris' });
+  return Object.assign({}, inv, { venue_name:'Le Boudoir de Léa', address:'14 rue des Petits-Champs, 75002 Paris', maps_url:'https://www.google.com/maps/search/?api=1&query=14+rue+des+Petits-Champs+75002+Paris', contacts:[{name:'Léa',role:'Organisatrice',phone:'06 12 34 56 78'},{name:'Inès',role:'Co-organisatrice',phone:'06 98 76 54 32'}], message:'Une soirée entre amies, élégante et gourmande : jeux, douceurs et jolies surprises. Hâte de vous y retrouver !', card_text: ct });
+}
+function demoVenueOld(inv){
   if(!inv.is_demo || PREVIEW || LIVE) return inv;
   const ct = Object.assign({}, inv.card_text || {}, { venue:'Villa Ephrussi de Rothschild', venue2:'Saint-Jean-Cap-Ferrat' });
   return Object.assign({}, inv, { venue_name:'Villa Ephrussi de Rothschild', address:'1 avenue Ephrussi de Rothschild, 06230 Saint-Jean-Cap-Ferrat', maps_url:'https://www.google.com/maps/search/?api=1&query=Villa+Ephrussi+de+Rothschild+Saint-Jean-Cap-Ferrat', card_text: ct });
